@@ -52,11 +52,20 @@
             android:cacheColorHint="@android:color/transparent" >
         </ListView>
 
+        <TextView
+            android:id="@+id/itinerary_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/itinerary_notice" 
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+        
         <Button
             android:id="@+id/itinerary_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:text="@string/btn_startmonitoring" />
     </LinearLayout>
 

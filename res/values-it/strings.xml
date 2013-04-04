@@ -245,4 +245,6 @@
     <string name="saturday_short">S</string>
     <string name="sunday_short">D</string>
     
+    <string name="itinerary_notice">Premendo il pulsante "Salva" riceverai delle notifiche riguardo ad eventuali ritardi che potrebbero influenzare il tuo itinerario.</string>
+    <string name="toast_choose_transport">Selezionare almeno un mezzo di trasporto.</string>
 </resources>

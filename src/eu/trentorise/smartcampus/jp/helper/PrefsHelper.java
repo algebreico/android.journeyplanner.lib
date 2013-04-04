@@ -110,17 +110,22 @@ public class PrefsHelper {
 
 				// transport types
 				List<TType> tTypesList = Arrays.asList(userPrefsHolder.getTransportTypes());
-				for (TType tType : Config.TTYPES_ALLOWED) {
-					prefsEditor.putBoolean(tType.toString(), tTypesList.contains(tType));
-				}
-
-				// route types
-				prefsEditor.putString(Config.USER_PREFS_RTYPE, userPrefsHolder.getRouteType().toString());
-
-				boolean success = prefsEditor.commit();
-				if (success) {
-					Toast toast = Toast.makeText(ctx, R.string.toast_prefs_saved, Toast.LENGTH_SHORT);
-					toast.show();
+				
+				if(tTypesList.size()==0){
+					Toast.makeText(ctx, R.string.toast_choose_transport, Toast.LENGTH_SHORT).show();
+				} else {
+					for (TType tType : Config.TTYPES_ALLOWED) {
+						prefsEditor.putBoolean(tType.toString(), tTypesList.contains(tType));
+					}
+	
+					// route types
+					prefsEditor.putString(Config.USER_PREFS_RTYPE, userPrefsHolder.getRouteType().toString());
+	
+					boolean success = prefsEditor.commit();
+					if (success) {
+						Toast toast = Toast.makeText(ctx, R.string.toast_prefs_saved, Toast.LENGTH_SHORT);
+						toast.show();
+					}
 				}
 			}
 		});

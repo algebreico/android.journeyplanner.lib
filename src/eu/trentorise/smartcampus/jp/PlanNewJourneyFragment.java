@@ -21,6 +21,7 @@ import it.sayservice.platform.smartplanner.data.message.TType;
 import it.sayservice.platform.smartplanner.data.message.journey.SingleJourney;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -49,7 +50,6 @@ import android.widget.TableLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.google.android.maps.GeoPoint;
 
 import eu.trentorise.smartcampus.android.common.GeocodingAutocompletionHelper;
@@ -155,40 +155,44 @@ public class PlanNewJourneyFragment extends FeedbackFragment {
 					userPrefsHolder = PrefsHelper.sharedPreferences2Holder(userPrefs);
 				}
 
-				Date fromDate = (Date) getView().findViewById(R.id.plannew_date).getTag();
-				Date fromTime = (Date) getView().findViewById(R.id.plannew_time).getTag();
-
-				if (fromPosition == null) {
-					Toast.makeText(getActivity(), R.string.from_field_empty, Toast.LENGTH_SHORT).show();
-					return;
+				if(Arrays.asList(userPrefsHolder.getTransportTypes()).size()==0){
+					Toast.makeText(getActivity(), R.string.toast_choose_transport, Toast.LENGTH_SHORT).show();
+				} else {
+					Date fromDate = (Date) getView().findViewById(R.id.plannew_date).getTag();
+					Date fromTime = (Date) getView().findViewById(R.id.plannew_time).getTag();
+	
+					if (fromPosition == null) {
+						Toast.makeText(getActivity(), R.string.from_field_empty, Toast.LENGTH_SHORT).show();
+						return;
+					}
+					if (toPosition == null) {
+						Toast.makeText(getActivity(), R.string.to_field_empty, Toast.LENGTH_SHORT).show();
+						return;
+					}
+	
+					if (!eu.trentorise.smartcampus.jp.helper.Utils.validFromDateTime(fromDate, fromTime)) {
+						Toast.makeText(getActivity(), R.string.datetime_before_now, Toast.LENGTH_SHORT).show();
+						return;
+					}
+	
+					// build SingleJourney
+					SingleJourney sj = new SingleJourney();
+	
+					sj.setFrom(fromPosition);
+					sj.setTo(toPosition);
+	
+					// NEW! Date in getTag() support
+					sj.setDate(Config.FORMAT_DATE_SMARTPLANNER.format(fromDate));
+					sj.setDepartureTime(Config.FORMAT_TIME_SMARTPLANNER.format(fromTime));
+	
+					sj.setTransportTypes((TType[]) userPrefsHolder.getTransportTypes());
+					sj.setRouteType(userPrefsHolder.getRouteType());
+	
+					SCAsyncTask<SingleJourney, Void, List<Itinerary>> task = new SCAsyncTask<SingleJourney, Void, List<Itinerary>>(
+							getSherlockActivity(), new PlanNewJourneyProcessor(getSherlockActivity(), sj,
+									PlanNewJourneyFragment.this.getTag()));
+					task.execute(sj);
 				}
-				if (toPosition == null) {
-					Toast.makeText(getActivity(), R.string.to_field_empty, Toast.LENGTH_SHORT).show();
-					return;
-				}
-
-				if (!eu.trentorise.smartcampus.jp.helper.Utils.validFromDateTime(fromDate, fromTime)) {
-					Toast.makeText(getActivity(), R.string.datetime_before_now, Toast.LENGTH_SHORT).show();
-					return;
-				}
-
-				// build SingleJourney
-				SingleJourney sj = new SingleJourney();
-
-				sj.setFrom(fromPosition);
-				sj.setTo(toPosition);
-
-				// NEW! Date in getTag() support
-				sj.setDate(Config.FORMAT_DATE_SMARTPLANNER.format(fromDate));
-				sj.setDepartureTime(Config.FORMAT_TIME_SMARTPLANNER.format(fromTime));
-
-				sj.setTransportTypes((TType[]) userPrefsHolder.getTransportTypes());
-				sj.setRouteType(userPrefsHolder.getRouteType());
-
-				SCAsyncTask<SingleJourney, Void, List<Itinerary>> task = new SCAsyncTask<SingleJourney, Void, List<Itinerary>>(
-						getSherlockActivity(), new PlanNewJourneyProcessor(getSherlockActivity(), sj,
-								PlanNewJourneyFragment.this.getTag()));
-				task.execute(sj);
 			}
 		});
 		// hide keyboard if it is still open

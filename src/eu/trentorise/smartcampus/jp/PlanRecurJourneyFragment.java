@@ -21,8 +21,8 @@ import it.sayservice.platform.smartplanner.data.message.journey.RecurrentJourney
 import it.sayservice.platform.smartplanner.data.message.journey.RecurrentJourneyParameters;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,11 +57,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
-import eu.trentorise.smartcampus.ac.Constants;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.jp.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.jp.custom.data.BasicRecurrentJourney;
-import eu.trentorise.smartcampus.jp.custom.data.BasicRecurrentJourneyParameters;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.helper.PrefsHelper;
 import eu.trentorise.smartcampus.jp.helper.processor.DeleteMyRecurItineraryProcessor;
@@ -283,164 +281,167 @@ public class PlanRecurJourneyFragment extends PlanNewJourneyFragment {
 //				params.setName(name.getText().toString().trim());
 //				params.setMonitor(((CheckBox) getView().findViewById(R.id.recur_monitor)).isChecked());
 
-				RecurrentJourneyParameters rj = params.getData().getParameters();
-				if (fromPosition == null) {
-					Toast.makeText(getActivity(), R.string.from_field_empty, Toast.LENGTH_SHORT).show();
-					return;
-				}
-				if (toPosition == null) {
-					Toast.makeText(getActivity(), R.string.to_field_empty, Toast.LENGTH_SHORT).show();
-					return;
-				}
-
-				rj.setFrom(fromPosition);
-				rj.setTo(toPosition);
-
-				Date fromDateD;
-				Date fromTimeD;
-				Date toDateD;
-				Date toTimeD;
-
-				CharSequence timeString = fromDate.getText();
-				if (timeString == null) {
-					Toast.makeText(getActivity(), R.string.from_date_field_empty, Toast.LENGTH_SHORT).show();
-					return;
+				if(Arrays.asList(userPrefsHolder.getTransportTypes()).size()==0){
+					Toast.makeText(getActivity(), R.string.toast_choose_transport, Toast.LENGTH_SHORT).show();
 				} else {
-					try {
-						fromDateD = Config.FORMAT_DATE_UI.parse(timeString.toString());
-						rj.setFromDate(fromDateD.getTime());
-					} catch (ParseException e) {
+					RecurrentJourneyParameters rj = params.getData().getParameters();
+					if (fromPosition == null) {
+						Toast.makeText(getActivity(), R.string.from_field_empty, Toast.LENGTH_SHORT).show();
+						return;
+					}
+					if (toPosition == null) {
+						Toast.makeText(getActivity(), R.string.to_field_empty, Toast.LENGTH_SHORT).show();
+						return;
+					}
+	
+					rj.setFrom(fromPosition);
+					rj.setTo(toPosition);
+	
+					Date fromDateD;
+					Date fromTimeD;
+					Date toDateD;
+					Date toTimeD;
+	
+					CharSequence timeString = fromDate.getText();
+					if (timeString == null) {
 						Toast.makeText(getActivity(), R.string.from_date_field_empty, Toast.LENGTH_SHORT).show();
 						return;
+					} else {
+						try {
+							fromDateD = Config.FORMAT_DATE_UI.parse(timeString.toString());
+							rj.setFromDate(fromDateD.getTime());
+						} catch (ParseException e) {
+							Toast.makeText(getActivity(), R.string.from_date_field_empty, Toast.LENGTH_SHORT).show();
+							return;
+						}
 					}
-				}
-
-				timeString = fromTime.getText();
-				if (timeString == null) {
-					Toast.makeText(getActivity(), R.string.from_time_field_empty, Toast.LENGTH_SHORT).show();
-					return;
-				} else {
-					try {
-						fromTimeD = Config.FORMAT_TIME_UI.parse(timeString.toString());
-						rj.setTime(Config.FORMAT_TIME_SMARTPLANNER.format(fromTimeD));
-					} catch (ParseException e) {
+	
+					timeString = fromTime.getText();
+					if (timeString == null) {
 						Toast.makeText(getActivity(), R.string.from_time_field_empty, Toast.LENGTH_SHORT).show();
 						return;
-					}
-				}
-
-//				if (!eu.trentorise.smartcampus.jp.helper.Utils.validFromDateTime(fromDateD, fromTimeD)) {
-//					Toast.makeText(getActivity(), R.string.datetime_before_now, Toast.LENGTH_SHORT).show();
-//					return;
-//				}
-				if (alwaysCheckbox.isChecked())
-				{
-					rj.setToDate(Config.ALWAYS_DATE);
-				}
-				
-				timeString = toDate.getText();
-				if (!alwaysCheckbox.isChecked())
-
-				if (timeString == null) {
-					Toast.makeText(getActivity(), R.string.to_date_field_empty, Toast.LENGTH_SHORT).show();
-					return;
-				} else {
-					try {
-						toDateD = Config.FORMAT_DATE_UI.parse(timeString.toString());
-						rj.setToDate(toDateD.getTime());
-						if (rj.getFromDate()==rj.getToDate())
-							rj.setToDate( rj.getToDate()+(24 * 60 * 60 * 1000));
-						if ((rj.getToDate() < rj.getFromDate())&&!alwaysCheckbox.isChecked()) {
-							Toast.makeText(getActivity(), R.string.to_date_before_from_date, Toast.LENGTH_SHORT).show();
+					} else {
+						try {
+							fromTimeD = Config.FORMAT_TIME_UI.parse(timeString.toString());
+							rj.setTime(Config.FORMAT_TIME_SMARTPLANNER.format(fromTimeD));
+						} catch (ParseException e) {
+							Toast.makeText(getActivity(), R.string.from_time_field_empty, Toast.LENGTH_SHORT).show();
 							return;
 						}
-
-					} catch (ParseException e) {
+					}
+	
+	//				if (!eu.trentorise.smartcampus.jp.helper.Utils.validFromDateTime(fromDateD, fromTimeD)) {
+	//					Toast.makeText(getActivity(), R.string.datetime_before_now, Toast.LENGTH_SHORT).show();
+	//					return;
+	//				}
+					if (alwaysCheckbox.isChecked())
+					{
+						rj.setToDate(Config.ALWAYS_DATE);
+					}
+					
+					timeString = toDate.getText();
+					if (!alwaysCheckbox.isChecked())
+	
+					if (timeString == null) {
 						Toast.makeText(getActivity(), R.string.to_date_field_empty, Toast.LENGTH_SHORT).show();
 						return;
-					}
-				} else toDateD = new Date(Config.ALWAYS_DATE);
-
-				timeString = toTime.getText();
-				if (timeString == null) {
-					Toast.makeText(getActivity(), R.string.to_time_field_empty, Toast.LENGTH_SHORT).show();
-					return;
-				} else {
-					try {
-						//if the interval is negative, add an entire day
-						toTimeD = Config.FORMAT_TIME_UI.parse(timeString.toString());
-						rj.setInterval(toTimeD.getTime() - fromTimeD.getTime());
-						if (rj.getInterval() < 0)
-							rj.setInterval(rj.getInterval() + 24 * 60 * 60 * 1000);
-						if (rj.getInterval() > Config.MAX_RECUR_INTERVAL) {
-							Toast.makeText(getActivity(), R.string.interval_too_large, Toast.LENGTH_SHORT).show();
+					} else {
+						try {
+							toDateD = Config.FORMAT_DATE_UI.parse(timeString.toString());
+							rj.setToDate(toDateD.getTime());
+							if (rj.getFromDate()==rj.getToDate())
+								rj.setToDate( rj.getToDate()+(24 * 60 * 60 * 1000));
+							if ((rj.getToDate() < rj.getFromDate())&&!alwaysCheckbox.isChecked()) {
+								Toast.makeText(getActivity(), R.string.to_date_before_from_date, Toast.LENGTH_SHORT).show();
+								return;
+							}
+	
+						} catch (ParseException e) {
+							Toast.makeText(getActivity(), R.string.to_date_field_empty, Toast.LENGTH_SHORT).show();
 							return;
 						}
-
-					} catch (ParseException e) {
+					} else toDateD = new Date(Config.ALWAYS_DATE);
+	
+					timeString = toTime.getText();
+					if (timeString == null) {
 						Toast.makeText(getActivity(), R.string.to_time_field_empty, Toast.LENGTH_SHORT).show();
 						return;
+					} else {
+						try {
+							//if the interval is negative, add an entire day
+							toTimeD = Config.FORMAT_TIME_UI.parse(timeString.toString());
+							rj.setInterval(toTimeD.getTime() - fromTimeD.getTime());
+							if (rj.getInterval() < 0)
+								rj.setInterval(rj.getInterval() + 24 * 60 * 60 * 1000);
+							if (rj.getInterval() > Config.MAX_RECUR_INTERVAL) {
+								Toast.makeText(getActivity(), R.string.interval_too_large, Toast.LENGTH_SHORT).show();
+								return;
+							}
+	
+						} catch (ParseException e) {
+							Toast.makeText(getActivity(), R.string.to_time_field_empty, Toast.LENGTH_SHORT).show();
+							return;
+						}
 					}
-				}
-
-				if (!eu.trentorise.smartcampus.jp.helper.Utils.validFromDateTimeToDateTime(fromDateD, fromTimeD, toDateD,
-						toTimeD)&&!alwaysCheckbox.isChecked()) {
-					Toast.makeText(getActivity(), R.string.datetime_to_before_from, Toast.LENGTH_SHORT).show();
-					return;
-				}
-				
-
-
-				rj.setTransportTypes((TType[]) userPrefsHolder.getTransportTypes());
-				rj.setRouteType(userPrefsHolder.getRouteType());
-
-				/*set recurrence on the ui*/
-				rj.setRecurrence(new ArrayList<Integer>());
-				ToggleButton tmpToggle = (ToggleButton)getView().findViewById(R.id.monday_toggle);
-				if(tmpToggle.isChecked()) rj.getRecurrence().add(2);
-				tmpToggle=(ToggleButton)getView().findViewById(R.id.tuesday_toggle);
-				if(tmpToggle.isChecked()) rj.getRecurrence().add(3);
-				tmpToggle=(ToggleButton)getView().findViewById(R.id.wednesday_toggle);
-				if(tmpToggle.isChecked()) rj.getRecurrence().add(4);
-				tmpToggle=(ToggleButton)getView().findViewById(R.id.thursday_toggle);
-				if(tmpToggle.isChecked()) rj.getRecurrence().add(5);
-				tmpToggle=(ToggleButton)getView().findViewById(R.id.friday_toggle);
-				if(tmpToggle.isChecked()) rj.getRecurrence().add(6);
-				tmpToggle=(ToggleButton)getView().findViewById(R.id.saturday_toggle);
-				if(tmpToggle.isChecked()) rj.getRecurrence().add(7);
-				tmpToggle=(ToggleButton)getView().findViewById(R.id.sunday_toggle);
-				if(tmpToggle.isChecked()) rj.getRecurrence().add(1);
-
-				if (rj.getRecurrence().isEmpty()) {
-						Toast.makeText(getActivity(), R.string.no_days_selected, Toast.LENGTH_SHORT).show();
+	
+					if (!eu.trentorise.smartcampus.jp.helper.Utils.validFromDateTimeToDateTime(fromDateD, fromTimeD, toDateD,
+							toTimeD)&&!alwaysCheckbox.isChecked()) {
+						Toast.makeText(getActivity(), R.string.datetime_to_before_from, Toast.LENGTH_SHORT).show();
 						return;
 					}
-				 
-				 
-					FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager()
-							.beginTransaction();
-					Fragment fragment = new MyRecurItineraryFragment();
-					Bundle b = new Bundle();
-					b.putSerializable(MyRecurItineraryFragment.PARAMS, params);
-					b.putBoolean(MyRecurItineraryFragment.PARAM_EDITING,true );
-
-					fragment.setArguments(b);
-					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-					fragmentTransaction.replace(Config.mainlayout, fragment,PlanRecurJourneyFragment.this.getTag());
-					fragmentTransaction.addToBackStack(fragment.getTag());
-					fragmentTransaction.commit();
-//				SCAsyncTask<BasicRecurrentJourneyParameters, Void, RecurrentJourney> task = new SCAsyncTask<BasicRecurrentJourneyParameters, Void, RecurrentJourney>(
-//						getSherlockActivity(), new PlanRecurJourneyProcessor(getSherlockActivity()));
-//				/*creare i parametri per la chiamata*/
-//				BasicRecurrentJourneyParameters parameters = new BasicRecurrentJourneyParameters();
-//				/*fill the params*/
-//				parameters.setClientId(params.getClientId());
-//				parameters.setData(rj);
-//				parameters.setMonitor(monitorToggleBtn.isChecked());
-//				parameters.setName(params.getName());
-//				task.execute(parameters);
+					
+	
+	
+					rj.setTransportTypes((TType[]) userPrefsHolder.getTransportTypes());
+					rj.setRouteType(userPrefsHolder.getRouteType());
+	
+					/*set recurrence on the ui*/
+					rj.setRecurrence(new ArrayList<Integer>());
+					ToggleButton tmpToggle = (ToggleButton)getView().findViewById(R.id.monday_toggle);
+					if(tmpToggle.isChecked()) rj.getRecurrence().add(2);
+					tmpToggle=(ToggleButton)getView().findViewById(R.id.tuesday_toggle);
+					if(tmpToggle.isChecked()) rj.getRecurrence().add(3);
+					tmpToggle=(ToggleButton)getView().findViewById(R.id.wednesday_toggle);
+					if(tmpToggle.isChecked()) rj.getRecurrence().add(4);
+					tmpToggle=(ToggleButton)getView().findViewById(R.id.thursday_toggle);
+					if(tmpToggle.isChecked()) rj.getRecurrence().add(5);
+					tmpToggle=(ToggleButton)getView().findViewById(R.id.friday_toggle);
+					if(tmpToggle.isChecked()) rj.getRecurrence().add(6);
+					tmpToggle=(ToggleButton)getView().findViewById(R.id.saturday_toggle);
+					if(tmpToggle.isChecked()) rj.getRecurrence().add(7);
+					tmpToggle=(ToggleButton)getView().findViewById(R.id.sunday_toggle);
+					if(tmpToggle.isChecked()) rj.getRecurrence().add(1);
+	
+					if (rj.getRecurrence().isEmpty()) {
+							Toast.makeText(getActivity(), R.string.no_days_selected, Toast.LENGTH_SHORT).show();
+							return;
+						}
+					 
+					 
+						FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager()
+								.beginTransaction();
+						Fragment fragment = new MyRecurItineraryFragment();
+						Bundle b = new Bundle();
+						b.putSerializable(MyRecurItineraryFragment.PARAMS, params);
+						b.putBoolean(MyRecurItineraryFragment.PARAM_EDITING,true );
+	
+						fragment.setArguments(b);
+						fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+						fragmentTransaction.replace(Config.mainlayout, fragment,PlanRecurJourneyFragment.this.getTag());
+						fragmentTransaction.addToBackStack(fragment.getTag());
+						fragmentTransaction.commit();
+	//				SCAsyncTask<BasicRecurrentJourneyParameters, Void, RecurrentJourney> task = new SCAsyncTask<BasicRecurrentJourneyParameters, Void, RecurrentJourney>(
+	//						getSherlockActivity(), new PlanRecurJourneyProcessor(getSherlockActivity()));
+	//				/*creare i parametri per la chiamata*/
+	//				BasicRecurrentJourneyParameters parameters = new BasicRecurrentJourneyParameters();
+	//				/*fill the params*/
+	//				parameters.setClientId(params.getClientId());
+	//				parameters.setData(rj);
+	//				parameters.setMonitor(monitorToggleBtn.isChecked());
+	//				parameters.setName(params.getName());
+	//				task.execute(parameters);
+				}
 			}
-
 
 		});
 

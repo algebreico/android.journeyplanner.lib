@@ -242,4 +242,6 @@
     <string name="saturday_short">S</string>
     <string name="sunday_short">S</string>
     
+    <string name="itinerary_notice">By tapping on "Save" you will receive notifications about any delays that may affect your trip.</string>
+    <string name="toast_choose_transport">Please choose at least one transport type.</string>
 </resources>

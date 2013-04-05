@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -38,7 +39,6 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	private static final int DAYS_WINDOWS = 1;
 	protected static final String PARAM_SMARTLINE = "smartline";
 	private SmartLine params;
-	private ArrayList<SmartLine> lines;
 	private TimeTable actualTimeTable;
 	private long from_date_milisecond;
 	private long to_date_milisecond;
@@ -167,7 +167,6 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		List<Integer> courseForDay = new ArrayList<Integer>();
 		// sum of every column
 		int tempNumbCol = 0;
-		int daySkipped = 0;
 		courseForDay.add(0);
 		for (List<Integer> tt : actualBusTimeTable.getDelays()) {
 			tempNumbCol = tempNumbCol + tt.size();
@@ -176,13 +175,8 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 		final int NUM_COLS = tempNumbCol;
 		// are equals to the first
-		final int NUM_ROWS = actualBusTimeTable.getStops().size(); // keeping it
-																	// square
-																	// just
-																	// because
-																	// i'm lazy
-		final int NUMB_OF_TT = actualBusTimeTable.getTimes().size();
-
+		final int NUM_ROWS = actualBusTimeTable.getStops().size(); 
+		
 		cols = new String[NUM_COLS];
 		rows = new String[NUM_ROWS];
 		data = new String[NUM_ROWS][NUM_COLS];
@@ -230,6 +224,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		// setup left column with row labels
 		LinearLayout leftlayout = new LinearLayout(getSherlockActivity());
 		leftlayout.setOrientation(LinearLayout.VERTICAL);
+		
 		TextView dayLabel = new TextView(getSherlockActivity());
 		dayLabel.setText(getString(R.string.dayLabel));
 		dayLabel.setTextAppearance(getSherlockActivity(), R.style.place_tt_jp);
@@ -367,9 +362,11 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 				actualDate = tempDate.getTime();
 				day.setText(dateFormat.format(actualDate));
 				day.setTextAppearance(getSherlockActivity(), R.style.day_tt_jp);
+				day.setPadding(4, 3, 0, 1);
+				day.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 				if (alternateDay) {
-					day.setBackgroundColor(getSherlockActivity().getResources().getColor(R.color.tt_day_gray));
+					day.setBackgroundColor(getSherlockActivity().getResources().getColor(R.color.transparent_journeyplanner));
 					alternateDay = false;
 				} else {
 					alternateDay = true;

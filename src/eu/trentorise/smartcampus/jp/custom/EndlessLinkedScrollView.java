@@ -10,8 +10,7 @@ import android.view.View.OnTouchListener;
 import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 
-public class EndlessLinkedScrollView extends LinkedScrollView implements
-		OnTouchListener {
+public class EndlessLinkedScrollView extends LinkedScrollView {
 
 	public interface TimetableNavigation {
 		public void onLeftOverScrolled();
@@ -27,11 +26,10 @@ public class EndlessLinkedScrollView extends LinkedScrollView implements
 			TimetableNavigation endListener) {
 		super(context);
 		this.mOnEndListener = endListener;
-		this.setOnTouchListener(this);
 	}
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
+	public boolean onTouchEvent(MotionEvent event) {
 		ViewGroup table = ((ViewGroup) (this.getChildAt(0)));
 		if (table != null) {
 			ViewGroup row = ((ViewGroup) (table.getChildAt(0)));
@@ -49,9 +47,9 @@ public class EndlessLinkedScrollView extends LinkedScrollView implements
 				if (Rect.intersects(touch, start)) {
 					mOnEndListener.onLeftOverScrolled();
 				}
-				return true;
 			}
 		}
-		return false;
+		return super.onTouchEvent(event);
 	}
+	
 }

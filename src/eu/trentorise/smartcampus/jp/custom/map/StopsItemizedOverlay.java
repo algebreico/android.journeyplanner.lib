@@ -45,7 +45,7 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	private final static int densityX = 5;
 	private final static int densityY = 5;
 
-	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
+	private List<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	private ArrayList<SmartCheckStop> mObjects = new ArrayList<SmartCheckStop>();
 	private Set<OverlayItem> mGeneric = new HashSet<OverlayItem>();
 
@@ -96,9 +96,17 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 			drawable.setBounds(-drawable.getIntrinsicWidth() / 2, -drawable.getIntrinsicHeight(),
 					drawable.getIntrinsicWidth() / 2, 0);
 			overlayitem.setMarker(drawable);
-
-			mOverlays.add(overlayitem);
-			mObjects.add(o);
+			boolean check=false;
+			for(OverlayItem item : mOverlays){
+				if(item.getPoint().getLatitudeE6()==point.getLatitudeE6()&& point.getLongitudeE6()==item.getPoint().getLongitudeE6()){
+					check=true;
+					break;
+				}
+			}
+			if(!check){
+				mOverlays.add(overlayitem);
+				mObjects.add(o);
+			}
 			// populate();
 		}
 	}

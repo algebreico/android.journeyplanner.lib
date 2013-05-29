@@ -57,7 +57,6 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 	@Override
 	protected void onCancelled() {
 		super.onCancelled();
-		this.onPostExecute(false);
 	}
 
 	@Override
@@ -89,7 +88,10 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 				if (!smartCheckStopMap.containsKey(stop.getId())) {
 					smartCheckStopMap.put(stop.getId(), stop);
 					// list.add(stop);
-					publishProgress(stop);
+//					publishProgress(stop);
+					overlay.addOverlay(stop);
+					overlay.populateAll();
+					mapView.postInvalidate();
 				}
 			}
 		} catch (Exception e) {
@@ -102,9 +104,9 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 	@Override
 	protected void onProgressUpdate(SmartCheckStop... values) {
 		super.onProgressUpdate(values);
-		overlay.addOverlay(values[0]);
-		overlay.populateAll();
-		mapView.invalidate();
+//		overlay.addOverlay(values[0]);
+//		overlay.populateAll();
+//		mapView.invalidate();
 	}
 
 	@Override

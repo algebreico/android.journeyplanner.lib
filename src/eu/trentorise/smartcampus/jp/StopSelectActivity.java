@@ -196,32 +196,6 @@ public class StopSelectActivity extends FeedbackFragmentActivity implements
 			}
 		});
 
-		// // LOAD
-		// new SCAsyncTask<Void, Void, Collection<SmartCheckStop>>(this,
-		// new StopsMapLoadProcessor(this, mItemizedoverlay, mapView) {
-		// @Override
-		// protected Collection<SmartCheckStop> getObjects() {
-		// List<SmartCheckStop> list = new ArrayList<SmartCheckStop>();
-		// if (selectedAgencyIds != null) {
-		// for (int i = 0; i < selectedAgencyIds.length; i++) {
-		// try {
-		// list.addAll(JPHelper.getStops(Integer.toString(selectedAgencyIds[i]),
-		// null));
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// } else {
-		// try {
-		// list.addAll(JPHelper.getStops(null, null));
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// }
-		// return list;
-		// }
-		// }).execute();
-
 	}
 
 	@Override

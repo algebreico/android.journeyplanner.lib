@@ -30,11 +30,13 @@ import android.location.Location;
 		}
 		
 		public boolean compareTo(Square another) {
+			if(another.mDiagonal>mDiagonal)
+				return true;
 			if(Math.abs((mLat-another.mLat))>mDiagonal)
 				return true;
 			if(Math.abs((mLong-another.mLong))>mDiagonal)
 				return true;
-			return (Math.abs((mLat-another.mLat))==mDiagonal)&&(Math.abs((mLong-another.mLong))==mDiagonal);
+			return !(Math.abs((mLat-another.mLat))==mDiagonal)&&(Math.abs((mLong-another.mLong))==mDiagonal);
 		}
 		
 

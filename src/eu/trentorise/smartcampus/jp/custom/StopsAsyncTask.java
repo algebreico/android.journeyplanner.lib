@@ -84,6 +84,8 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 			}
 
 			for (SmartCheckStop stop : stops) {
+				if(isCancelled())
+					break;
 				if (!smartCheckStopMap.containsKey(stop.getId())) {
 					smartCheckStopMap.put(stop.getId(), stop);
 					// list.add(stop);
@@ -94,7 +96,7 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 			e.printStackTrace();
 			return false;
 		}
-		return true;
+		return !isCancelled();
 	}
 
 	@Override

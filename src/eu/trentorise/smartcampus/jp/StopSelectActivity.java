@@ -177,21 +177,19 @@ public class StopSelectActivity extends FeedbackFragmentActivity implements
 		mMyLocationOverlay.runOnFirstFix(new Runnable() {
 			public void run() {
 				double[] location_old = new double[2];
-				// location_old[0] = mapView.getMapCenter().getLatitudeE6() /
-				// 1e6;
-				// location_old[1] = mapView.getMapCenter().getLongitudeE6() /
-				// 1e6;
-				// //cache = new Square(location_old,
-				// mapView.getDiagonalLenght());
-				// // load with radius? Not for now.
-				// if (active != null)
-				// active.cancel(true);
-				// active = new StopsAsyncTask(selectedAgencyIds,
-				// smartCheckStopMap, mItemizedoverlay, null,
-				// location_old, mapView.getDiagonalLenght(), mapView,
-				// StopSelectActivity.this);
-				//
-				// active.execute();
+				location_old[0] = mapView.getMapCenter().getLatitudeE6() / 1e6;
+				location_old[1] = mapView.getMapCenter().getLongitudeE6() / 1e6;
+				// cache = new Square(location_old,
+				mapView.getDiagonalLenght();
+				// load with radius? Not for now.
+				if (active != null)
+					active.cancel(true);
+				active = new StopsAsyncTask(selectedAgencyIds,
+						smartCheckStopMap, mItemizedoverlay, location_old,
+						mapView.getDiagonalLenght(), mapView,
+						StopSelectActivity.this);
+
+				active.execute();
 				mapView.getController().animateTo(
 						mMyLocationOverlay.getMyLocation());
 

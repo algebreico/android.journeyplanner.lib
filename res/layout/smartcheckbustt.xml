@@ -9,20 +9,77 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/lineNumber"
-            style="@style/label_line_tt_jp"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:id="@+id/line_day"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="3dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/lineNumber"
+                style="@style/label_line_tt_jp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:paddingBottom="3dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="3dp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/lineDay"
+                style="@style/label_line_tt_jp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="right"
+                android:paddingBottom="3dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="3dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/button_previous"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                 android:layout_margin="4dp"
+                
+                android:text="@string/tt_previous"
+                android:background="@drawable/button_tt_left" />
+
+            <Button
+                android:id="@+id/button_today"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:layout_margin="4dp"
+                android:text="@string/tt_today"
+                android:background="@drawable/button_tt_center" />
+
+            <Button
+                android:id="@+id/button_next"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                                android:layout_margin="4dp"
+                
+                android:text="@string/tt_next"
+                android:background="@drawable/button_tt_right"  />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_bustt"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
         </LinearLayout>
     </LinearLayout>
 
@@ -30,8 +87,8 @@
         android:id="@+id/smartcheckbustt_content_pb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"      
         android:visibility="invisible" />
 
 </RelativeLayout>

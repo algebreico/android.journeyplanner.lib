@@ -261,5 +261,8 @@
     <string name="friday_short">V</string>
     <string name="saturday_short">S</string>
     <string name="sunday_short">D</string>
+    <string name="tt_previous">  Precedente </string>  
+    <string name="tt_today">  Oggi </string>
+    <string name="tt_next">  Prossimo  </string>
     
 </resources>

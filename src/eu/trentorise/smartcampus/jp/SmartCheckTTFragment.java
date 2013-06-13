@@ -14,18 +14,25 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import android.R.color;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -33,6 +40,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -71,7 +79,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 	private TextView tvday;
 	private int displayedDay;
 	private boolean firstHasNoCourses;
-
+	private Date basic_date;
 	private RenderTimeTableAsyncTask renderTimeTableAsyncTask;
 
 	@Override
@@ -84,25 +92,27 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		}
 
 		create_interval();
-
 		// get the BusTimeTable
-		AsyncTaskNoDialog<Object, Void, TimeTable> task = new AsyncTaskNoDialog<Object, Void, TimeTable>(getSherlockActivity(),
-				new GetBusTimeTableProcessor(getSherlockActivity()));
+		AsyncTaskNoDialog<Object, Void, TimeTable> task = new AsyncTaskNoDialog<Object, Void, TimeTable>(
+				getSherlockActivity(), new GetBusTimeTableProcessor(getSherlockActivity()));
 		task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
 	}
 
 	private void create_interval() {
-		Date basic_date = new Date();
+		if (basic_date == null)
+			basic_date = new Date();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(basic_date);
-		cal.add(Calendar.HOUR_OF_DAY, -1);
-		Date from_date = cal.getTime();
-		cal.add(Calendar.HOUR_OF_DAY, 1);
-		cal.add(Calendar.DAY_OF_YEAR, DAYS_WINDOWS + 1);
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
+		Date from_date = cal.getTime();
+		// cal.add(Calendar.HOUR_OF_DAY, 1);
+		// cal.add(Calendar.DAY_OF_YEAR, DAYS_WINDOWS + 1);
+		cal.set(Calendar.HOUR_OF_DAY, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		cal.set(Calendar.MILLISECOND, 999);
 		Date to_date = cal.getTime();
 		from_date_millisecond = from_date.getTime();
 		to_date_millisecond = to_date.getTime();
@@ -116,7 +126,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 	@Override
 	public void onStart() {
 		super.onStart();
-
+		
 		getView().setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -129,10 +139,144 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		});
 
 		mProgressBar = (ProgressBar) getView().findViewById(R.id.smartcheckbustt_content_pb);
+		toggleProgressDialog();
+		LinearLayout linelayout = (LinearLayout) getSherlockActivity().findViewById(R.id.line_day);
+		linelayout.setBackgroundColor(params.getColor());
+
 		TextView lineNumber = (TextView) getSherlockActivity().findViewById(R.id.lineNumber);
 		lineNumber.setText(params.getLine());
 		lineNumber.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 		lineNumber.setBackgroundColor(params.getColor());
+		TextView lineDay = (TextView) getSherlockActivity().findViewById(R.id.lineDay);
+		lineDay.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
+		lineDay.setBackgroundColor(params.getColor());
+
+		Button todayButton = (Button) getView().findViewById(R.id.button_today);
+		todayButtonCheck();
+
+		todayButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				if (!mProgressBar.isShown())
+					toggleProgressDialog();
+				// -1 day
+				AsyncTaskNoDialog<Object, Void, TimeTable> task = new AsyncTaskNoDialog<Object, Void, TimeTable>(
+						getSherlockActivity(), new GetBusTimeTableProcessor(getSherlockActivity()));
+				basic_date = null;
+				create_interval();
+				todayButtonCheck();
+				task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
+			}
+		});
+
+		Button previousButton = (Button) getView().findViewById(R.id.button_previous);
+		previousButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
+		((GradientDrawable)previousButton.getBackground()).setColor(params.getColor());
+		previousButton.setOnTouchListener(new OnTouchListener() {
+
+		        @Override
+		        public boolean onTouch(View v, MotionEvent event) {
+		    		Button previousButton = (Button) getView().findViewById(R.id.button_previous);
+
+		            switch(event.getAction()) {
+		            case MotionEvent.ACTION_DOWN:
+		                // PRESSED
+		        		((GradientDrawable)previousButton.getBackground()).setColor(getResources().getColor(android.R.color.holo_blue_light));
+
+		                return true; // if you want to handle the touch event
+		            case MotionEvent.ACTION_UP:
+		                // RELEASED
+		        		((GradientDrawable)previousButton.getBackground()).setColor(params.getColor());
+						if (!mProgressBar.isShown())
+							toggleProgressDialog();
+						// -1 day
+						AsyncTaskNoDialog<Object, Void, TimeTable> task = new AsyncTaskNoDialog<Object, Void, TimeTable>(
+								getSherlockActivity(), new GetBusTimeTableProcessor(getSherlockActivity()));
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(basic_date);
+						cal.add(Calendar.DAY_OF_YEAR, -1);
+						cal.set(Calendar.MINUTE, 0);
+						cal.set(Calendar.SECOND, 0);
+						basic_date = cal.getTime();
+						create_interval();
+						todayButtonCheck();
+
+						task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
+		                return true; // if you want to handle the touch event
+		            }
+		            return false;
+		        }
+		    });
+
+		Button nextButton = (Button) getView().findViewById(R.id.button_next);
+		nextButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
+		((GradientDrawable)nextButton.getBackground()).setColor(params.getColor());
+		nextButton.setOnTouchListener(new OnTouchListener() {
+
+	        @Override
+	        public boolean onTouch(View v, MotionEvent event) {
+	    		Button nextButton = (Button) getView().findViewById(R.id.button_next);
+
+	            switch(event.getAction()) {
+	            case MotionEvent.ACTION_DOWN:
+	                // PRESSED
+	        		((GradientDrawable)nextButton.getBackground()).setColor(getResources().getColor(android.R.color.holo_blue_light));
+
+	                return true; // if you want to handle the touch event
+	            case MotionEvent.ACTION_UP:
+	                // RELEASED
+	        		((GradientDrawable)nextButton.getBackground()).setColor(params.getColor());
+					if (!mProgressBar.isShown())
+						toggleProgressDialog();
+					// +1 day
+					AsyncTaskNoDialog<Object, Void, TimeTable> task = new AsyncTaskNoDialog<Object, Void, TimeTable>(
+							getSherlockActivity(), new GetBusTimeTableProcessor(getSherlockActivity()));
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(basic_date);
+					cal.add(Calendar.DAY_OF_YEAR, 1);
+					cal.set(Calendar.MINUTE, 0);
+					cal.set(Calendar.SECOND, 0);
+					basic_date = cal.getTime();
+
+					create_interval();
+					todayButtonCheck();
+
+					task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
+	                return true; // if you want to handle the touch event
+	            }
+	            return false;
+	        }
+	    });
+
+	}
+
+	protected void todayButtonCheck() {
+		Button todayButton = (Button) getView().findViewById(R.id.button_today);
+		Date today = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(today);
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		Date morning = cal.getTime();
+		cal.set(Calendar.HOUR, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 999);
+		Date evening = cal.getTime();
+		if (basic_date.after(morning)&&basic_date.before(evening))
+		{
+			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
+			((GradientDrawable)todayButton.getBackground()).setColor(getResources().getColor(android.R.color.holo_blue_light));
+		}
+		else 
+			{
+			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
+			((GradientDrawable)todayButton.getBackground()).setColor(params.getColor());
+			}
+			
+
 	}
 
 	@Override
@@ -154,16 +298,28 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 			long from_day = (Long) params[0];
 			long to_day = (Long) params[1];
 			String routeId = (String) params[2];
-			toggleProgressDialog();
+			// toggleProgressDialog();
 			return JPHelper.getTransitTimeTableById(from_day, to_day, routeId);
 		}
 
 		@Override
+		public void handleFailure(Exception e) {
+			super.handleFailure(e);
+			getFragmentManager().popBackStack();
+		}
+		@Override
 		public void handleResult(TimeTable result) {
 			actualTimeTable = result;
 			try {
-				toggleProgressDialog();
-				reloadTimeTable(actualTimeTable);
+				// toggleProgressDialog();
+				if (delays==null)
+					reloadTimeTable(actualTimeTable);
+				else {
+					initData(actualTimeTable);
+					refreshTimes(0);
+					
+					}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -178,14 +334,84 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 					}
 				};
 				if (SmartCheckTTFragment.this.getSherlockActivity() != null) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(SmartCheckTTFragment.this.getSherlockActivity());
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							SmartCheckTTFragment.this.getSherlockActivity());
 
 					builder.setMessage("Problem loading").setPositiveButton("Back", dialogClickListener).show();
 				}
+			}
+			if (mProgressBar.isShown())
 				toggleProgressDialog();
+			
+		}
+
+		private void initData(final TimeTable actualBusTimeTable) {
+			final int COL_PLACE_WIDTH = 170;
+			actualTimeTable = actualBusTimeTable;
+			long actualDate = from_date_millisecond;
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+			List<Integer> courseForDay = new ArrayList<Integer>();
+			// sum of every column
+			int tempNumbCol = 0;
+			courseForDay.add(0);
+
+			for (List<Map<String, String>> tt : actualBusTimeTable.getDelays()) {
+				tempNumbCol += tt.size();
+				courseForDay.add(tempNumbCol);
 			}
 
+			final int NUM_COLS = tempNumbCol;
+			final int NUM_ROWS = actualBusTimeTable.getStops().size();
+
+			delays = new HashMap[NUM_COLS];
+			stops = new String[NUM_ROWS];
+			times = new String[NUM_ROWS][NUM_COLS];
+
+			// Initializing data
+			for (int i = 0; i < NUM_ROWS; i++) {
+
+				int indexOfDay = 0;
+				int indexOfCourseInThatDay = 0;
+				stops[i] = actualBusTimeTable.getStops().get(i);
+
+				for (int j = 0; j < NUM_COLS; j++) {
+					while (actualBusTimeTable.getDelays().get(indexOfDay).isEmpty()) {
+						if (indexOfDay == 0) {
+							firstHasNoCourses = true;
+							displayedDay = 1;
+						}
+						indexOfDay++;
+					}
+
+					if (i == 0) {
+						Map<String, String> actualDelays = actualBusTimeTable.getDelays().get(indexOfDay)
+								.get(indexOfCourseInThatDay);
+						/*
+						 * TODO: TEST
+						 */
+						// if (actualDelays.isEmpty()) {
+						// actualDelays.put(CreatorType.SERVICE.toString(), "1");
+						// actualDelays.put(CreatorType.USER.toString(), "2");
+						// }
+						/*
+						 * 
+						 */
+						delays[j] = actualDelays;
+					}
+
+					times[i][j] = actualBusTimeTable.getTimes().get(indexOfDay).get(indexOfCourseInThatDay).get(i);
+
+					if (indexOfCourseInThatDay == actualBusTimeTable.getDelays().get(indexOfDay).size() - 1) {
+						if (indexOfDay < DAYS_WINDOWS)
+							indexOfDay++;
+						indexOfCourseInThatDay = 0;
+					} else {
+						indexOfCourseInThatDay++;
+					}
+				}
+			}			
 		}
+
 
 	}
 
@@ -279,7 +505,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		delaysLabel.setGravity(Gravity.CENTER);
 		delaysLabel.setMinHeight(ROW_HEIGHT);
 
-		leftlayout.addView(dayLabel);
+		// leftlayout.addView(dayLabel);
 		leftlayout.addView(delaysLabel);
 
 		LinkedScrollView lsvLeftCol = new LinkedScrollView(getSherlockActivity());
@@ -293,8 +519,8 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 			TableRow tr = new TableRow(getSherlockActivity());
 			TextView tv = new TextView(getSherlockActivity());
 			if (i >= 0) {
-
-				tv.setText(stops[i]);
+				final String stop = stops[i];
+				tv.setText(stop);
 				tv.setMinimumHeight(ROW_HEIGHT);
 				tv.setWidth(COL_PLACE_WIDTH);
 				tv.setEllipsize(TruncateAt.MARQUEE);
@@ -312,6 +538,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 					@Override
 					public void onClick(View v) {
 						// this is needed to view all content of the cell
+						Toast.makeText(getSherlockActivity(), stop, Toast.LENGTH_LONG).show();
 					}
 				});
 
@@ -352,7 +579,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		trDelays.setMinimumHeight(ROW_HEIGHT);
 		tlColHeadings.addView(trDelays);
 
-		llMainContent.addView(tvday);
+		// llMainContent.addView(tvday);
 		llMainContent.addView(tlColHeadings);
 
 		// now lets add the main content
@@ -364,7 +591,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		tlMainContent.setVerticalScrollBarEnabled(true);
 
 		renderTimeTableAsyncTask = new RenderTimeTableAsyncTask(this);
-		renderTimeTableAsyncTask.execute(displayedDay, NUM_ROWS);
+		renderTimeTableAsyncTask.execute(0, NUM_ROWS);
 
 		mElsvMainContent.addView(tlMainContent);
 
@@ -433,6 +660,15 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		long actualDate = tempDate.getTime();
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
 		tvday.setText(dateFormat.format(actualDate));
+
+		TextView lineDay = (TextView) getSherlockActivity().findViewById(R.id.lineDay);
+		if (lineDay!=null)
+		{
+		lineDay.setText(dateFormat.format(actualDate));
+		lineDay.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
+		lineDay.setBackgroundColor(params.getColor());
+		}
+
 	}
 
 	private void refreshDelays(int displayedDay) {
@@ -460,8 +696,8 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 						delaysCreatorTypesMap.put(ct, delay.getValue());
 
 						TextView tv = new TextView(getSherlockActivity());
-						tv.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-								1f));
+						tv.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+								LayoutParams.WRAP_CONTENT, 1f));
 						tv.setBackgroundColor(getSherlockActivity().getResources().getColor(R.color.sc_light_gray));
 						tv.setBackgroundResource(R.drawable.cell_late);
 						tv.setGravity(Gravity.CENTER);
@@ -469,7 +705,8 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 
 						if (ct.equals(CreatorType.USER)) {
 							tv.setTextColor(getSherlockActivity().getResources().getColor(R.color.blue));
-							tv.setText(getSherlockActivity().getString(R.string.smart_check_tt_delay_user, delay.getValue()));
+							tv.setText(getSherlockActivity().getString(R.string.smart_check_tt_delay_user,
+									delay.getValue()));
 						} else {
 							tv.setTextColor(getSherlockActivity().getResources().getColor(R.color.red));
 							tv.setText(getSherlockActivity().getString(R.string.smart_check_tt_delay, delay.getValue()));
@@ -496,7 +733,14 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 			}
 		}
 	}
+	@Override
+	public void onPause() {
+		if (renderTimeTableAsyncTask!=null)
+			renderTimeTableAsyncTask.cancel(true);
+		super.onPause();
+	}
 
+	
 	private void refreshTimes(int displayDay) {
 		toggleProgressDialog();
 		mElsvMainContent.setEnabled(false);
@@ -504,7 +748,10 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		refreshDayTextView(displayedDay);
 		refreshDelays(displayedDay);
 		tlMainContent.removeAllViews();
-		new RenderTimeTableAsyncTask(this).execute(displayedDay, actualTimeTable.getStops().size());
+		if (renderTimeTableAsyncTask!=null)
+			renderTimeTableAsyncTask.cancel(true);
+		renderTimeTableAsyncTask = new RenderTimeTableAsyncTask(this);
+		renderTimeTableAsyncTask.execute(displayedDay, actualTimeTable.getStops().size());
 	}
 
 	private class RenderTimeTableAsyncTask extends AsyncTask<Integer, TableRow, Boolean> {
@@ -519,32 +766,37 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 
 		@Override
 		protected Boolean doInBackground(Integer... params) {
-			Integer dayIndex = params[0];
-			mDayIndex = dayIndex;
-			endColumn = firstColumn + actualTimeTable.getDelays().get(dayIndex).size() - 1;
-			for (int i = 0; i < params[1]; i++) {
-				TableRow tr = new TableRow(getSherlockActivity());
-				tr.setMinimumHeight(ROW_HEIGHT);
-				for (int j = firstColumn; j <= endColumn; j++) {
-					if (times[i][j] != null) {
-						TextView tv = new TextView(getSherlockActivity());
-						if (tv != null) {
-							tv.setMinimumHeight(ROW_HEIGHT);
-							if (times[i][j].length() > 0)
-								tv.setText(times[i][j].substring(0, 5));
-							else
-								tv.setText(times[i][j]);
-							tv.setMinWidth(COL_WIDTH);
-							tv.setTextAppearance(getSherlockActivity(), R.style.hour_tt_jp);
-							tv.setGravity(Gravity.CENTER);
-							tv.setBackgroundResource(R.drawable.cell_hour);
-							tr.addView(tv);
+			try {
+				Integer dayIndex = params[0];
+				mDayIndex = dayIndex;
+				endColumn = firstColumn + actualTimeTable.getDelays().get(dayIndex).size() - 1;
+				for (int i = 0; i < params[1]; i++) {
+					TableRow tr = new TableRow(getSherlockActivity());
+					tr.setMinimumHeight(ROW_HEIGHT);
+					for (int j = firstColumn; j <= endColumn; j++) {
+						if (times[i][j] != null) {
+							TextView tv = new TextView(getSherlockActivity());
+							if (tv != null) {
+								tv.setMinimumHeight(ROW_HEIGHT);
+								if (times[i][j].length() > 0)
+									tv.setText(times[i][j].substring(0, 5));
+								else
+									tv.setText(times[i][j]);
+								tv.setMinWidth(COL_WIDTH);
+								tv.setTextAppearance(getSherlockActivity(), R.style.hour_tt_jp);
+								tv.setGravity(Gravity.CENTER);
+								tv.setBackgroundResource(R.drawable.cell_hour);
+								tr.addView(tv);
+							}
 						}
 					}
+					publishProgress(tr);
 				}
-				publishProgress(tr);
+				return true;
+			} catch (Exception e) {
+
+				return false;
 			}
-			return true;
 		}
 
 		@Override
@@ -558,8 +810,11 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 			super.onPostExecute(result);
 			// the usage of this index is so shitty!
 			// TODO find another solution!
-			firstColumn = endColumn + 1;
-			mRenderListener.onDayFinished(mDayIndex == 0);
+			if (!result) {
+				Toast.makeText(getSherlockActivity(), getString(R.string.problem_loading), Toast.LENGTH_LONG).show();
+			}
+			// firstColumn = endColumn + 1;
+			// mRenderListener.onDayFinished(mDayIndex == 0);
 		}
 
 	}

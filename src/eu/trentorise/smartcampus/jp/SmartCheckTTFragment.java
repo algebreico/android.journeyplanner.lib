@@ -81,7 +81,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 	private boolean firstHasNoCourses;
 	private Date basic_date;
 	private RenderTimeTableAsyncTask renderTimeTableAsyncTask;
-
+	private LinearLayout layout;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -99,6 +99,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 	}
 
 	private void create_interval() {
+		//create interval for 1 day and set from and to
 		if (basic_date == null)
 			basic_date = new Date();
 		Calendar cal = Calendar.getInstance();
@@ -107,8 +108,6 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		Date from_date = cal.getTime();
-		// cal.add(Calendar.HOUR_OF_DAY, 1);
-		// cal.add(Calendar.DAY_OF_YEAR, DAYS_WINDOWS + 1);
 		cal.set(Calendar.HOUR_OF_DAY, 23);
 		cal.set(Calendar.MINUTE, 59);
 		cal.set(Calendar.SECOND, 59);
@@ -150,7 +149,9 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		TextView lineDay = (TextView) getSherlockActivity().findViewById(R.id.lineDay);
 		lineDay.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 		lineDay.setBackgroundColor(params.getColor());
-
+		//set the buttons for navigation
+		
+		//today
 		Button todayButton = (Button) getView().findViewById(R.id.button_today);
 		todayButtonCheck();
 
@@ -251,7 +252,8 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 	    });
 
 	}
-
+	
+	//check if enable or disable the today button 
 	protected void todayButtonCheck() {
 		Button todayButton = (Button) getView().findViewById(R.id.button_today);
 		Date today = new Date();
@@ -298,8 +300,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 			long from_day = (Long) params[0];
 			long to_day = (Long) params[1];
 			String routeId = (String) params[2];
-			// toggleProgressDialog();
-			return JPHelper.getTransitTimeTableById(from_day, to_day, routeId);
+			return JPHelper.getLocalTransitTimeTableById(from_day, to_day, routeId);
 		}
 
 		@Override
@@ -311,7 +312,6 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		public void handleResult(TimeTable result) {
 			actualTimeTable = result;
 			try {
-				// toggleProgressDialog();
 				if (delays==null)
 					reloadTimeTable(actualTimeTable);
 				else {
@@ -345,6 +345,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 			
 		}
 
+		//method that change the global variables when I have a new TT
 		private void initData(final TimeTable actualBusTimeTable) {
 			final int COL_PLACE_WIDTH = 170;
 			actualTimeTable = actualBusTimeTable;
@@ -386,16 +387,6 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 					if (i == 0) {
 						Map<String, String> actualDelays = actualBusTimeTable.getDelays().get(indexOfDay)
 								.get(indexOfCourseInThatDay);
-						/*
-						 * TODO: TEST
-						 */
-						// if (actualDelays.isEmpty()) {
-						// actualDelays.put(CreatorType.SERVICE.toString(), "1");
-						// actualDelays.put(CreatorType.USER.toString(), "2");
-						// }
-						/*
-						 * 
-						 */
 						delays[j] = actualDelays;
 					}
 
@@ -417,7 +408,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 
 	/*
 	 * big method that build in runtime the timetable using the result get from
-	 * processing
+	 * processing. It's used only the first time
 	 */
 
 	private void reloadTimeTable(final TimeTable actualBusTimeTable) throws Exception {
@@ -461,16 +452,6 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 				if (i == 0) {
 					Map<String, String> actualDelays = actualBusTimeTable.getDelays().get(indexOfDay)
 							.get(indexOfCourseInThatDay);
-					/*
-					 * TODO: TEST
-					 */
-					// if (actualDelays.isEmpty()) {
-					// actualDelays.put(CreatorType.SERVICE.toString(), "1");
-					// actualDelays.put(CreatorType.USER.toString(), "2");
-					// }
-					/*
-					 * 
-					 */
 					delays[j] = actualDelays;
 				}
 
@@ -486,7 +467,7 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 			}
 		}
 
-		LinearLayout layout = (LinearLayout) getSherlockActivity().findViewById(R.id.layout_bustt);
+		layout = (LinearLayout) getSherlockActivity().findViewById(R.id.layout_bustt);
 
 		// setup left column with row labels
 		LinearLayout leftlayout = new LinearLayout(getSherlockActivity());
@@ -644,10 +625,20 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 
 	private void toggleProgressDialog() {
 		if (mProgressBar != null) {
-			if (mProgressBar.isShown())
+			if (mProgressBar.isShown()){
 				mProgressBar.setVisibility(View.INVISIBLE);
-			else
+				if (layout!=null)
+				{
+					layout.setVisibility(View.VISIBLE);
+				}
+				}
+			else{
 				mProgressBar.setVisibility(View.VISIBLE);
+				if (layout!=null)
+				{
+					layout.setVisibility(View.INVISIBLE);
+				}
+				}
 		}
 	}
 
@@ -808,13 +799,11 @@ public class SmartCheckTTFragment extends FeedbackFragment implements RenderList
 		@Override
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
-			// the usage of this index is so shitty!
-			// TODO find another solution!
+
 			if (!result) {
 				Toast.makeText(getSherlockActivity(), getString(R.string.problem_loading), Toast.LENGTH_LONG).show();
 			}
-			// firstColumn = endColumn + 1;
-			// mRenderListener.onDayFinished(mDayIndex == 0);
+
 		}
 
 	}

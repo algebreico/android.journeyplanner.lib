@@ -171,6 +171,21 @@ public class JPHelper {
 
 	}
 
+	public static List<List<Map<String, String>>> getDelay(String routeId, long from_time,long to_time) throws ConnectionException, ProtocolException, SecurityException, JSONException, JsonParseException,
+	JsonMappingException, IOException {
+		String url = Config.TARGET_ADDRESS + Config.CALL_GET_DELAY_TIME_BY_ROUTE + "/" + routeId + "/" + from_time
+		+ "/" + to_time;
+
+		MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), url);
+		req.setMethod(Method.GET);
+		req.setQuery("complex=true");
+		
+		MessageResponse res = JPHelper.instance.getProtocolCarrier().invokeSync(req, JPParamsHelper.getAppToken(),
+				getAuthToken());
+
+	return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(res.getBody(), TimeTable.class).getDelays();
+	}
+
 	public static void deleteMyItinerary(String id) throws ConnectionException, ProtocolException, SecurityException {
 		if (id != null && id.length() > 0) {
 			MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
@@ -590,16 +605,14 @@ public class JPHelper {
 
 		return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(res.getBody(), TimeTable.class);
 	}
-	
+
 	public static TimeTable getLocalTransitTimeTableById(long from_day, long to_day, String routeId)
 			throws ConnectionException, ProtocolException, SecurityException, JSONException, JsonParseException,
 			JsonMappingException, IOException {
 		if (!TTHelper.isInitialized())
 			TTHelper.init(mContext);
-		return TTHelper.getTTwithRouteIdAndTime(routeId, from_day);
+		return TTHelper.getTTwithRouteIdAndTime(routeId, from_day, to_day);
 	}
-
-
 
 	public static List<SmartCheckStop> getStops(String agencyId, double[] location, double radius) throws Exception {
 		getInstance();

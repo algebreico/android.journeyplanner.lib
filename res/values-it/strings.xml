@@ -152,6 +152,7 @@
     <string name="smart_check_train_choose_stop_text">Scegli la fermata:</string>
     <string name="smart_check_train_choose_line_text">Scegli la linea:</string>
     <string name="choose_direction_label">Scegli la direzione:</string>
+    <string name="typeLabel">Tipo</string>   
     <string name="delaysLabel">Ritardi</string>
     <string name="dayLabel">Giorni</string>
     <string name="loading_dialog_label">Creazione tabella &#8230;</string>

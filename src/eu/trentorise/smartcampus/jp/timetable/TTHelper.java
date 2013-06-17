@@ -49,7 +49,7 @@ public class TTHelper {
 
 	private static TTHelper instance = null;
 	private static Context mContext;
-	private static Map<String,Map<Object, Object>> calendar;
+	private static Map<String, Map<Object, Object>> calendar;
 	private static final String calendarFilename = "calendar.js";
 
 	protected TTHelper(Context mContext) {
@@ -58,22 +58,21 @@ public class TTHelper {
 		calendar = loadCalendar();
 	}
 
-	private Map<String,Map<Object, Object>> loadCalendar() {
+	private Map<String, Map<Object, Object>> loadCalendar() {
 		AssetManager assetManager = mContext.getResources().getAssets();
 		InputStream in;
-		Map<String,Map<Object, Object>> calendarGlobal = new HashMap<String, Map<Object,Object>>();
+		Map<String, Map<Object, Object>> calendarGlobal = new HashMap<String, Map<Object, Object>>();
 
-		for ( String agencyId: RoutesHelper.AGENCYIDS)
-		{
-		try {
+		for (String agencyId : RoutesHelper.AGENCYIDS) {
+			try {
 
-			in = assetManager.open(agencyId+"/"+calendarFilename);
-			String jsonParams = getStringFromInputStream(in);
-			calendarGlobal.put(agencyId,  Utils.convertJSONToObject(jsonParams, Map.class));			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+				in = assetManager.open(agencyId + "/" + calendarFilename);
+				String jsonParams = getStringFromInputStream(in);
+				calendarGlobal.put(agencyId, Utils.convertJSONToObject(jsonParams, Map.class));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		}
 		return calendarGlobal;
@@ -117,14 +116,15 @@ public class TTHelper {
 	}
 
 	public static TimeTable getTTwithRouteIdAndTime(String routeId, long from_time, long to_time) {
-		TimeTable tt=null;
-		try{
-		// convert time to date
-		String date = convertMsToDateFormat(from_time);
-		// get correct name of file
-		String nameFile = RoutesHelper.getAgencyIdByRouteId(routeId)+"/"+routeId + "_" + calendar.get(RoutesHelper.getAgencyIdByRouteId(routeId)).get(date) + ".js";
-		// get the new tt
-		 tt = getTimeTable(nameFile, routeId, from_time, to_time);
+		TimeTable tt = null;
+		try {
+			// convert time to date
+			String date = convertMsToDateFormat(from_time);
+			// get correct name of file
+			String nameFile = RoutesHelper.getAgencyIdByRouteId(routeId) + "/" + routeId + "_"
+					+ calendar.get(RoutesHelper.getAgencyIdByRouteId(routeId)).get(date) + ".js";
+			// get the new tt
+			tt = getTimeTable(nameFile, routeId, from_time, to_time);
 		} catch (Exception e) {
 		}
 		return tt;
@@ -139,7 +139,8 @@ public class TTHelper {
 			String jsonParams = getStringFromInputStream(in);
 			TimeTable localTT = Utils.convertJSONToObject(jsonParams, TimeTable.class);
 			localTT.setDelays(emptyDelay(localTT));
-//			TimeTable returnTT = changeDelay(localTT, routeId, from_time, to_time);
+			// TimeTable returnTT = changeDelay(localTT, routeId, from_time,
+			// to_time);
 			return localTT;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -154,11 +155,10 @@ public class TTHelper {
 			{
 				List<Map<String, String>> daylist = new ArrayList<Map<String, String>>();
 				for (int course = 0; course < localTT.getTimes().get(day).size(); course++) {
-					{
-						Map<String, String> courselist = new HashMap<String, String>();
-						daylist.add(courselist);
-					}
-					returnlist.add(daylist);
+
+					Map<String, String> courselist = new HashMap<String, String>();
+					daylist.add(courselist);
+
 				}
 				returnlist.add(daylist);
 			}

@@ -131,7 +131,7 @@ public class StopSelectActivity extends FeedbackFragmentActivity implements Stop
 
 		mapView.setClickable(true);
 		mapView.setBuiltInZoomControls(true);
-		mapView.getController().setZoom(15);
+		mapView.getController().setZoom(17);
 
 		List<Overlay> listOfOverlays = mapView.getOverlays();
 		mItemizedoverlay = new StopsItemizedOverlay(this, mapView);

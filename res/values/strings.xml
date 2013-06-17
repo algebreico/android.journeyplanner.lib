@@ -155,6 +155,7 @@
     <string name="smart_check_train_choose_stop_text">Select stop:</string>
     <string name="smart_check_train_choose_line_text">Select line:</string>
     <string name="choose_direction_label">Select direction:</string>
+    <string name="typeLabel">Type</string>
     <string name="delaysLabel">Delays</string>
     <string name="dayLabel">Day</string>
     <string name="loading_dialog_label">Creating timetable &#8230;</string>

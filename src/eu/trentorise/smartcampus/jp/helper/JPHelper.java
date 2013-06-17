@@ -67,6 +67,7 @@ import eu.trentorise.smartcampus.jp.model.SmartCheckRoute;
 import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
 import eu.trentorise.smartcampus.jp.model.SmartCheckTime;
 import eu.trentorise.smartcampus.jp.model.TripData;
+import eu.trentorise.smartcampus.jp.timetable.TTHelper;
 import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
 import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
 import eu.trentorise.smartcampus.protocolcarrier.custom.MessageRequest;
@@ -129,6 +130,7 @@ public class JPHelper {
 		JPHelper.mContext = mContext;
 
 		JPParamsHelper.init(mContext);
+		TTHelper.init(mContext);
 		MapManager.initWithParams();
 
 		setProtocolCarrier(new ProtocolCarrier(mContext, JPParamsHelper.getAppToken()));
@@ -178,7 +180,8 @@ public class JPHelper {
 		return list;
 	}
 
-	public static void saveItinerary(BasicItinerary bi) throws ConnectionException, ProtocolException, SecurityException {
+	public static void saveItinerary(BasicItinerary bi) throws ConnectionException, ProtocolException,
+			SecurityException {
 		if (bi != null) {
 			String json = JSONUtils.convertToJSON(bi);
 			MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
@@ -190,8 +193,8 @@ public class JPHelper {
 		}
 	}
 
-	public static List<BasicItinerary> getMyItineraries() throws ConnectionException, ProtocolException, SecurityException,
-			JSONException, JsonParseException, JsonMappingException, IOException {
+	public static List<BasicItinerary> getMyItineraries() throws ConnectionException, ProtocolException,
+			SecurityException, JSONException, JsonParseException, JsonMappingException, IOException {
 		MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
 				+ Config.CALL_ITINERARY);
 		req.setMethod(Method.GET);
@@ -200,6 +203,21 @@ public class JPHelper {
 				getAuthToken());
 		return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObjects(res.getBody(), BasicItinerary.class);
 
+	}
+
+	public static List<List<Map<String, String>>> getDelay(String routeId, long from_time,long to_time) throws ConnectionException, ProtocolException, SecurityException, JSONException, JsonParseException,
+	JsonMappingException, IOException {
+		String url = Config.TARGET_ADDRESS + Config.CALL_GET_DELAY_TIME_BY_ROUTE + "/" + routeId + "/" + from_time
+		+ "/" + to_time;
+
+		MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), url);
+		req.setMethod(Method.GET);
+		req.setQuery("complex=true");
+		
+		MessageResponse res = JPHelper.instance.getProtocolCarrier().invokeSync(req, JPParamsHelper.getAppToken(),
+				getAuthToken());
+
+	return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(res.getBody(), TimeTable.class).getDelays();
 	}
 
 	public static void deleteMyItinerary(String id) throws ConnectionException, ProtocolException, SecurityException {
@@ -229,8 +247,8 @@ public class JPHelper {
 		return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(res.getBody(), Boolean.class);
 	}
 
-	public static boolean monitorMyRecItinerary(boolean monitor, String id) throws ConnectionException, ProtocolException,
-			SecurityException {
+	public static boolean monitorMyRecItinerary(boolean monitor, String id) throws ConnectionException,
+			ProtocolException, SecurityException {
 		MessageResponse res = null;
 		if (id != null && id.length() > 0) {
 			MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
@@ -268,8 +286,8 @@ public class JPHelper {
 		return list;
 	}
 
-	public static List<SmartLine> getSmartLinesByAgencyId(String agencyId) throws ConnectionException, ProtocolException,
-			SecurityException, JsonParseException, JsonMappingException, IOException {
+	public static List<SmartLine> getSmartLinesByAgencyId(String agencyId) throws ConnectionException,
+			ProtocolException, SecurityException, JsonParseException, JsonMappingException, IOException {
 
 		List<Route> list = new ArrayList<Route>();
 		Resources resources = mContext.getResources();
@@ -323,7 +341,8 @@ public class JPHelper {
 				}
 			}
 			SmartLine singleLine = new SmartLine(icons.getDrawable(index), lines[index], colors.getColor(index, 0),
-					singleRoutesShorts.get(lines[index]), singleRoutesLong.get(lines[index]), singleRoutesId.get(lines[index]));
+					singleRoutesShorts.get(lines[index]), singleRoutesLong.get(lines[index]),
+					singleRoutesId.get(lines[index]));
 			busLines.add(singleLine);
 		}
 		return busLines;
@@ -445,11 +464,12 @@ public class JPHelper {
 			String json = JSONUtils.convertToJSON(brj);
 			MessageRequest req = null;
 			if (brj.getClientId() != null) {
-				req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS + Config.CALL_RECUR
-						+ "/" + brj.getClientId());
+				req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
+						+ Config.CALL_RECUR + "/" + brj.getClientId());
 				req.setMethod(Method.PUT);
 			} else {
-				req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS + Config.CALL_RECUR);
+				req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
+						+ Config.CALL_RECUR);
 				req.setMethod(Method.POST);
 			}
 			req.setBody(json);
@@ -460,7 +480,8 @@ public class JPHelper {
 		return false;
 	}
 
-	public static void deleteMyRecurItinerary(String id) throws ConnectionException, ProtocolException, SecurityException {
+	public static void deleteMyRecurItinerary(String id) throws ConnectionException, ProtocolException,
+			SecurityException {
 		if (id != null && id.length() > 0) {
 			MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
 					+ Config.CALL_RECUR + "/" + id);
@@ -470,7 +491,8 @@ public class JPHelper {
 		}
 	}
 
-	public static Object getItineraryObject(String objectId) throws ConnectionException, ProtocolException, SecurityException {
+	public static Object getItineraryObject(String objectId) throws ConnectionException, ProtocolException,
+			SecurityException {
 		MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
 				+ Config.CALL_ITINERARY + "/" + objectId);
 		req.setMethod(Method.GET);
@@ -478,10 +500,11 @@ public class JPHelper {
 		MessageResponse res = JPHelper.instance.getProtocolCarrier().invokeSync(req, JPParamsHelper.getAppToken(),
 				getAuthToken());
 		if (res.getBody() != null && res.getBody().length() != 0) {
-			return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(res.getBody(), BasicItinerary.class);
+			return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(res.getBody(),
+					BasicItinerary.class);
 		} else {
-			req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS + Config.CALL_GET_RECUR
-					+ "/" + objectId);
+			req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
+					+ Config.CALL_GET_RECUR + "/" + objectId);
 			req.setMethod(Method.GET);
 
 			res = instance.getProtocolCarrier().invokeSync(req, JPParamsHelper.getAppToken(), getAuthToken());
@@ -516,18 +539,20 @@ public class JPHelper {
 		String json = JSONUtils.convertToJSON(brj.getData());
 		MessageRequest req = null;
 		if (brj.getClientId() != null) {
-			req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS + Config.CALL_PLAN_RECUR
-					+ "/" + brj.getClientId());
+			req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
+					+ Config.CALL_PLAN_RECUR + "/" + brj.getClientId());
 			req.setMethod(Method.POST);
 		} else {
-			req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS + Config.CALL_PLAN_RECUR);
+			req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
+					+ Config.CALL_PLAN_RECUR);
 			req.setMethod(Method.POST);
 		}
 		req.setBody(json);
 
 		MessageResponse res = JPHelper.instance.getProtocolCarrier().invokeSync(req, JPParamsHelper.getAppToken(),
 				getAuthToken());
-		return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(res.getBody(), RecurrentJourney.class);
+		return eu.trentorise.smartcampus.android.common.Utils
+				.convertJSONToObject(res.getBody(), RecurrentJourney.class);
 		// return
 		// eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(exammpleRouteString,
 		// RecurrentJourney.class);
@@ -538,8 +563,8 @@ public class JPHelper {
 
 	}
 
-	public static Boolean saveMyRecurrentJourney(BasicRecurrentJourney brj) throws ConnectionException, ProtocolException,
-			SecurityException {
+	public static Boolean saveMyRecurrentJourney(BasicRecurrentJourney brj) throws ConnectionException,
+			ProtocolException, SecurityException {
 
 		if (brj != null) {
 			String json = JSONUtils.convertToJSON(brj);
@@ -572,7 +597,8 @@ public class JPHelper {
 		// return
 		// eu.trentorise.smartcampus.android.common.Utils.convertJSONToObjects(myJourneysString,
 		// BasicRecurrentJourney.class);
-		return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObjects(res.getBody(), BasicRecurrentJourney.class);
+		return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObjects(res.getBody(),
+				BasicRecurrentJourney.class);
 
 	}
 
@@ -598,10 +624,11 @@ public class JPHelper {
 	// "Oberziner\",\"Caneppele Goio\",\"M. ROSSI \\\"Stella d.Mattino\\\"\",\"GARDOLO"+
 	// "\\\"campo sportivo\\\"\",\"Maccani  Commercio\",\"GARDOLO  P.le"+
 	// "Neufahrn\",\"RONCAFORT\",\"RONCAFORT nord\"],\"delays\":[[0,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7],[0,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7,8,5,0,5,7]]}";
-	public static TimeTable getTransitTimeTableById(long from_day, long to_day, String routeId) throws ConnectionException,
-			ProtocolException, SecurityException, JSONException, JsonParseException, JsonMappingException, IOException {
-		String url = Config.TARGET_ADDRESS + Config.CALL_GET_TRANSIT_TIME_BY_ROUTE + "/" + routeId + "/" + from_day + "/"
-				+ to_day;
+	public static TimeTable getTransitTimeTableById(long from_day, long to_day, String routeId)
+			throws ConnectionException, ProtocolException, SecurityException, JSONException, JsonParseException,
+			JsonMappingException, IOException {
+		String url = Config.TARGET_ADDRESS + Config.CALL_GET_TRANSIT_TIME_BY_ROUTE + "/" + routeId + "/" + from_day
+				+ "/" + to_day;
 
 		MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), url);
 		req.setMethod(Method.GET);
@@ -611,6 +638,14 @@ public class JPHelper {
 				getAuthToken());
 
 		return eu.trentorise.smartcampus.android.common.Utils.convertJSONToObject(res.getBody(), TimeTable.class);
+	}
+
+	public static TimeTable getLocalTransitTimeTableById(long from_day, long to_day, String routeId)
+			throws ConnectionException, ProtocolException, SecurityException, JSONException, JsonParseException,
+			JsonMappingException, IOException {
+		if (!TTHelper.isInitialized())
+			TTHelper.init(mContext);
+		return TTHelper.getTTwithRouteIdAndTime(routeId, from_day, to_day);
 	}
 
 	public static List<SmartCheckStop> getStops(String agencyId, double[] location, double radius) throws Exception {
@@ -662,8 +697,8 @@ public class JPHelper {
 				List<Map<String, Object>> protos = map.get(key);
 				if (protos != null) {
 					for (Map<String, Object> proto : protos) {
-						objects.add(eu.trentorise.smartcampus.android.common.Utils.convertObjectToData(SmartCheckStop.class,
-								proto));
+						objects.add(eu.trentorise.smartcampus.android.common.Utils.convertObjectToData(
+								SmartCheckStop.class, proto));
 					}
 				}
 			}

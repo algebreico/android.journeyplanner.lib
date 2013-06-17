@@ -68,6 +68,19 @@ public class RoutesHelper {
 		return list;
 	}
 
+	public static String getAgencyIdByRouteId(String routeId){
+		for (List<RouteDescriptor> list: ROUTES.values())
+		{
+			for (RouteDescriptor route: list)
+			{
+				if (route.getRouteId().equals(routeId))
+					return route.getAgencyId();
+			}
+
+		}
+		return null;
+	}
+	
 	public static RouteDescriptor getRouteDescriptorByRouteId(String agencyId, String routeId) {
 		RouteDescriptor routeDescriptor = null;
 

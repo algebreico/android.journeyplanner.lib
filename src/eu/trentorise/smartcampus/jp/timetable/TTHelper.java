@@ -154,11 +154,8 @@ public class TTHelper {
 			{
 				List<Map<String, String>> daylist = new ArrayList<Map<String, String>>();
 				for (int course = 0; course < localTT.getTimes().get(day).size(); course++) {
-					{
-						Map<String, String> courselist = new HashMap<String, String>();
-						daylist.add(courselist);
-					}
-					returnlist.add(daylist);
+					Map<String, String> courselist = new HashMap<String, String>();
+					daylist.add(courselist);
 				}
 				returnlist.add(daylist);
 			}

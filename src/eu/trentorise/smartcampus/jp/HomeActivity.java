@@ -15,10 +15,15 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.jp;
 
+import android.R.anim;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,13 +34,16 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.github.espiandev.showcaseview.ShowcaseView;
+import com.github.espiandev.showcaseview.ShowcaseView.OnShowcaseEventListener;
 
 import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
+import eu.trentorise.smartcampus.jp.helper.JPHelper.Tutorial;
 import eu.trentorise.smartcampus.jp.notifications.BroadcastNotificationsActivity;
 import eu.trentorise.smartcampus.jp.notifications.NotificationsFragmentActivityJP;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements OnShowcaseEventListener {
 
 	private boolean mHiddenNotification;
 
@@ -43,26 +51,19 @@ public class HomeActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
+
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD)
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
 				(RelativeLayout) findViewById(R.id.home_relative_layout_jp));
-		setHiddenNotification();
-	}
 
-	private void setHiddenNotification() {
-		try {
-			ApplicationInfo ai = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
-			Bundle aBundle = ai.metaData;
-			mHiddenNotification = aBundle.getBoolean("hidden-notification");
-		} catch (NameNotFoundException e) {
-			mHiddenNotification = false;
-			Log.e(HomeActivity.class.getName(), "you should set the hidden-notification metadata in app manifest");
-		}
-		if (mHiddenNotification) {
-			View notificationButton = findViewById(R.id.btn_notifications);
-			if (notificationButton != null)
-				notificationButton.setVisibility(View.GONE);
+		setHiddenNotification();
+
+		if (JPHelper.isFirstLaunch(this)) {
+			showTourDialog();
+			JPHelper.disableFirstLaunch(this);
 		}
 	}
 
@@ -77,6 +78,14 @@ public class HomeActivity extends BaseActivity {
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.clear();
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.emptymenu, menu);
+		return true;
 	}
 
 	@Override
@@ -101,12 +110,8 @@ public class HomeActivity extends BaseActivity {
 		JPHelper.getLocationHelper().stop();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.clear();
-		MenuInflater inflater = getSupportMenuInflater();
-		inflater.inflate(R.menu.emptymenu, menu);
-		return true;
+	public int getMainlayout() {
+		return Config.mainlayout;
 	}
 
 	public void goToFunctionality(View view) {
@@ -115,6 +120,11 @@ public class HomeActivity extends BaseActivity {
 
 		if (viewId == R.id.btn_planjourney) {
 			intent = new Intent(this, PlanJourneyActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			startActivity(intent);
+			return;
+		} else if (viewId == R.id.btn_monitorrecurrentjourney) {
+			intent = new Intent(this, MonitorJourneyActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			startActivity(intent);
 			return;
@@ -150,7 +160,39 @@ public class HomeActivity extends BaseActivity {
 		}
 	}
 
-	public int getMainlayout() {
-		return Config.mainlayout;
+	private void setHiddenNotification() {
+		try {
+			ApplicationInfo ai = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
+			Bundle aBundle = ai.metaData;
+			mHiddenNotification = aBundle.getBoolean("hidden-notification");
+		} catch (NameNotFoundException e) {
+			mHiddenNotification = false;
+			Log.e(HomeActivity.class.getName(), "you should set the hidden-notification metadata in app manifest");
+		}
+		if (mHiddenNotification) {
+			View notificationButton = findViewById(R.id.btn_notifications);
+			if (notificationButton != null)
+				notificationButton.setVisibility(View.GONE);
+		}
 	}
+
+	private void showTourDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(getString(R.string.first_launch))
+				.setPositiveButton(getString(R.string.begin_tut), new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						JPHelper.setWantTour(HomeActivity.this, true);
+					}
+				}).setNeutralButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						JPHelper.setWantTour(HomeActivity.this, false);
+						dialog.dismiss();
+					}
+				});
+		builder.create().show();
+	}
+
 }

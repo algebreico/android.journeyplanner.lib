@@ -15,10 +15,10 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.jp.notifications;
 
-import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -55,12 +55,11 @@ public class BroadcastNotificationsActivity extends FeedbackFragmentActivity {
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD)
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
-		android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 		SherlockFragment fragment = new BroadcastNotificationsFragment();
 		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		fragmentTransaction.replace(Config.mainlayout, fragment);
 		fragmentTransaction.commit();
-
 	}
 
 	@Override

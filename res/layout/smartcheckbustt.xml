@@ -49,37 +49,136 @@
                 android:id="@+id/button_previous"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
                 android:layout_weight="0.3"
-                 android:layout_margin="4dp"
-                
-                android:text="@string/tt_previous"
-                android:background="@drawable/button_tt_left" />
+                android:background="@drawable/button_tt_left"
+                android:text="@string/tt_previous" />
 
             <Button
                 android:id="@+id/button_today"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.3"
                 android:layout_margin="4dp"
-                android:text="@string/tt_today"
-                android:background="@drawable/button_tt_center" />
+                android:layout_weight="0.3"
+                android:background="@drawable/button_tt_center"
+                android:text="@string/tt_today" />
 
             <Button
                 android:id="@+id/button_next"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="4dp"
                 android:layout_weight="0.3"
-                                android:layout_margin="4dp"
-                
-                android:text="@string/tt_next"
-                android:background="@drawable/button_tt_right"  />
+                android:background="@drawable/button_tt_right"
+                android:text="@string/tt_next" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_bustt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal" >
+            android:orientation="horizontal" 
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:orientation="vertical" >
+
+<!--                 <View -->
+<!--                     android:layout_width="match_parent" -->
+<!--                     android:layout_height="1dp" /> -->
+
+                <TextView
+                    android:id="@+id/twDelays"
+                    android:layout_width="match_parent"
+                    android:layout_height="33dp"
+                    android:background="@drawable/cell_place"
+                    android:gravity="center"
+                    android:text="@string/delaysLabel"
+                    android:textAppearance="@style/late_tt_jp" />
+                
+                <TextView
+                    android:id="@+id/twTypes"
+                    android:layout_width="match_parent"
+                    android:layout_height="33dp"
+                    android:background="@drawable/cell_place"
+                    android:gravity="center"
+                    android:text="@string/typeLabel"
+                    android:textAppearance="@style/late_tt_jp" 
+                    android:visibility="gone"/>
+                
+                <eu.trentorise.smartcampus.jp.custom.LinkedScrollView
+                    android:id="@+id/leftscrollview"
+                    android:layout_width="115dp"
+                    android:layout_height="match_parent" 
+                    android:scrollbars="none">
+
+                    <eu.trentorise.smartcampus.jp.custom.TACGridView
+                        android:id="@+id/stops"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fadingEdge="none" />
+                </eu.trentorise.smartcampus.jp.custom.LinkedScrollView>
+            </LinearLayout>
+
+<!--             <View -->
+<!--                 android:layout_width="1dp" -->
+<!--                 android:layout_height="match_parent" /> -->
+
+            <HorizontalScrollView
+                android:id="@+id/ttHsv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:fadingEdge="none"
+                android:scrollbars="none" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical" >
+
+<!--                     <View -->
+<!--                         android:id="@+id/ttw" -->
+<!--                         android:layout_width="match_parent" -->
+<!--                         android:layout_height="1dp" /> -->
+
+                    <GridView
+                        android:id="@+id/delays"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fadingEdge="none"
+                        android:stretchMode="columnWidth" />
+                    
+                    <GridView
+                        android:id="@+id/types"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fadingEdge="none"
+                        android:stretchMode="columnWidth" 
+                        android:visibility="gone"/>
+                    
+                    <eu.trentorise.smartcampus.jp.custom.LinkedScrollView
+                        android:id="@+id/mainscrollview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" 
+                        android:scrollbars="none">
+
+                        <eu.trentorise.smartcampus.jp.custom.CustomView
+                            android:id="@+id/gridview"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:fadingEdge="none"
+                            android:background="@drawable/cell_hour"/>
+<!--                         <eu.trentorise.smartcampus.jp.custom.TACGridView -->
+<!--                             android:id="@+id/gridview" -->
+<!--                             android:layout_width="fill_parent" -->
+<!--                             android:layout_height="fill_parent" -->
+<!--                             android:fadingEdge="none" -->
+<!--                             android:stretchMode="columnWidth" /> -->
+                    </eu.trentorise.smartcampus.jp.custom.LinkedScrollView>
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
     </LinearLayout>
 
@@ -88,7 +187,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"      
+        android:layout_centerVertical="true"
         android:visibility="invisible" />
 
 </RelativeLayout>

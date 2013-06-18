@@ -96,6 +96,17 @@ public class RoutesHelper {
 		return routeDescriptor;
 	}
 
+	public static String getShortNameByRouteIdAndAgencyID (String routeId,String AgencyId){
+		
+		String returnShortName="";
+		List<RouteDescriptor> names = ROUTES.get(AgencyId);
+		for (RouteDescriptor desc: names)
+		{
+			if (desc.getRouteId().equals(routeId))
+				return desc.getShortNameResource();
+		}
+		return returnShortName;
+	}
 	public static RouteDescriptor getRouteDescriptorByRouteId(String routeId) {
 		return getRouteDescriptorByRouteId(null, routeId);
 	}
@@ -323,6 +334,7 @@ public class RoutesHelper {
 	// R.string.agency_16_route_451_Rov, "N-7")
 			});
 
+	
 	/*
 	 * Suburban
 	 */

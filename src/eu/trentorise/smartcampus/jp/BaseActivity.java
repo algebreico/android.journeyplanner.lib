@@ -78,6 +78,8 @@ public class BaseActivity extends FeedbackFragmentActivity {
 	}
 	
 
+	
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

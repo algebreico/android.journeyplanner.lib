@@ -24,6 +24,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -800,14 +801,13 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		}
 		
 		if (todayView) {
-			getView().invalidate();
-			if (minFutureCol < NUM_COLS) {
-				getActivity().findViewById(R.id.ttHsv).scrollTo(
-						minFutureCol * TTAdapter.colWidth(getActivity()), 0);
-			} else {
-				getActivity().findViewById(R.id.ttHsv).scrollTo(
-						(NUM_COLS - 1) * TTAdapter.colWidth(getActivity()), 0);
-			}
+			final HorizontalScrollView hsw = (HorizontalScrollView)getActivity().findViewById(R.id.ttHsv); 
+			final int shift = (minFutureCol < NUM_COLS ? minFutureCol : (NUM_COLS - 1)) * TTAdapter.colWidth(getActivity());
+			hsw.post(new Runnable() {
+				public void run() {
+					hsw.smoothScrollTo(shift, 0);
+				}
+			});
 		}
 		refreshDayTextView(0); 
 	}

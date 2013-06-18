@@ -24,7 +24,7 @@
     <string name="placeholder">&#8230;</string>
     <string name="app_name">ViaggiaTrento</string>
     <string name="btn_planjourney">Plan\njourney</string>
-    <string name="btn_monitorrecurrent">Monitor recurrent\njourney</string>
+    <string name="btn_monitorrecurrent">Monitoring setup</string>
     <string name="btn_broadcast">Submit\nan alert</string>
     <string name="btn_myprofile">Preferences</string>
     <string name="btn_smartcheck">Real time info</string>
@@ -136,9 +136,10 @@
     <string name="menu_item_edit">Edit</string>
     <string name="btn_monitorsaved">Saved \njourneys</string>
     <string name="title_saved_journey">Saved journeys</string>
-    <string name="title_plan_journey">Plan</string>
-    <string name="tab_myoneoffjourneys">SINGLE JOURNEY</string>
-    <string name="tab_myrecjourneys">RECURRING JOURNEY</string>
+    <string name="title_plan_journey">Plan new journey</string>
+    <string name="title_monitor_journey">Monitor journey</string>
+    <string name="tab_myoneoffjourneys">JOURNEYS</string>
+    <string name="tab_myrecjourneys">MONITORING</string>
     <!-- days of the week -->
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>

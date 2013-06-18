@@ -40,6 +40,8 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.location.Location;
@@ -90,6 +92,38 @@ public class JPHelper {
 	private static LocationHelper mLocationHelper;
 
 	private SyncStorageWithPaging storage = null;
+	
+	//tutorial's stuff
+	
+	private static final String TUT_PREFS= "tut_prefs";
+	private static final String TOUR_PREFS= "wantTour";
+	private static final String FIRST_LAUNCH_PREFS= "firstLaunch";
+	
+	public static enum Tutorial {
+	    PLAN("planTut"),
+	    WATCH("watchTut"),
+	    SEND("sendTut"),
+	    INFO("infoTut"),
+	    NOTIF("notifTut"),
+	    PREFST("prefsTut")
+	    ;
+	    /**
+	     * @param text
+	     */
+	    private Tutorial(final String text) {
+	        this.text = text;
+	    }
+
+	    private final String text;
+
+	    /* (non-Javadoc)
+	     * @see java.lang.Enum#toString()
+	     */
+	    @Override
+	    public String toString() {
+	        return text;
+	    }
+	}
 
 	protected JPHelper(Context mContext) {
 		super();
@@ -765,6 +799,54 @@ public class JPHelper {
 
 	public static SyncStorage getSyncStorage() throws DataException {
 		return getInstance().storage;
+	}
+	
+	public static SharedPreferences getTutorialPreferences(Context ctx){
+		SharedPreferences out = ctx.getSharedPreferences(TUT_PREFS, Context.MODE_PRIVATE);
+		return out;
+	}
+	
+	public static boolean isFirstLaunch(Context ctx){
+		return getTutorialPreferences(ctx).getBoolean(FIRST_LAUNCH_PREFS, true);
+	}
+	public static void disableFirstLaunch(Context ctx){
+		Editor edit = getTutorialPreferences(ctx).edit();
+		edit.putBoolean(FIRST_LAUNCH_PREFS, false);
+		edit.commit();
+	}
+	
+	public static boolean wantTour(Context ctx){
+		return getTutorialPreferences(ctx).getBoolean(TOUR_PREFS, false);
+	}
+	
+	public static void setWantTour(Context ctx,boolean want){
+		Editor edit = getTutorialPreferences(ctx).edit();
+		edit.putBoolean(TOUR_PREFS, want);
+		edit.commit();
+	}
+	
+	public static boolean isTutorialShowed(Context ctx,Tutorial t){
+		return getTutorialPreferences(ctx).getBoolean(t.toString(), false);
+	}
+	
+	public static void setTutorialAsShowed(Context ctx,Tutorial t){
+		Editor edit = getTutorialPreferences(ctx).edit();
+		edit.putBoolean(t.toString(), true);
+		edit.commit();
+	}
+	
+	/**
+	 * With this method you can get the last tutorial that was not showed
+	 * @param ctx the activity 
+	 * @return the last Tutorial not showed to the user otherwise null
+	 */
+	public static Tutorial getLastTutorialNotShowed(Context ctx){
+		for(Tutorial t : Tutorial.values() )
+		{
+			if(!isTutorialShowed(ctx, t))
+				return t;
+		}
+		return null;
 	}
 
 }

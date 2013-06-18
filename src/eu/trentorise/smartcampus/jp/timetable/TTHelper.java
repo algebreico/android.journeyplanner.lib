@@ -6,16 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,9 +22,6 @@ import eu.trentorise.smartcampus.android.common.Utils;
 import eu.trentorise.smartcampus.jp.custom.data.TimeTable;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.helper.RoutesHelper;
-import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
-import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
-import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class TTHelper {
 	/*******************************************************************************
@@ -74,6 +67,7 @@ public class TTHelper {
 				e.printStackTrace();
 			}
 
+
 		}
 		return calendarGlobal;
 
@@ -103,6 +97,11 @@ public class TTHelper {
 			}
 		}
 
+		// the case of empty file: means that there is no transport for that date
+		if (sb.length() == 0) {
+			return "";
+		}
+				
 		String json = sb.toString();
 
 		try {
@@ -133,17 +132,26 @@ public class TTHelper {
 
 	private static TimeTable getTimeTable(String nameFile, String routeId, long from_time, long to_time) {
 		AssetManager assetManager = mContext.getResources().getAssets();
-		InputStream in;
 		try {
-			in = assetManager.open(nameFile);
+			TimeTable localTT = null;
+			InputStream in = assetManager.open(nameFile);
 			String jsonParams = getStringFromInputStream(in);
-			TimeTable localTT = Utils.convertJSONToObject(jsonParams, TimeTable.class);
+			// file not exists or the content is not parsed; some error occurred, go for remote version
+			if (jsonParams == null) return null;
+			// file is empty; no transport for the date
+			if (jsonParams.length() ==0) {
+				localTT = new TimeTable();
+				localTT.setStops(Collections.<String>emptyList());
+				localTT.setTimes(Collections.<List<List<String>>>singletonList(Collections.<List<String>>emptyList()));
+			} else {
+				localTT = Utils.convertJSONToObject(jsonParams, TimeTable.class);
+			}
+			
 			localTT.setDelays(emptyDelay(localTT));
 			// TimeTable returnTT = changeDelay(localTT, routeId, from_time,
 			// to_time);
 			return localTT;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -158,7 +166,6 @@ public class TTHelper {
 
 					Map<String, String> courselist = new HashMap<String, String>();
 					daylist.add(courselist);
-
 				}
 				returnlist.add(daylist);
 			}

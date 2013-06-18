@@ -67,7 +67,7 @@ import eu.trentorise.smartcampus.jp.helper.PrefsHelper;
 import eu.trentorise.smartcampus.jp.helper.processor.DeleteMyRecurItineraryProcessor;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
-public class PlanRecurJourneyFragment extends PlanNewJourneyFragment {
+public class MonitorJourneyFragment extends PlanNewJourneyFragment {
 
 	private static final String[] RECURRENCE = new String[] { "Daily", "Weekdays", "Weekends" };
 
@@ -185,7 +185,7 @@ public class PlanRecurJourneyFragment extends PlanNewJourneyFragment {
 			deleteAlertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					SCAsyncTask<String, Void, Void> task = new SCAsyncTask<String, Void, Void>(getSherlockActivity(),
-							new DeleteMyRecurItineraryProcessor(getSherlockActivity(),PlanRecurJourneyFragment.this.getTag()));
+							new DeleteMyRecurItineraryProcessor(getSherlockActivity(),MonitorJourneyFragment.this.getTag()));
 					task.execute(params.getName(), params.getClientId());
 					dialog.dismiss();
 					getSherlockActivity().getSupportFragmentManager().popBackStackImmediate();
@@ -426,7 +426,7 @@ public class PlanRecurJourneyFragment extends PlanNewJourneyFragment {
 
 					fragment.setArguments(b);
 					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-					fragmentTransaction.replace(Config.mainlayout, fragment,PlanRecurJourneyFragment.this.getTag());
+					fragmentTransaction.replace(Config.mainlayout, fragment,MonitorJourneyFragment.this.getTag());
 					fragmentTransaction.addToBackStack(fragment.getTag());
 					fragmentTransaction.commit();
 //				SCAsyncTask<BasicRecurrentJourneyParameters, Void, RecurrentJourney> task = new SCAsyncTask<BasicRecurrentJourneyParameters, Void, RecurrentJourney>(

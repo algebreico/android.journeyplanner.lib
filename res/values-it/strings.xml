@@ -134,8 +134,9 @@
     <string name="btn_monitorsaved">Controlla\nviaggi salvati</string>
     <string name="title_saved_journey">I miei viaggi</string>
     <string name="title_plan_journey">Pianifica viaggio</string>
-    <string name="tab_myoneoffjourneys">VIAGGIO SINGOLO</string>
-    <string name="tab_myrecjourneys">VIAGGIO ABITUALE</string>
+    <string name="title_monitor_journey">Controlla viaggio</string>
+    <string name="tab_myoneoffjourneys">VIAGGI</string>
+    <string name="tab_myrecjourneys">SOTTO CONTROLLO</string>
     <!-- days of the week -->
     <string name="monday">Lun</string>
     <string name="tuesday">Mar</string>

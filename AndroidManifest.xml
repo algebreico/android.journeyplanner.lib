@@ -86,7 +86,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PlanRecurJourneyActivity"
+            android:name=".MonitorJourneyActivity"
             android:configChanges="orientation|screenSize"
             android:theme="@style/Theme.journeyplanner"
             android:windowSoftInputMode="stateHidden" >

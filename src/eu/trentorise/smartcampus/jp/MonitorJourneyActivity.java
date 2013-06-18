@@ -18,20 +18,17 @@ package eu.trentorise.smartcampus.jp;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
-import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
 
-import eu.trentorise.smartcampus.jp.custom.TabListener;
-
-public class PlanJourneyActivity extends BaseActivity {
+public class MonitorJourneyActivity extends BaseActivity {
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setTitle(R.string.title_plan_journey);
+		getSupportActionBar().setTitle(R.string.title_monitor_journey);
 	}
 
 	@Override
@@ -52,7 +49,7 @@ public class PlanJourneyActivity extends BaseActivity {
 		// getSupportActionBar().removeAllTabs();
 
 		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-		SherlockFragment fragment = new PlanNewJourneyFragment();
+		SherlockFragment fragment = new MonitorJourneyFragment();
 		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		fragmentTransaction.replace(Config.mainlayout, fragment);
 		fragmentTransaction.commit();

@@ -192,9 +192,9 @@ public class MyRecurItineraryFragment extends FeedbackFragment {
 		if (item.getItemId() == R.id.menu_item_edit) {
 			// toggle the monitor
 			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
-			Fragment fragment = new PlanRecurJourneyFragment();
+			Fragment fragment = new MonitorJourneyFragment();
 			Bundle b = new Bundle();
-			b.putSerializable(PlanRecurJourneyFragment.PARAMS, params);
+			b.putSerializable(MonitorJourneyFragment.PARAMS, params);
 			fragment.setArguments(b);
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			fragmentTransaction.replace(Config.mainlayout, fragment, Config.PLAN_NEW_RECUR_FRAGMENT_TAG);

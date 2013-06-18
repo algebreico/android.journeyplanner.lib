@@ -3,6 +3,7 @@ package eu.trentorise.smartcampus.jp.custom;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
@@ -13,6 +14,14 @@ public class LinkedScrollView extends ScrollView {
 
 	public LinkedScrollView(Context context) {
 		super(context);
+	}
+	
+	public LinkedScrollView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+	}
+
+	public LinkedScrollView(Context context, AttributeSet attrs) {
+		super(context, attrs);
 	}
 
 	@Override

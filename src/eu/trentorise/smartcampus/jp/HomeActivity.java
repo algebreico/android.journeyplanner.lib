@@ -15,10 +15,15 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.jp;
 
+import android.R.anim;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,41 +34,47 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.github.espiandev.showcaseview.ShowcaseView;
+import com.github.espiandev.showcaseview.ShowcaseView.OnShowcaseEventListener;
 
 import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
+import eu.trentorise.smartcampus.jp.helper.JPHelper.Tutorial;
 import eu.trentorise.smartcampus.jp.notifications.BroadcastNotificationsActivity;
 import eu.trentorise.smartcampus.jp.notifications.NotificationsFragmentActivityJP;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements OnShowcaseEventListener {
 
 	private boolean mHiddenNotification;
+	private ShowcaseView sv;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.home);
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD)
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
 				(RelativeLayout) findViewById(R.id.home_relative_layout_jp));
+
 		setHiddenNotification();
+
+		if (JPHelper.isFirstLaunch(this)) {
+			showTourDialog();
+			JPHelper.disableFirstLaunch(this);
+		}
 	}
 
-	private void setHiddenNotification() {
-		try {
-			ApplicationInfo ai = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
-			Bundle aBundle = ai.metaData;
-			mHiddenNotification = aBundle.getBoolean("hidden-notification");
-		} catch (NameNotFoundException e) {
-			mHiddenNotification = false;
-			Log.e(HomeActivity.class.getName(), "you should set the hidden-notification metadata in app manifest");
-		}
-		if (mHiddenNotification) {
-			View notificationButton = findViewById(R.id.btn_notifications);
-			if (notificationButton != null)
-				notificationButton.setVisibility(View.GONE);
-		}
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		// This is needed because the ShowCaseLibrary doesn't provide anything
+		// to manage screen rotation
+		if (sv != null && sv.isShown())
+			sv.forceLayout();
 	}
 
 	@Override
@@ -77,6 +88,71 @@ public class HomeActivity extends BaseActivity {
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.clear();
+		MenuInflater inflater = getSupportMenuInflater();
+		inflater.inflate(R.menu.emptymenu, menu);
+		return true;
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		if (JPHelper.wantTour(this))
+			showTutorials();
+	}
+
+	private void showTutorials() {
+		JPHelper.Tutorial t = JPHelper.getLastTutorialNotShowed(this);
+		String title = "", msg = "";
+		int id = R.id.btn_myprofile;
+		if (t != null)
+			switch (t) {
+			case PLAN:
+				id = R.id.btn_planjourney;
+				msg = getString(R.string.plan_tut);
+				break;
+			case WATCH:
+				id = R.id.btn_monitorsavedjourney;
+				msg = getString(R.string.watch_tut);
+				break;
+			case INFO:
+				id = R.id.btn_smart;
+				msg = getString(R.string.info_tut);
+				break;
+			case SEND:
+				id = R.id.btn_broadcast;
+				msg = getString(R.string.send_tut);
+				break;
+			case NOTIF:
+				id = R.id.btn_notifications;
+				msg = getString(R.string.notif_tut);
+				break;
+			case PREFST:
+				id = R.id.btn_myprofile;
+				msg = getString(R.string.prefs_tut);
+				break;
+			default:
+				id = -1;
+				break;
+			}
+		if (t != null) {
+			displayShowcaseView(id, title, msg);
+			JPHelper.setTutorialAsShowed(this, t);
+		} else
+			JPHelper.setWantTour(this, false);
+	}
+
+	private void displayShowcaseView(int id, String title, String detail) {
+		ShowcaseView.ConfigOptions options = new ShowcaseView.ConfigOptions();
+		options.backColor = Color.argb(128, 34, 34, 34);
+		options.hideOnClickOutside = false;
+//		options.buttonText = getString(R.string.next_tut);
+		sv = ShowcaseView.insertShowcaseView(id, this, title, detail, options);
+		sv.setOnShowcaseEventListener(this);
 	}
 
 	@Override
@@ -101,12 +177,8 @@ public class HomeActivity extends BaseActivity {
 		JPHelper.getLocationHelper().stop();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.clear();
-		MenuInflater inflater = getSupportMenuInflater();
-		inflater.inflate(R.menu.emptymenu, menu);
-		return true;
+	public int getMainlayout() {
+		return Config.mainlayout;
 	}
 
 	public void goToFunctionality(View view) {
@@ -115,6 +187,11 @@ public class HomeActivity extends BaseActivity {
 
 		if (viewId == R.id.btn_planjourney) {
 			intent = new Intent(this, PlanJourneyActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			startActivity(intent);
+			return;
+		} else if (viewId == R.id.btn_monitorrecurrentjourney) {
+			intent = new Intent(this, MonitorJourneyActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			startActivity(intent);
 			return;
@@ -150,7 +227,51 @@ public class HomeActivity extends BaseActivity {
 		}
 	}
 
-	public int getMainlayout() {
-		return Config.mainlayout;
+	private void setHiddenNotification() {
+		try {
+			ApplicationInfo ai = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
+			Bundle aBundle = ai.metaData;
+			mHiddenNotification = aBundle.getBoolean("hidden-notification");
+		} catch (NameNotFoundException e) {
+			mHiddenNotification = false;
+			Log.e(HomeActivity.class.getName(), "you should set the hidden-notification metadata in app manifest");
+		}
+		if (mHiddenNotification) {
+			View notificationButton = findViewById(R.id.btn_notifications);
+			if (notificationButton != null)
+				notificationButton.setVisibility(View.GONE);
+		}
 	}
+
+	private void showTourDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(getString(R.string.first_launch))
+				.setPositiveButton(getString(R.string.begin_tut), new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						JPHelper.setWantTour(HomeActivity.this, true);
+					}
+				}).setNeutralButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						JPHelper.setWantTour(HomeActivity.this, false);
+						dialog.dismiss();
+					}
+				});
+		builder.create().show();
+	}
+
+	@Override
+	public void onShowcaseViewHide(ShowcaseView showcaseView) {
+		if (JPHelper.wantTour(this))
+			showTutorials();
+	}
+
+	@Override
+	public void onShowcaseViewShow(ShowcaseView showcaseView) {
+		// JPHelper.setTutorialAsShowed(this,
+		// JPHelper.getLastTutorialNotShowed(this));
+	}
+
 }

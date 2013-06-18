@@ -59,13 +59,13 @@ public class TTHelper {
 		for (String agencyId : RoutesHelper.AGENCYIDS) {
 			try {
 
-				in = assetManager.open(agencyId + "/" + calendarFilename);
-				String jsonParams = getStringFromInputStream(in);
-				calendarGlobal.put(agencyId, Utils.convertJSONToObject(jsonParams, Map.class));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			in = assetManager.open(agencyId+"/"+calendarFilename);
+			String jsonParams = getStringFromInputStream(in);
+			calendarGlobal.put(agencyId,  Utils.convertJSONToObject(jsonParams, Map.class));			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 
 		}

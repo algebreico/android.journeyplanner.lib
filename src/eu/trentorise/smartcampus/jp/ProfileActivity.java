@@ -30,7 +30,7 @@ import eu.trentorise.smartcampus.jp.custom.TabListener;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
 
-public class ProfileActivity extends FeedbackFragmentActivity {
+public class ProfileActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

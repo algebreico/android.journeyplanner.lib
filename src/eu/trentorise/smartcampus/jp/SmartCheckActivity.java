@@ -12,7 +12,7 @@ import eu.trentorise.smartcampus.android.feedback.activity.FeedbackFragmentActiv
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
 
-public class SmartCheckActivity extends FeedbackFragmentActivity {
+public class SmartCheckActivity extends BaseActivity {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

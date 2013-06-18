@@ -35,7 +35,7 @@ import eu.trentorise.smartcampus.android.feedback.activity.FeedbackFragmentActiv
 import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
 import eu.trentorise.smartcampus.jp.custom.map.LegsOverlay;
 
-public class LegMapActivity extends FeedbackFragmentActivity {
+public class LegMapActivity extends BaseActivity {
 
 	private MapView mapView = null;
 

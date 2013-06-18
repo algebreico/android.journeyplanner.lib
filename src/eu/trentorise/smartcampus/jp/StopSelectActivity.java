@@ -59,7 +59,7 @@ import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
 import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
 import eu.trentorise.smartcampus.jp.model.Square;
 
-public class StopSelectActivity extends FeedbackFragmentActivity implements StopObjectMapItemTapListener, OnMapChanged,
+public class StopSelectActivity extends BaseActivity implements StopObjectMapItemTapListener, OnMapChanged,
 		OnStopLoadingFinished, OnDetailsClick {
 
 	public final static String ARG_AGENCY_IDS = "agencyIds";
@@ -131,7 +131,7 @@ public class StopSelectActivity extends FeedbackFragmentActivity implements Stop
 
 		mapView.setClickable(true);
 		mapView.setBuiltInZoomControls(true);
-		mapView.getController().setZoom(17);
+		mapView.getController().setZoom(15);
 
 		List<Overlay> listOfOverlays = mapView.getOverlays();
 		mItemizedoverlay = new StopsItemizedOverlay(this, mapView);

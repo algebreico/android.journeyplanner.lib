@@ -43,7 +43,7 @@ import eu.trentorise.smartcampus.jp.custom.map.MapManager;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
 
-public class AddressSelectActivity extends FeedbackFragmentActivity {
+public class AddressSelectActivity extends BaseActivity {
 
 	private MapView mapView = null;
 

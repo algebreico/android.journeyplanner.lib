@@ -27,6 +27,8 @@ import java.util.Set;
 
 public class Config {
 
+	public static final String APP_TOKEN = "journeyplanner";
+
 	public static int mainlayout = android.R.id.content;
 
 	public static final String TARGET_ADDRESS = "/smartcampus-journeyplanner-web/rest";

@@ -16,7 +16,8 @@ import eu.trentorise.smartcampus.jp.model.Square;
 public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 
 	public interface OnStopLoadingFinished {
-		public void onStopLoadingFinished(boolean result,double[] location,double diagonal);
+		public void onStopLoadingFinished(boolean result, double[] location,
+				double diagonal);
 	}
 
 	private OnStopLoadingFinished mOnStopLoadingFinished;
@@ -29,10 +30,11 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 	private MapView mapView;
 	private String[] selectedAgencyIds;
 	private StopsItemizedOverlay old_overlay;
-	private Square cache;
 
-	public StopsAsyncTask(String[] selectedAgencyIds, Map<String, SmartCheckStop> smartCheckStopMap,
-			StopsItemizedOverlay overlay,Square cache, double[] location, double diagonal, MapView mapView, OnStopLoadingFinished listener) {
+	public StopsAsyncTask(String[] selectedAgencyIds,
+			Map<String, SmartCheckStop> smartCheckStopMap,
+			StopsItemizedOverlay overlay,double[] location,
+			double diagonal, MapView mapView, OnStopLoadingFinished listener) {
 		super();
 		this.overlay = overlay;
 		this.mapView = mapView;
@@ -43,7 +45,6 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 		this.smartCheckStopMap = smartCheckStopMap;
 
 		this.selectedAgencyIds = selectedAgencyIds;
-		this.cache=cache;
 	}
 
 	@Override
@@ -56,7 +57,6 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 	@Override
 	protected void onCancelled() {
 		super.onCancelled();
-		this.onPostExecute(false);
 	}
 
 	@Override
@@ -68,7 +68,8 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 			if (selectedAgencyIds != null) {
 				for (int i = 0; i < selectedAgencyIds.length; i++) {
 					try {
-						stops.addAll(JPHelper.getStops(selectedAgencyIds[i], location, diagonal));
+						stops.addAll(JPHelper.getStops(selectedAgencyIds[i],
+								location, diagonal));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -82,45 +83,39 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 			}
 
 			for (SmartCheckStop stop : stops) {
+				if(isCancelled())
+					break;
 				if (!smartCheckStopMap.containsKey(stop.getId())) {
 					smartCheckStopMap.put(stop.getId(), stop);
 					// list.add(stop);
+//					publishProgress(stop);
+					overlay.addOverlay(stop);
+					overlay.populateAll();
+					mapView.postInvalidate();
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-		return true;
+		return !isCancelled();
 	}
 
 	@Override
 	protected void onProgressUpdate(SmartCheckStop... values) {
 		super.onProgressUpdate(values);
-		// overlay.addOverlay(values[0]);
+//		overlay.addOverlay(values[0]);
+//		overlay.populateAll();
+//		mapView.invalidate();
 	}
 
 	@Override
 	protected void onPostExecute(Boolean result) {
 		super.onPostExecute(result);
-		if (result) {
-			//overlay.clearMarkers();
-			// for (SmartCheckStop o : list) {
-			Square s;
-			for (SmartCheckStop o : smartCheckStopMap.values()) {
-				s = new Square(o.getLocation(),diagonal);
-				if(cache==null ||overlay.size()<=0 || cache.compareTo(s)<0)
-					overlay.addOverlay(o);
-				s=null;
-			}
-			overlay.populateAll();
-			mapView.invalidate();
-			// list.clear();
-		} else {
-			overlay = old_overlay;
-		}
-
-		mOnStopLoadingFinished.onStopLoadingFinished(result,location,diagonal);
+		if(!result)
+			overlay=old_overlay;
+		mOnStopLoadingFinished
+				.onStopLoadingFinished(result, location, diagonal);
 	}
 
 }

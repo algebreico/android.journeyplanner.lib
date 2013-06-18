@@ -88,9 +88,11 @@
     <string name="datetime_before_now">You cannot plan a journey in the past!</string>
     <string name="datetime_to_before_from">End date/time is before or equal to start date/time!</string>
     <string name="no_days_selected">No days are selected!</string>
-    <string name="favorites_empty">Select an address</string>
+    <string name="favorites_empty_address">Select a valid address</string>
     <string name="favorites_saved">Added to favorites</string>
     <string name="favorites_title">Favorites</string>
+    <string name="favorites_add_confirmation">Do you want to add\n\n%s\n\nto your favorite places?</string>
+    <string name="favorites_empty_list">You have no favorite places yet</string>
     <string name="address_dlg_current">Current location</string>
     <string name="address_dlg_map">Point on map</string>
     <string name="address_dlg_favorites">Favorite places</string>

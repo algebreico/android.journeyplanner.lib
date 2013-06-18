@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/plan_from"
-                    android:src="@drawable/ic_star" />
+                    android:src="@drawable/ic_fav_star" />
             </LinearLayout>
 
             <LinearLayout
@@ -129,7 +129,7 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/plan_to"
-                    android:src="@drawable/ic_star" />
+                    android:src="@drawable/ic_fav_star" />
             </LinearLayout>
 
             <TextView

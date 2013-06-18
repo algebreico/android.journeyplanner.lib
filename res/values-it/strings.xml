@@ -85,9 +85,11 @@
     <string name="datetime_before_now">Non puoi pianificare un viaggio nel passato!</string>
     <string name="datetime_to_before_from">Data e/o orario di fine sono precedenti a quelle di inizio!</string>
     <string name="no_days_selected">Devi selezionare almeno un giorno in cui viaggiare!</string>
-    <string name="favorites_empty">Scegli l\'indirizzo</string>
+    <string name="favorites_empty_address">Scegli un indirizzo valido</string>
     <string name="favorites_saved">Aggiunto ai preferiti</string>
     <string name="favorites_title">Preferiti</string>
+    <string name="favorites_add_confirmation">Vuoi aggiungere\n\n%s\n\nai tuoi luoghi preferiti?</string>
+    <string name="favorites_empty_list">Non hai ancora aggiunto luoghi preferiti</string>
     <string name="address_dlg_current">Posizione attuale</string>
     <string name="address_dlg_map">Da mappa</string>
     <string name="address_dlg_favorites">I miei luoghi</string>

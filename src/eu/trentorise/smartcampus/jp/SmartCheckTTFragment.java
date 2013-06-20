@@ -400,7 +400,8 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 	private void reloadDelays() {
 		GridView gwDelays = (GridView) getActivity().findViewById(R.id.delays);
-		gwDelays.setAdapter(new TTDelaysAdapter(getSherlockActivity(),delays));
+		if (gwDelays!=null)
+			gwDelays.setAdapter(new TTDelaysAdapter(getSherlockActivity(),delays));
 	}
 	
 	/*

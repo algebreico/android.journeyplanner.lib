@@ -16,6 +16,7 @@
 package eu.trentorise.smartcampus.jp.custom.map;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -75,8 +76,7 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	int lastStepCount = 0;
 
 	public StopsItemizedOverlay(Context mContext, MapView mapView) {
-		super(boundCenterBottom(mContext.getResources().getDrawable(
-				R.drawable.poi)));
+		super(boundCenterBottom(mContext.getResources().getDrawable(R.drawable.poi)));
 		this.mContext = mContext;
 		this.mMapView = mapView;
 		populate();
@@ -92,21 +92,17 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 
 	public void addOverlay(SmartCheckStop o) {
 		if (o.getLocation() != null) {
-			GeoPoint point = new GeoPoint((int) (o.getLocation()[0] * 1E6),
-					(int) (o.getLocation()[1] * 1E6));
+			GeoPoint point = new GeoPoint((int) (o.getLocation()[0] * 1E6), (int) (o.getLocation()[1] * 1E6));
 			OverlayItem overlayitem = new OverlayItem(point, o.getTitle(), "");
 
-			Drawable drawable = mContext.getResources().getDrawable(
-					R.drawable.marker_poi_mobility);
-			drawable.setBounds(-drawable.getIntrinsicWidth() / 2,
-					-drawable.getIntrinsicHeight(),
+			Drawable drawable = mContext.getResources().getDrawable(R.drawable.marker_poi_mobility);
+			drawable.setBounds(-drawable.getIntrinsicWidth() / 2, -drawable.getIntrinsicHeight(),
 					drawable.getIntrinsicWidth() / 2, 0);
 			overlayitem.setMarker(drawable);
 			boolean check = false;
 			for (OverlayItem item : mOverlays) {
 				if (item.getPoint().getLatitudeE6() == point.getLatitudeE6()
-						&& point.getLongitudeE6() == item.getPoint()
-								.getLongitudeE6()) {
+						&& point.getLongitudeE6() == item.getPoint().getLongitudeE6()) {
 					check = true;
 					break;
 				}
@@ -116,6 +112,12 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 				mObjects.add(o);
 			}
 			// populate();
+		}
+	}
+
+	public void addAllOverlays(Collection<SmartCheckStop> list) {
+		for (SmartCheckStop o : list) {
+			addOverlay(o);
 		}
 	}
 
@@ -187,13 +189,10 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 					if (item2group.get(index) != null) {
 						int[] coords = item2group.get(index);
 						try {
-							List<OverlayItem> list = grid.get(coords[0]).get(
-									coords[1]);
+							List<OverlayItem> list = grid.get(coords[0]).get(coords[1]);
 							if (list.size() > 1) {
-								if (mMapView.getZoomLevel() == mMapView
-										.getMaxZoomLevel()) {
-									List<SmartCheckStop> objects = new ArrayList<SmartCheckStop>(
-											list.size());
+								if (mMapView.getZoomLevel() == mMapView.getMaxZoomLevel()) {
+									List<SmartCheckStop> objects = new ArrayList<SmartCheckStop>(list.size());
 									for (OverlayItem item : list) {
 										int idx = mOverlays.indexOf(item);
 										if (idx > 0)
@@ -201,8 +200,7 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 									}
 									listener.onStopObjectsTap(objects);
 								} else {
-									MapManager.fitMapWithOverlays(list,
-											mMapView);
+									MapManager.fitMapWithOverlays(list, mMapView);
 								}
 								return super.onTap(index);
 							}
@@ -229,11 +227,9 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 			Projection proj = mapView.getProjection();
 			// coordinates of visible part
 			GeoPoint lu = proj.fromPixels(0, 0);
-			GeoPoint rd = proj.fromPixels(mapView.getWidth(),
-					mapView.getHeight());
+			GeoPoint rd = proj.fromPixels(mapView.getWidth(), mapView.getHeight());
 			// grid step
-			int step = Math.abs(lu.getLongitudeE6() - rd.getLongitudeE6())
-					/ densityX;
+			int step = Math.abs(lu.getLongitudeE6() - rd.getLongitudeE6()) / densityX;
 
 			// check if zoom is being animated
 			boolean zooming = false;
@@ -256,8 +252,7 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 				grid.clear();
 
 				for (int i = 0; i <= densityX; i++) {
-					ArrayList<List<OverlayItem>> column = new ArrayList<List<OverlayItem>>(
-							densityY + 1);
+					ArrayList<List<OverlayItem>> column = new ArrayList<List<OverlayItem>>(densityY + 1);
 					for (int j = 0; j <= densityY; j++) {
 						column.add(new ArrayList<OverlayItem>());
 					}
@@ -280,17 +275,11 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 				int idx = 0;
 				try {
 					for (OverlayItem m : mOverlays) {
-						if (!mGeneric.contains(m)
-								&& m.getPoint().getLongitudeE6() >= startX
-								&& m.getPoint().getLongitudeE6() <= endX
-								&& m.getPoint().getLatitudeE6() >= startY
+						if (!mGeneric.contains(m) && m.getPoint().getLongitudeE6() >= startX
+								&& m.getPoint().getLongitudeE6() <= endX && m.getPoint().getLatitudeE6() >= startY
 								&& m.getPoint().getLatitudeE6() <= endY) {
-							int binX = Math.abs(m.getPoint().getLongitudeE6()
-									- startX)
-									/ step;
-							int binY = Math.abs(m.getPoint().getLatitudeE6()
-									- startY)
-									/ step;
+							int binX = Math.abs(m.getPoint().getLongitudeE6() - startX) / step;
+							int binY = Math.abs(m.getPoint().getLatitudeE6() - startY) / step;
 
 							item2group.put(idx, new int[] { binX, binY });
 							grid.get(binX).get(binY).add(m); // just push the
@@ -352,10 +341,8 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 			return false;
 
 		float[] dist = new float[3];
-		Location.distanceBetween(src.get(0).getPoint().getLatitudeE6() / 1E6,
-				src.get(0).getPoint().getLongitudeE6() / 1E6, curr.get(0)
-						.getPoint().getLatitudeE6() / 1E6, curr.get(0)
-						.getPoint().getLongitudeE6() / 1E6, dist);
+		Location.distanceBetween(src.get(0).getPoint().getLatitudeE6() / 1E6, src.get(0).getPoint().getLongitudeE6() / 1E6,
+				curr.get(0).getPoint().getLatitudeE6() / 1E6, curr.get(0).getPoint().getLongitudeE6() / 1E6, dist);
 		if (dist[0] < 20) {
 			src.addAll(curr);
 			curr.clear();
@@ -364,18 +351,15 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		return false;
 	}
 
-	private void drawGroup(Canvas canvas, MapView mapView,
-			List<OverlayItem> markerList, int i, int j) {
+	private void drawGroup(Canvas canvas, MapView mapView, List<OverlayItem> markerList, int i, int j) {
 		OverlayItem item = markerList.get(0);
 		GeoPoint point = item.getPoint();
 		Point ptScreenCoord = new Point();
 		mapView.getProjection().toPixels(point, ptScreenCoord);
 
 		if (groupMarker == null) {
-			groupMarker = mContext.getResources().getDrawable(
-					R.drawable.marker_poi_generic);
-			groupMarker.setBounds(-groupMarker.getIntrinsicWidth() / 2,
-					-groupMarker.getIntrinsicHeight(),
+			groupMarker = mContext.getResources().getDrawable(R.drawable.marker_poi_generic);
+			groupMarker.setBounds(-groupMarker.getIntrinsicWidth() / 2, -groupMarker.getIntrinsicHeight(),
 					groupMarker.getIntrinsicWidth() / 2, 0);
 		}
 
@@ -388,33 +372,27 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		paint.setAntiAlias(true);
 		paint.setARGB(255, 255, 255, 255);
 		// show text to the right of the icon
-		canvas.drawText("" + markerList.size(), ptScreenCoord.x,
-				ptScreenCoord.y - 23, paint);
+		canvas.drawText("" + markerList.size(), ptScreenCoord.x, ptScreenCoord.y - 23, paint);
 	}
 
-	private void drawSingle(Canvas canvas, MapView mapView,
-			List<OverlayItem> markerList) {
+	private void drawSingle(Canvas canvas, MapView mapView, List<OverlayItem> markerList) {
 		for (OverlayItem item : markerList) {
 			drawSingleItem(canvas, mapView, item);
 		}
 	}
 
-	protected Point drawSingleItem(Canvas canvas, MapView mapView,
-			OverlayItem item) {
+	protected Point drawSingleItem(Canvas canvas, MapView mapView, OverlayItem item) {
 		GeoPoint point = item.getPoint();
 		Point ptScreenCoord = new Point();
 		mapView.getProjection().toPixels(point, ptScreenCoord);
 
-		drawAt(canvas, item.getMarker(0), ptScreenCoord.x, ptScreenCoord.y,
-				true);
-		drawAt(canvas, item.getMarker(0), ptScreenCoord.x, ptScreenCoord.y,
-				false);
+		drawAt(canvas, item.getMarker(0), ptScreenCoord.x, ptScreenCoord.y, true);
+		drawAt(canvas, item.getMarker(0), ptScreenCoord.x, ptScreenCoord.y, false);
 		return ptScreenCoord;
 	}
 
 	public static boolean isWithin(Point p, MapView mapView) {
-		return (p.x > 0 & p.x < mapView.getWidth() & p.y > 0 & p.y < mapView
-				.getHeight());
+		return (p.x > 0 & p.x < mapView.getWidth() & p.y > 0 & p.y < mapView.getHeight());
 	}
 
 }

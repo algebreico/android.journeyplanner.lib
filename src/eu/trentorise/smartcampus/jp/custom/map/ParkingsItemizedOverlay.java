@@ -16,6 +16,7 @@
 package eu.trentorise.smartcampus.jp.custom.map;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -101,6 +102,12 @@ public class ParkingsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 			mOverlays.add(overlayitem);
 			mObjects.add(parking);
 			// populate();
+		}
+	}
+
+	public void addAllOverlays(Collection<ParkingSerial> list) {
+		for (ParkingSerial parking : list) {
+			addOverlay(parking);
 		}
 	}
 

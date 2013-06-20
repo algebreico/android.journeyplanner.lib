@@ -21,11 +21,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
-import eu.trentorise.smartcampus.android.feedback.model.Feedback;
 import eu.trentorise.smartcampus.jp.custom.FavoritesAdapter;
 import eu.trentorise.smartcampus.jp.custom.UserPrefsHolder;
 import eu.trentorise.smartcampus.jp.helper.PrefsHelper;
@@ -37,11 +38,13 @@ public class FavoritesFragment extends FeedbackFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// TODO: REMEMBER THIS!!!
+		// setHasOptionsMenu(true);
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.favorites, container, false);
 	}
 
@@ -50,10 +53,28 @@ public class FavoritesFragment extends FeedbackFragment {
 		super.onStart();
 		ListView list = (ListView) getSherlockActivity().findViewById(R.id.favorites_list);
 		if (userPrefsHolder == null) {
-			userPrefsHolder = PrefsHelper.sharedPreferences2Holder(getSherlockActivity().getSharedPreferences(Config.USER_PREFS, Context.MODE_PRIVATE));
+			userPrefsHolder = PrefsHelper.sharedPreferences2Holder(getSherlockActivity().getSharedPreferences(
+					Config.USER_PREFS, Context.MODE_PRIVATE));
 		}
-		FavoritesAdapter adapter = new FavoritesAdapter(getActivity(),
-				R.layout.favorites_row, userPrefsHolder);
+		FavoritesAdapter adapter = new FavoritesAdapter(getActivity(), R.layout.favorites_row, userPrefsHolder);
 		list.setAdapter(adapter);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		getSherlockActivity().getSupportMenuInflater().inflate(R.menu.addmenu, menu);
+
+		super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.menu_add) {
+			Toast.makeText(getSherlockActivity(), "Coming soon", Toast.LENGTH_SHORT).show();
+			return true;
+		} else {
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }

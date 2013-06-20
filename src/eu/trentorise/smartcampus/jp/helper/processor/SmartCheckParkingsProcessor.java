@@ -82,6 +82,8 @@ public class SmartCheckParkingsProcessor extends AbstractAsyncTaskProcessor<Void
 
 	@Override
 	public void handleResult(List<ParkingSerial> result) {
+		List<ParkingSerial> orderedList = new ArrayList<ParkingSerial>();
+
 		// order: firsts with data
 		List<ParkingSerial> parkingsWithData = new ArrayList<ParkingSerial>();
 		List<ParkingSerial> parkingsWithoutData = new ArrayList<ParkingSerial>();
@@ -103,17 +105,23 @@ public class SmartCheckParkingsProcessor extends AbstractAsyncTaskProcessor<Void
 		Collections.sort(parkingsWithData, comparator);
 		Collections.sort(parkingsWithoutData, comparator);
 
-		adapter.clear();
-
 		for (ParkingSerial parking : parkingsWithData) {
-			adapter.add(parking);
+			orderedList.add(parking);
 		}
 
 		for (ParkingSerial parking : parkingsWithoutData) {
+			orderedList.add(parking);
+		}
+
+		adapter.clear();
+		for (ParkingSerial parking : orderedList) {
 			adapter.add(parking);
 		}
 
 		adapter.notifyDataSetChanged();
+
+		// save in cache
+		ParkingsHelper.setParkingsCache(orderedList);
 	}
 
 }

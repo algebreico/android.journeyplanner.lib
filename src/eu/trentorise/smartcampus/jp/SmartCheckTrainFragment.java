@@ -9,12 +9,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.jp.custom.SmartCheckTrainAdapter;
 import eu.trentorise.smartcampus.jp.custom.data.SmartLine;
@@ -22,14 +20,25 @@ import eu.trentorise.smartcampus.jp.helper.RoutesHelper;
 import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
 
 public class SmartCheckTrainFragment extends FeedbackFragment {
+
+	protected static final String PARAM_AIDS = "agencyids";
 	private ListView routesListView;
 	private SmartCheckTrainAdapter adapter;
+
+	private String[] agencyIds = new String[] { RoutesHelper.AGENCYID_TRAIN_BZVR, RoutesHelper.AGENCYID_TRAIN_TM,
+			RoutesHelper.AGENCYID_TRAIN_TNBDG };
 
 	private SmartCheckStop selectedStop = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (savedInstanceState != null && savedInstanceState.containsKey(PARAM_AIDS)) {
+			this.agencyIds = savedInstanceState.getStringArray(PARAM_AIDS);
+		} else if (getArguments() != null && getArguments().containsKey(PARAM_AIDS)) {
+			this.agencyIds = getArguments().getStringArray(PARAM_AIDS);
+		}
 	}
 
 	@Override
@@ -45,8 +54,7 @@ public class SmartCheckTrainFragment extends FeedbackFragment {
 
 		// get routes from Constants
 		adapter = new SmartCheckTrainAdapter(getSherlockActivity(), android.R.layout.simple_list_item_1,
-				RoutesHelper.getRouteDescriptorsList(new String[] { RoutesHelper.AGENCYID_TRAIN_BZVR,
-						RoutesHelper.AGENCYID_TRAIN_TM, RoutesHelper.AGENCYID_TRAIN_TNBDG }));
+				RoutesHelper.getRouteDescriptorsList(agencyIds));
 		routesListView.setAdapter(adapter);
 
 		routesListView.setOnItemClickListener(new OnItemClickListener() {
@@ -74,18 +82,21 @@ public class SmartCheckTrainFragment extends FeedbackFragment {
 
 		});
 
-		RelativeLayout chooseStop = (RelativeLayout) getSherlockActivity().findViewById(
-				R.id.smart_check_train_choose_stop_layout);
-
-		chooseStop.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getSherlockActivity(), StopSelectActivity.class);
-				intent.putExtra(StopSelectActivity.ARG_AGENCY_IDS, new String[] { RoutesHelper.AGENCYID_TRAIN_BZVR,
-						RoutesHelper.AGENCYID_TRAIN_TM, RoutesHelper.AGENCYID_TRAIN_TNBDG });
-				startActivityForResult(intent, StopSelectActivity.REQUEST_CODE);
-			}
-		});
+		// RelativeLayout chooseStop = (RelativeLayout)
+		// getSherlockActivity().findViewById(
+		// R.id.smart_check_train_choose_stop_layout);
+		//
+		// chooseStop.setOnClickListener(new OnClickListener() {
+		// @Override
+		// public void onClick(View v) {
+		// Intent intent = new Intent(getSherlockActivity(),
+		// StopSelectActivity.class);
+		// intent.putExtra(StopSelectActivity.ARG_AGENCY_IDS, new String[] {
+		// RoutesHelper.AGENCYID_TRAIN_BZVR,
+		// RoutesHelper.AGENCYID_TRAIN_TM, RoutesHelper.AGENCYID_TRAIN_TNBDG });
+		// startActivityForResult(intent, StopSelectActivity.REQUEST_CODE);
+		// }
+		// });
 	}
 
 	@Override

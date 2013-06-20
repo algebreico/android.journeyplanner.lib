@@ -19,8 +19,8 @@ public class BetterMapView extends MapView {
 	private GeoPoint mCenter;
 	private double mDiagonal;
 
-	public BetterMapView(Context arg0, String arg1, OnMapChanged listener) {
-		super(arg0, arg1);
+	public BetterMapView(Context mContext, String arg1, OnMapChanged listener) {
+		super(mContext, arg1);
 		this.mOnMapChanged = listener;
 	}
 

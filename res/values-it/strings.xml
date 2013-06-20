@@ -34,6 +34,10 @@
     <string name="tab_myjourneys">I miei viaggi</string>
     <string name="tab_profile">Preferenze viaggio</string>
     <string name="tab_favorites">I miei luoghi</string>
+    <string name="tab_map">Mappa</string>
+    <string name="tab_lines">Linee</string>
+    <string name="tab_zones">Zone</string>
+    <string name="tab_parkings">Parcheggi</string>
     <string name="dialog_itineraryname_hint">Nome dell\'itinerario</string>
     <string name="plan_location">Dove</string>
     <string name="plan_datetime">Quando</string>
@@ -227,6 +231,7 @@
     
     <string name="toast_position">Posizione</string>
     <string name="toast_deleted">%s eliminata</string>
+    <string name="toast_position_deleted">Posizione %s eliminata</string>
     <string name="toast_alert_sent">Segnalazione inviata</string>
     <string name="toast_prefs_saved">Preferenze salvate!</string>
     <string name="toast_notification_sent">La tua notifica è stata inviata!</string>

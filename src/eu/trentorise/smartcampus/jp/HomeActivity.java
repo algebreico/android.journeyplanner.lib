@@ -15,7 +15,6 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.jp;
 
-import android.R.anim;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,19 +33,19 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.github.espiandev.showcaseview.ShowcaseView;
-import com.github.espiandev.showcaseview.ShowcaseView.OnShowcaseEventListener;
+import com.github.espiandev.showcaseview.BaseTutorialActivity;
 
 import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
+import eu.trentorise.smartcampus.jp.custom.TutorialActivity;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
-import eu.trentorise.smartcampus.jp.helper.JPHelper.Tutorial;
 import eu.trentorise.smartcampus.jp.notifications.BroadcastNotificationsActivity;
 import eu.trentorise.smartcampus.jp.notifications.NotificationsFragmentActivityJP;
 
-public class HomeActivity extends BaseActivity implements OnShowcaseEventListener {
+public class HomeActivity extends BaseActivity {
 
 	private boolean mHiddenNotification;
-	private ShowcaseView sv;
+
+	private final static int TUTORIAL_REQUEST_CODE = 1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +53,11 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 
 		setContentView(R.layout.home);
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD)
-			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+			getSupportActionBar().setNavigationMode(
+					ActionBar.NAVIGATION_MODE_STANDARD);
+
+		// DEBUG PURPOSE
+		JPHelper.getTutorialPreferences(this).edit().clear().commit();
 
 		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
@@ -73,8 +76,6 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 		super.onConfigurationChanged(newConfig);
 		// This is needed because the ShowCaseLibrary doesn't provide anything
 		// to manage screen rotation
-		if (sv != null && sv.isShown())
-			sv.forceLayout();
 	}
 
 	@Override
@@ -86,7 +87,8 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
-			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+			getSupportActionBar().setNavigationMode(
+					ActionBar.NAVIGATION_MODE_STANDARD);
 		}
 	}
 
@@ -101,8 +103,6 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 	@Override
 	protected void onPostResume() {
 		super.onPostResume();
-		if (JPHelper.wantTour(this))
-			showTutorials();
 	}
 
 	private void showTutorials() {
@@ -113,26 +113,32 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 			switch (t) {
 			case PLAN:
 				id = R.id.btn_planjourney;
+				title = getString(R.string.btn_planjourney);
 				msg = getString(R.string.plan_tut);
 				break;
 			case WATCH:
 				id = R.id.btn_monitorsavedjourney;
+				title = getString(R.string.btn_monitorsaved);
 				msg = getString(R.string.watch_tut);
 				break;
 			case INFO:
 				id = R.id.btn_smart;
+				title = getString(R.string.btn_smartcheck);
 				msg = getString(R.string.info_tut);
 				break;
 			case SEND:
 				id = R.id.btn_broadcast;
+				title = getString(R.string.btn_broadcast);
 				msg = getString(R.string.send_tut);
 				break;
 			case NOTIF:
 				id = R.id.btn_notifications;
+				title = getString(R.string.btn_notifications);
 				msg = getString(R.string.notif_tut);
 				break;
 			case PREFST:
 				id = R.id.btn_myprofile;
+				title = getString(R.string.btn_myprofile);
 				msg = getString(R.string.prefs_tut);
 				break;
 			default:
@@ -147,12 +153,15 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 	}
 
 	private void displayShowcaseView(int id, String title, String detail) {
-		ShowcaseView.ConfigOptions options = new ShowcaseView.ConfigOptions();
-		options.backColor = Color.argb(128, 34, 34, 34);
-		options.hideOnClickOutside = false;
-//		options.buttonText = getString(R.string.next_tut);
-		sv = ShowcaseView.insertShowcaseView(id, this, title, detail, options);
-		sv.setOnShowcaseEventListener(this);
+		int[] position = new int[2];
+		View v = findViewById(id);
+
+		if (v != null) {
+			v.getLocationInWindow(position);
+			BaseTutorialActivity.newIstance(this, position, v.getWidth(),Color.WHITE,null,
+					title, detail, TUTORIAL_REQUEST_CODE,
+					TutorialActivity.class);
+		}
 	}
 
 	@Override
@@ -221,7 +230,8 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 			startActivity(intent);
 			return;
 		} else {
-			Toast toast = Toast.makeText(getApplicationContext(), R.string.tmp, Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(getApplicationContext(), R.string.tmp,
+					Toast.LENGTH_SHORT);
 			toast.show();
 			return;
 		}
@@ -229,12 +239,14 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 
 	private void setHiddenNotification() {
 		try {
-			ApplicationInfo ai = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
+			ApplicationInfo ai = getPackageManager().getApplicationInfo(
+					this.getPackageName(), PackageManager.GET_META_DATA);
 			Bundle aBundle = ai.metaData;
 			mHiddenNotification = aBundle.getBoolean("hidden-notification");
 		} catch (NameNotFoundException e) {
 			mHiddenNotification = false;
-			Log.e(HomeActivity.class.getName(), "you should set the hidden-notification metadata in app manifest");
+			Log.e(HomeActivity.class.getName(),
+					"you should set the hidden-notification metadata in app manifest");
 		}
 		if (mHiddenNotification) {
 			View notificationButton = findViewById(R.id.btn_notifications);
@@ -244,34 +256,40 @@ public class HomeActivity extends BaseActivity implements OnShowcaseEventListene
 	}
 
 	private void showTourDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(getString(R.string.first_launch))
-				.setPositiveButton(getString(R.string.begin_tut), new DialogInterface.OnClickListener() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+				.setMessage(getString(R.string.first_launch))
+				.setPositiveButton(getString(R.string.begin_tut),
+						new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						JPHelper.setWantTour(HomeActivity.this, true);
-					}
-				}).setNeutralButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								JPHelper.setWantTour(HomeActivity.this, true);
+								showTutorials();
+							}
+						})
+				.setNeutralButton(getString(android.R.string.cancel),
+						new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						JPHelper.setWantTour(HomeActivity.this, false);
-						dialog.dismiss();
-					}
-				});
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								JPHelper.setWantTour(HomeActivity.this, false);
+								dialog.dismiss();
+							}
+						});
 		builder.create().show();
 	}
 
 	@Override
-	public void onShowcaseViewHide(ShowcaseView showcaseView) {
-		if (JPHelper.wantTour(this))
-			showTutorials();
-	}
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 
-	@Override
-	public void onShowcaseViewShow(ShowcaseView showcaseView) {
-		// JPHelper.setTutorialAsShowed(this,
-		// JPHelper.getLastTutorialNotShowed(this));
+		if (requestCode == TUTORIAL_REQUEST_CODE) {
+			if (resultCode == RESULT_CANCELED) {
+				if (JPHelper.wantTour(this))
+					showTutorials();
+			}
+		}
 	}
-
 }

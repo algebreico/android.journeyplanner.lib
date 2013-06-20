@@ -95,9 +95,9 @@ public class JPHelper {
 	
 	//tutorial's stuff
 	
-	private static final String TUT_PREFS= "tut_prefs";
-	private static final String TOUR_PREFS= "wantTour";
-	private static final String FIRST_LAUNCH_PREFS= "firstLaunch";
+	private static final String TUT_PREFS= "jp_tut_prefs";
+	private static final String TOUR_PREFS= "jp_wantTour";
+	private static final String FIRST_LAUNCH_PREFS= "jp_firstLaunch";
 	
 	public static enum Tutorial {
 	    PLAN("planTut"),

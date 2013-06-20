@@ -60,6 +60,7 @@ import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.android.map.InfoDialog;
 import eu.trentorise.smartcampus.jp.custom.UserPrefsHolder;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
+import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
 import eu.trentorise.smartcampus.jp.helper.PrefsHelper;
 import eu.trentorise.smartcampus.jp.helper.processor.PlanNewJourneyProcessor;
 
@@ -251,9 +252,12 @@ public class PlanNewJourneyFragment extends FeedbackFragment {
 	}
 
 	protected void setUpLocationControls() {
+		List<Double> mapcenter = JPParamsHelper.getCenterMap();
+		double[] refLoc = mapcenter == null? null : new double[]{mapcenter.get(0),mapcenter.get(1)};
+
 		AutoCompleteTextView fromEditText = (AutoCompleteTextView) getView().findViewById(R.id.plannew_from_text);
 		GeocodingAutocompletionHelper fromAutocompletionHelper = new GeocodingAutocompletionHelper(getSherlockActivity(),
-				fromEditText, Config.TN_REGION, Config.TN_COUNTRY, Config.TN_ADM_AREA);
+				fromEditText, Config.TN_REGION, Config.TN_COUNTRY, Config.TN_ADM_AREA, refLoc);
 		fromAutocompletionHelper.setOnAddressSelectedListener(new OnAddressSelectedListener() {
 			@Override
 			public void onAddressSelected(Address address) {
@@ -266,7 +270,7 @@ public class PlanNewJourneyFragment extends FeedbackFragment {
 
 		AutoCompleteTextView toEditText = (AutoCompleteTextView) getView().findViewById(R.id.plannew_to_text);
 		GeocodingAutocompletionHelper toAutocompletionHelper = new GeocodingAutocompletionHelper(getSherlockActivity(),
-				toEditText, Config.TN_REGION, Config.TN_COUNTRY, Config.TN_ADM_AREA);
+				toEditText, Config.TN_REGION, Config.TN_COUNTRY, Config.TN_ADM_AREA, refLoc);
 		toAutocompletionHelper.setOnAddressSelectedListener(new OnAddressSelectedListener() {
 			@Override
 			public void onAddressSelected(Address address) {

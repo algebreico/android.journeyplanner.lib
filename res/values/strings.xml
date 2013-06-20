@@ -49,6 +49,7 @@
     <string name="plan_schedule">Schedule</string>
     <string name="plan_from">From&#8230;</string>
     <string name="plan_to">To&#8230;</string>
+    <string name="plan_address">Address&#8230;</string>
     <string name="plan_date">Date</string>
     <string name="plan_time">Time</string>
     <string name="plan_search">Go</string>

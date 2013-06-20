@@ -46,6 +46,7 @@
     <string name="plan_schedule">Giorni</string>
     <string name="plan_from">Da&#8230;</string>
     <string name="plan_to">A&#8230;</string>
+    <string name="plan_address">Indirizzo&#8230;</string>
     <string name="plan_date">Data</string>
     <string name="plan_time">Ora</string>
     <string name="plan_search">Vai</string>

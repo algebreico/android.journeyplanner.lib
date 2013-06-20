@@ -26,6 +26,7 @@ public class SmartCheckActivity extends BaseActivity {
 
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+			getSupportActionBar().removeAllTabs();
 		}
 
 		android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -55,6 +56,10 @@ public class SmartCheckActivity extends BaseActivity {
 	public void onBackPressed() {
 		Fragment smartCheckFragment = getSupportFragmentManager().findFragmentByTag(TAG_SMARTCHECKLIST);
 		if (smartCheckFragment == null || !smartCheckFragment.isVisible()) {
+			if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
+				getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+				getSupportActionBar().removeAllTabs();
+			}
 			android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 			SherlockFragment fragment = new SmartCheckListFragment();
 			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);

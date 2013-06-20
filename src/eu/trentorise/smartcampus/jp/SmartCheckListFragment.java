@@ -55,6 +55,7 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// actionBar.setDisplayShowHomeEnabled(true); // home icon
 					// bar
 					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+					actionBar.removeAllTabs();
 
 					// Lines
 					ActionBar.Tab tab = actionBar.newTab();
@@ -93,8 +94,8 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// RoutesHelper.AGENCYID_BUS_ROVERETO);
 					// fragment.setArguments(bundle);
 
-					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS); // tabs
-					// bar
+					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+					actionBar.removeAllTabs();
 
 					// Lines
 					ActionBar.Tab tab = actionBar.newTab();
@@ -122,8 +123,8 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Suburban bus timetable
 					// fragment = new SmartCheckSuburbanFragment();
 
-					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS); // tabs
-					// bar
+					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+					actionBar.removeAllTabs();
 
 					// Zones
 					ActionBar.Tab tab = actionBar.newTab();
@@ -151,8 +152,8 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Trains timetable
 					// fragment = new SmartCheckTrainFragment();
 
-					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS); // tabs
-					// bar
+					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+					actionBar.removeAllTabs();
 
 					// Lines
 					ActionBar.Tab tab = actionBar.newTab();
@@ -186,8 +187,8 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// ParkingsHelper.PARKING_AID_TRENTO);
 					// fragment.setArguments(bundle);
 
-					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS); // tabs
-					// bar
+					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+					actionBar.removeAllTabs();
 
 					// Lines
 					ActionBar.Tab tab = actionBar.newTab();
@@ -218,8 +219,8 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// ParkingsHelper.PARKING_AID_ROVERETO);
 					// fragment.setArguments(bundle);
 
-					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS); // tabs
-					// bar
+					actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+					actionBar.removeAllTabs();
 
 					// Lines
 					ActionBar.Tab tab = actionBar.newTab();

@@ -30,6 +30,8 @@ public class SmartCheckParkingsFragment extends SherlockListFragment {
 	private SmartCheckParkingsAdapter adapter;
 	private ParkingsLocationListener parkingLocationListener;
 
+	private SCAsyncTask<Void, Void, List<ParkingSerial>> loader;
+
 	public SmartCheckParkingsFragment() {
 	}
 
@@ -67,8 +69,10 @@ public class SmartCheckParkingsFragment extends SherlockListFragment {
 		setListAdapter(adapter);
 
 		// LOAD
-		new SCAsyncTask<Void, Void, List<ParkingSerial>>(getSherlockActivity(), new SmartCheckParkingsProcessor(
-				getSherlockActivity(), adapter, JPHelper.getLocationHelper().getLocation(), parkingAid)).execute();
+		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		loader = new SCAsyncTask<Void, Void, List<ParkingSerial>>(getSherlockActivity(), new SmartCheckParkingsProcessor(
+				getSherlockActivity(), adapter, JPHelper.getLocationHelper().getLocation(), parkingAid));
+		loader.execute();
 	}
 
 	@Override
@@ -101,6 +105,12 @@ public class SmartCheckParkingsFragment extends SherlockListFragment {
 	public void onPause() {
 		super.onPause();
 		JPHelper.getLocationHelper().removeLocationListener(parkingLocationListener);
+
+		if (loader != null) {
+			loader.cancel(true);
+		}
+
+		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 	}
 
 	// @Override

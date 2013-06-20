@@ -28,6 +28,7 @@ import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.jp.custom.BetterMapView;
 import eu.trentorise.smartcampus.jp.custom.BetterMapView.OnMapChanged;
+import eu.trentorise.smartcampus.jp.custom.map.MapManager;
 import eu.trentorise.smartcampus.jp.custom.map.ParkingObjectMapItemTapListener;
 import eu.trentorise.smartcampus.jp.custom.map.ParkingsInfoDialog;
 import eu.trentorise.smartcampus.jp.custom.map.ParkingsItemizedOverlay;
@@ -65,12 +66,11 @@ public class SmartCheckParkingMapFragment extends FeedbackFragment implements Pa
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mapContainer = new RelativeLayout(getActivity());
 
-		// mapView = MapManager.getMapView();
+		mapView = MapManager.getBetterMapView();
 		if (mapView == null) {
-			// mapView = new MapView(getSherlockActivity(),
-			// getResources().getString(R.string.maps_api_key));
 			mapView = new BetterMapView(getSherlockActivity(), getSherlockActivity().getResources().getString(
 					R.string.maps_api_key), this);
+			MapManager.setBetterMapView(mapView);
 		}
 
 		mapView.setClickable(true);
@@ -147,8 +147,10 @@ public class SmartCheckParkingMapFragment extends FeedbackFragment implements Pa
 			// move map to my location at first fix
 			mMyLocationOverlay.runOnFirstFix(new Runnable() {
 				public void run() {
-					mapView.getController().animateTo(mMyLocationOverlay.getMyLocation());
-					// load with radius? Not for now.
+					if (mapView != null && mapView.getController() != null && mMyLocationOverlay.getMyLocation() != null) {
+						mapView.getController().animateTo(mMyLocationOverlay.getMyLocation());
+						// load with radius? Not for now.
+					}
 				}
 			});
 		} else {
@@ -179,12 +181,13 @@ public class SmartCheckParkingMapFragment extends FeedbackFragment implements Pa
 	}
 
 	@Override
-	public void onDestroyView() {
+	public void onPause() {
+		super.onPause();
+
 		final ViewGroup parent = (ViewGroup) mapView.getParent();
 		if (parent != null) {
 			parent.removeView(mapView);
 		}
-		super.onDestroyView();
 	}
 
 	@Override

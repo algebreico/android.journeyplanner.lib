@@ -23,6 +23,7 @@ import java.util.List;
 import android.location.Location;
 import android.widget.ArrayAdapter;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.maps.GeoPoint;
 
@@ -34,6 +35,7 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class SmartCheckParkingsProcessor extends AbstractAsyncTaskProcessor<Void, List<ParkingSerial>> {
 
+	private SherlockFragmentActivity mActivity;
 	private ArrayAdapter<ParkingSerial> adapter;
 	private Location myLocation;
 	private String parkingAid;
@@ -63,6 +65,7 @@ public class SmartCheckParkingsProcessor extends AbstractAsyncTaskProcessor<Void
 	public SmartCheckParkingsProcessor(SherlockFragmentActivity activity, ArrayAdapter<ParkingSerial> adapter,
 			GeoPoint myLocation, String parkingAid) {
 		super(activity);
+		this.mActivity = activity;
 		this.adapter = adapter;
 
 		this.parkingAid = parkingAid;
@@ -122,6 +125,8 @@ public class SmartCheckParkingsProcessor extends AbstractAsyncTaskProcessor<Void
 
 		// save in cache
 		ParkingsHelper.setParkingsCache(orderedList);
+		
+		mActivity.setSupportProgressBarIndeterminateVisibility(false);
 	}
 
 }

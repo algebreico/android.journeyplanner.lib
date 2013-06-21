@@ -115,8 +115,8 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Lines
 					ActionBar.Tab tab = actionBar.newTab();
 					tab.setText(R.string.tab_lines);
-					tab.setTabListener(new TabListener<SmartCheckTrainFragment>(getSherlockActivity(), "lines",
-							SmartCheckTrainFragment.class, null));
+					tab.setTabListener(new TabListener<SmartCheckBusFragment>(getSherlockActivity(), "lines",
+							SmartCheckBusFragment.class, null));
 					Bundle bundle = new Bundle();
 					bundle.putString(SmartCheckBusFragment.PARAM_AID, RoutesHelper.AGENCYID_BUS_ROVERETO);
 					tab.setTag(bundle);

@@ -1,6 +1,7 @@
 package eu.trentorise.smartcampus.jp;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,15 @@ public class SmartCheckListFragment extends FeedbackFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.smartcheck, container, false);
 	}
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if (getSherlockActivity().getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
+			getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		}
+
+	}
 
 	@Override
 	public void onStart() {
@@ -45,10 +55,15 @@ public class SmartCheckListFragment extends FeedbackFragment {
 		optionsListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				
 				String optionName = adapter.getItem(position);
 				// Fragment fragment = null;
 				ActionBar actionBar = getSherlockActivity().getSupportActionBar();
-
+				FragmentTransaction fragmentTransaction =
+						 getSherlockActivity().getSupportFragmentManager()
+						 .beginTransaction();
+						 fragmentTransaction.remove(SmartCheckListFragment.this);
+						 fragmentTransaction.commit();
 				if (optionName.contentEquals(getResources().getString(R.string.smart_check_list_bus_trento_timetable))) {
 					// actionBar.setDisplayShowTitleEnabled(true); // system
 					// title
@@ -193,7 +208,7 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Lines
 					ActionBar.Tab tab = actionBar.newTab();
 					tab.setText(R.string.tab_parkings);
-					tab.setTabListener(new TabListener<SmartCheckParkingsFragment>(getSherlockActivity(), "parkings",
+					tab.setTabListener(new TabListener<SmartCheckParkingsFragment>(getSherlockActivity(), "lines",
 							SmartCheckParkingsFragment.class, null));
 					Bundle bundle = new Bundle();
 					bundle.putString(SmartCheckParkingsFragment.PARAM_AID, ParkingsHelper.PARKING_AID_TRENTO);
@@ -203,7 +218,7 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Map
 					tab = actionBar.newTab();
 					tab.setText(R.string.tab_map);
-					tab.setTabListener(new TabListener<SmartCheckParkingMapFragment>(getSherlockActivity(), "parkingsmap",
+					tab.setTabListener(new TabListener<SmartCheckParkingMapFragment>(getSherlockActivity(), "map",
 							SmartCheckParkingMapFragment.class, null));
 					bundle = new Bundle();
 					bundle.putString(SmartCheckParkingMapFragment.PARAM_AID, ParkingsHelper.PARKING_AID_TRENTO);
@@ -225,7 +240,7 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Lines
 					ActionBar.Tab tab = actionBar.newTab();
 					tab.setText(R.string.tab_lines);
-					tab.setTabListener(new TabListener<SmartCheckParkingsFragment>(getSherlockActivity(), "parkings",
+					tab.setTabListener(new TabListener<SmartCheckParkingsFragment>(getSherlockActivity(), "lines",
 							SmartCheckParkingsFragment.class, null));
 					Bundle bundle = new Bundle();
 					bundle.putString(SmartCheckParkingsFragment.PARAM_AID, ParkingsHelper.PARKING_AID_ROVERETO);
@@ -257,6 +272,7 @@ public class SmartCheckListFragment extends FeedbackFragment {
 				// fragmentTransaction.addToBackStack(null);
 				// fragmentTransaction.commit();
 				// }
+
 			}
 		});
 	}

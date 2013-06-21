@@ -130,6 +130,8 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		linelayout.setBackgroundColor(params.getColor());
 
 		TextView lineNumber = (TextView) getSherlockActivity().findViewById(R.id.lineNumber);
+		if (this.typeOfTransport)
+			lineNumber.setTextSize(15);
 		lineNumber.setText(params.getLine());
 		lineNumber.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 		lineNumber.setBackgroundColor(params.getColor());

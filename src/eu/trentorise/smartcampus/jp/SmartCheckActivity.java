@@ -31,8 +31,9 @@ public class SmartCheckActivity extends BaseActivity {
 
 		android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 		SherlockFragment fragment = new SmartCheckListFragment();
-		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 		fragmentTransaction.replace(Config.mainlayout, fragment, TAG_SMARTCHECKLIST);
+//		fragmentTransaction.addToBackStack(null);
 		fragmentTransaction.commit();
 	}
 
@@ -54,20 +55,40 @@ public class SmartCheckActivity extends BaseActivity {
 
 	@Override
 	public void onBackPressed() {
-		Fragment smartCheckFragment = getSupportFragmentManager().findFragmentByTag(TAG_SMARTCHECKLIST);
-		if (smartCheckFragment == null || !smartCheckFragment.isVisible()) {
-			if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
+		SherlockFragment smartCheckFragment = (SherlockFragment) getSupportFragmentManager().findFragmentByTag(
+				TAG_SMARTCHECKLIST);
+
+		if (getSupportFragmentManager().getBackStackEntryCount() == 0 && getSupportActionBar().getNavigationMode()!=ActionBar.NAVIGATION_MODE_STANDARD ) {
+//			super.onBackPressed();
+			
 				getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 				getSupportActionBar().removeAllTabs();
-			}
+			
+			
+			
 			android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-			SherlockFragment fragment = new SmartCheckListFragment();
-			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+			SherlockFragment fragment;
+			if (smartCheckFragment == null ) {
+				fragment = new SmartCheckListFragment();
+			} else {
+				fragment = smartCheckFragment;
+			}
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			fragmentTransaction.replace(Config.mainlayout, fragment, TAG_SMARTCHECKLIST);
 			fragmentTransaction.commit();
+			
 		} else {
 			super.onBackPressed();
 		}
+		
+		// } else {
+		// android.support.v4.app.FragmentTransaction fragmentTransaction =
+		// getSupportFragmentManager().beginTransaction();
+		// fragmentTransaction.attach(smartCheckFragment);
+		// fragmentTransaction.commit();
+		//
+		// }
+		
 	}
 
 	@Override

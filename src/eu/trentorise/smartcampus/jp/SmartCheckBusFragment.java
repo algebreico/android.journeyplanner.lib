@@ -76,8 +76,8 @@ public class SmartCheckBusFragment extends FeedbackFragment {
 					b.putParcelable(SmartCheckBusDirectionFragment.PARAM_LINE, busLines.get(position));
 					fragment.setArguments(b);
 					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-					fragmentTransaction.replace(Config.mainlayout, fragment);
-					fragmentTransaction.addToBackStack(null);
+					fragmentTransaction.replace(Config.mainlayout, fragment, "lines");
+					fragmentTransaction.addToBackStack(fragment.getTag());
 					fragmentTransaction.commit();
 				} else {
 					// call directly the
@@ -93,8 +93,8 @@ public class SmartCheckBusFragment extends FeedbackFragment {
 					b.putParcelable(SmartCheckTTFragment.PARAM_SMARTLINE, param);
 					fragment.setArguments(b);
 					fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-					fragmentTransaction.replace(Config.mainlayout, fragment);
-					fragmentTransaction.addToBackStack(null);
+					fragmentTransaction.replace(Config.mainlayout, fragment, "lines");
+					fragmentTransaction.addToBackStack(fragment.getTag());
 					fragmentTransaction.commit();
 				}
 			}

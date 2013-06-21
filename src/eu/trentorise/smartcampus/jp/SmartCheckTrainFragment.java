@@ -2,8 +2,6 @@ package eu.trentorise.smartcampus.jp;
 
 import java.util.Arrays;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -17,7 +15,6 @@ import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.jp.custom.SmartCheckTrainAdapter;
 import eu.trentorise.smartcampus.jp.custom.data.SmartLine;
 import eu.trentorise.smartcampus.jp.helper.RoutesHelper;
-import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
 
 public class SmartCheckTrainFragment extends FeedbackFragment {
 
@@ -28,7 +25,7 @@ public class SmartCheckTrainFragment extends FeedbackFragment {
 	private String[] agencyIds = new String[] { RoutesHelper.AGENCYID_TRAIN_BZVR, RoutesHelper.AGENCYID_TRAIN_TM,
 			RoutesHelper.AGENCYID_TRAIN_TNBDG };
 
-	private SmartCheckStop selectedStop = null;
+//	private SmartCheckStop selectedStop = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,8 +67,8 @@ public class SmartCheckTrainFragment extends FeedbackFragment {
 				b.putParcelable(SmartCheckTTFragment.PARAM_SMARTLINE, param);
 				fragment.setArguments(b);
 				fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-				fragmentTransaction.replace(Config.mainlayout, fragment);
-				fragmentTransaction.addToBackStack(null);
+				fragmentTransaction.replace(Config.mainlayout, fragment, "lines");
+				fragmentTransaction.addToBackStack(fragment.getTag());
 				fragmentTransaction.commit();
 
 				// Toast toast = Toast.makeText(getSherlockActivity(),
@@ -99,34 +96,34 @@ public class SmartCheckTrainFragment extends FeedbackFragment {
 		// });
 	}
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent result) {
-		super.onActivityResult(requestCode, resultCode, result);
+//	@Override
+//	public void onActivityResult(int requestCode, int resultCode, Intent result) {
+//		super.onActivityResult(requestCode, resultCode, result);
+//
+//		if (requestCode == StopSelectActivity.REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+//			if (result.getExtras().containsKey(StopSelectActivity.ARG_STOP)) {
+//				selectedStop = (SmartCheckStop) result.getSerializableExtra(StopSelectActivity.ARG_STOP);
+//			}
+//		}
+//	}
 
-		if (requestCode == StopSelectActivity.REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-			if (result.getExtras().containsKey(StopSelectActivity.ARG_STOP)) {
-				selectedStop = (SmartCheckStop) result.getSerializableExtra(StopSelectActivity.ARG_STOP);
-			}
-		}
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-
-		if (selectedStop != null) {
-			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
-			Fragment fragment = new SmartCheckStopFragment();
-			Bundle args = new Bundle();
-			args.putSerializable(SmartCheckStopFragment.ARG_STOP, selectedStop);
-			fragment.setArguments(args);
-			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(Config.mainlayout, fragment);
-			fragmentTransaction.addToBackStack(null);
-			// fragmentTransaction.commitAllowingStateLoss();
-			fragmentTransaction.commit();
-			selectedStop = null;
-		}
-	}
+//	@Override
+//	public void onResume() {
+//		super.onResume();
+//
+//		if (selectedStop != null) {
+//			FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+//			Fragment fragment = new SmartCheckStopFragment();
+//			Bundle args = new Bundle();
+//			args.putSerializable(SmartCheckStopFragment.ARG_STOP, selectedStop);
+//			fragment.setArguments(args);
+//			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+//			fragmentTransaction.replace(Config.mainlayout, fragment);
+//			fragmentTransaction.addToBackStack(null);
+//			// fragmentTransaction.commitAllowingStateLoss();
+//			fragmentTransaction.commit();
+//			selectedStop = null;
+//		}
+//	}
 
 }

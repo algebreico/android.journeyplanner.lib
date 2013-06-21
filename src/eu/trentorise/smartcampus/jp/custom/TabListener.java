@@ -56,7 +56,7 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	/* The following are each of the ActionBar.TabListener callbacks */
 
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
-		SherlockFragment preInitializedFragment = (SherlockFragment) mActivity.getSupportFragmentManager().findFragmentByTag(
+		Fragment preInitializedFragment =  mActivity.getSupportFragmentManager().findFragmentByTag(
 				mTag);
 		if (preInitializedFragment != null && !preInitializedFragment.equals(mFragment)) {
 			ft.remove(preInitializedFragment);
@@ -65,8 +65,9 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 		if (mFragment == null) {
 			// If not, instantiate and add it to the activity
 			mFragment = Fragment.instantiate(mActivity, mClass.getName(), tab.getTag() != null ? (Bundle) tab.getTag() : null);
-			// ft.add(android.R.id.content, mFragment, mTag);
-			ft.replace(android.R.id.content, mFragment);
+			 ft.add(android.R.id.content, mFragment, mTag);
+//			ft.replace(android.R.id.content, mFragment);
+			
 		} else {
 			// If it exists, simply attach it in order to show it
 			ft.attach(mFragment);

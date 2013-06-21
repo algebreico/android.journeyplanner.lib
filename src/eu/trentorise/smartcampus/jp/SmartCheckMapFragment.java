@@ -246,8 +246,8 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		args.putSerializable(SmartCheckStopFragment.ARG_STOP, stop);
 		fragment.setArguments(args);
 		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		fragmentTransaction.replace(Config.mainlayout, fragment);
-		fragmentTransaction.addToBackStack(null);
+		fragmentTransaction.replace(Config.mainlayout, fragment, "map");
+		fragmentTransaction.addToBackStack(fragment.getTag());
 		// fragmentTransaction.commitAllowingStateLoss();
 		fragmentTransaction.commit();
 		selectedStop = null;

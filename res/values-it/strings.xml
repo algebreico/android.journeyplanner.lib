@@ -21,7 +21,7 @@
     <string name="placeholder">&#8230;</string>
     <string name="app_name">ViaggiaTrento</string>
     <string name="btn_planjourney">Pianifica\nviaggio</string>
-    <string name="btn_monitorrecurrent">I miei viaggi</string>
+    <string name="btn_monitorrecurrent">Monitoraggio tratte abituali</string>
     <string name="btn_broadcast">Invia\nsegnalazioni</string>
     <string name="btn_myprofile">Preferenze</string>
     <string name="btn_smartcheck">Info in tempo reale</string>
@@ -138,12 +138,12 @@
     <string name="label_to">A:</string>
     <string name="label_days">Giorni:</string>
     <string name="menu_item_edit">Modifica</string>
-    <string name="btn_monitorsaved">Controlla\nviaggi salvati</string>
+    <string name="btn_monitorsaved">Viaggi salvati</string>
     <string name="title_saved_journey">I miei viaggi</string>
     <string name="title_plan_journey">Pianifica viaggio</string>
-    <string name="title_monitor_journey">Controlla viaggio</string>
+    <string name="title_monitor_journey">Monitoraggio</string>
     <string name="tab_myoneoffjourneys">VIAGGI</string>
-    <string name="tab_myrecjourneys">SOTTO CONTROLLO</string>
+    <string name="tab_myrecjourneys">MONITORAGGI</string>
     <!-- days of the week -->
     <string name="monday">Lun</string>
     <string name="tuesday">Mar</string>
@@ -275,4 +275,7 @@
     <string name="tt_today">  Oggi </string>
     <string name="tt_next">  Prossimo  </string>
     
+    
+    <string name="info_save_new_journey"> Salvando questo itinerario, sarai informato di eventuali ritardi o problemi che lo possano influenzare.</string>
+    <string name="info_save_rec_journey">  Scegli le linee dei mezzi pubblici che ti interessa monitorare, ossia per le quali vuoi essere informato in caso di ritardi.</string>
 </resources>

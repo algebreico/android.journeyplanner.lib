@@ -281,4 +281,8 @@
     <string name="tt_today">  Today </string>
     <string name="tt_next">  Next  </string>
 
+    
+    <string name="info_save_new_journey"> By saving this itinerary you will be notified about any delays or problems that might affect it.</string>
+    <string name="info_save_rec_journey"> Choose the transit lines you would like to monitor, i.e. those for which you want to be notified in case of delays.</string>
+    
 </resources>

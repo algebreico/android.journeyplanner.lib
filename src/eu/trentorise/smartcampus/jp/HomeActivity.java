@@ -38,6 +38,7 @@ import com.github.espiandev.showcaseview.BaseTutorialActivity;
 import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
 import eu.trentorise.smartcampus.jp.custom.TutorialActivity;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
+import eu.trentorise.smartcampus.jp.helper.JPHelper.Tutorial;
 import eu.trentorise.smartcampus.jp.notifications.BroadcastNotificationsActivity;
 import eu.trentorise.smartcampus.jp.notifications.NotificationsFragmentActivityJP;
 
@@ -46,6 +47,9 @@ public class HomeActivity extends BaseActivity {
 	private boolean mHiddenNotification;
 
 	private final static int TUTORIAL_REQUEST_CODE = 1;
+
+
+	private Tutorial lastShowed;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,7 @@ public class HomeActivity extends BaseActivity {
 					ActionBar.NAVIGATION_MODE_STANDARD);
 
 		// DEBUG PURPOSE
-		//JPHelper.getTutorialPreferences(this).edit().clear().commit();
+		 JPHelper.getTutorialPreferences(this).edit().clear().commit();
 
 		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
@@ -69,13 +73,6 @@ public class HomeActivity extends BaseActivity {
 			showTourDialog();
 			JPHelper.disableFirstLaunch(this);
 		}
-	}
-
-	@Override
-	public void onConfigurationChanged(Configuration newConfig) {
-		super.onConfigurationChanged(newConfig);
-		// This is needed because the ShowCaseLibrary doesn't provide anything
-		// to manage screen rotation
 	}
 
 	@Override
@@ -103,6 +100,9 @@ public class HomeActivity extends BaseActivity {
 	@Override
 	protected void onPostResume() {
 		super.onPostResume();
+		
+		if (JPHelper.wantTour(this))
+			showTutorials();
 	}
 
 	private void showTutorials() {
@@ -147,7 +147,7 @@ public class HomeActivity extends BaseActivity {
 			}
 		if (t != null) {
 			displayShowcaseView(id, title, msg);
-			JPHelper.setTutorialAsShowed(this, t);
+			lastShowed = t;
 		} else
 			JPHelper.setWantTour(this, false);
 	}
@@ -158,8 +158,8 @@ public class HomeActivity extends BaseActivity {
 
 		if (v != null) {
 			v.getLocationInWindow(position);
-			BaseTutorialActivity.newIstance(this, position, v.getWidth(),Color.WHITE,null,
-					title, detail, TUTORIAL_REQUEST_CODE,
+			BaseTutorialActivity.newIstance(this, position, v.getWidth(),
+					Color.WHITE, null, title, detail, TUTORIAL_REQUEST_CODE,
 					TutorialActivity.class);
 		}
 	}
@@ -286,10 +286,15 @@ public class HomeActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		if (requestCode == TUTORIAL_REQUEST_CODE) {
-			if (resultCode == RESULT_CANCELED) {
-				if (JPHelper.wantTour(this))
+			if (resultCode == RESULT_OK) {
+				String resData = data.getExtras().getString(BaseTutorialActivity.RESULT_DATA);
+				if(resData.equals(BaseTutorialActivity.OK))
+					JPHelper.setTutorialAsShowed(this, lastShowed);
+				if (JPHelper.wantTour(this)){
 					showTutorials();
-			}
+				}
+			} 
+			
 		}
 	}
 }

@@ -57,7 +57,7 @@ public class HomeActivity extends BaseActivity {
 					ActionBar.NAVIGATION_MODE_STANDARD);
 
 		// DEBUG PURPOSE
-		JPHelper.getTutorialPreferences(this).edit().clear().commit();
+		//JPHelper.getTutorialPreferences(this).edit().clear().commit();
 
 		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
@@ -65,10 +65,10 @@ public class HomeActivity extends BaseActivity {
 
 		setHiddenNotification();
 
-//		if (JPHelper.isFirstLaunch(this)) {
-//			showTourDialog();
-//			JPHelper.disableFirstLaunch(this);
-//		}
+		if (JPHelper.isFirstLaunch(this)) {
+			showTourDialog();
+			JPHelper.disableFirstLaunch(this);
+		}
 	}
 
 	@Override

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.jp;
 
+import android.R.bool;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -61,7 +62,7 @@ public class HomeActivity extends BaseActivity {
 					ActionBar.NAVIGATION_MODE_STANDARD);
 
 		// DEBUG PURPOSE
-		 JPHelper.getTutorialPreferences(this).edit().clear().commit();
+		// JPHelper.getTutorialPreferences(this).edit().clear().commit();
 
 		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
@@ -108,58 +109,65 @@ public class HomeActivity extends BaseActivity {
 	private void showTutorials() {
 		JPHelper.Tutorial t = JPHelper.getLastTutorialNotShowed(this);
 		String title = "", msg = "";
+		boolean isLast= false;
 		int id = R.id.btn_myprofile;
 		if (t != null)
 			switch (t) {
 			case PLAN:
 				id = R.id.btn_planjourney;
 				title = getString(R.string.btn_planjourney);
-				msg = getString(R.string.plan_tut);
+				msg = getString(R.string.jp_plan_tut);
+				break;
+			case MONITOR:
+				id = R.id.btn_monitorrecurrentjourney;
+				title = getString(R.string.btn_monitorrecurrent);
+				msg = getString(R.string.jp_plan_tut);
 				break;
 			case WATCH:
 				id = R.id.btn_monitorsavedjourney;
 				title = getString(R.string.btn_monitorsaved);
-				msg = getString(R.string.watch_tut);
+				msg = getString(R.string.jp_watch_tut);
 				break;
 			case INFO:
 				id = R.id.btn_smart;
 				title = getString(R.string.btn_smartcheck);
-				msg = getString(R.string.info_tut);
+				msg = getString(R.string.jp_info_tut);
 				break;
 			case SEND:
 				id = R.id.btn_broadcast;
 				title = getString(R.string.btn_broadcast);
-				msg = getString(R.string.send_tut);
+				msg = getString(R.string.jp_send_tut);
 				break;
 			case NOTIF:
 				id = R.id.btn_notifications;
 				title = getString(R.string.btn_notifications);
-				msg = getString(R.string.notif_tut);
+				msg = getString(R.string.jp_notif_tut);
 				break;
 			case PREFST:
 				id = R.id.btn_myprofile;
 				title = getString(R.string.btn_myprofile);
-				msg = getString(R.string.prefs_tut);
+				msg = getString(R.string.jp_prefs_tut);
+				isLast=true;
 				break;
 			default:
 				id = -1;
 				break;
 			}
 		if (t != null) {
-			displayShowcaseView(id, title, msg);
+			displayShowcaseView(id, title, msg,isLast);
 			lastShowed = t;
 		} else
 			JPHelper.setWantTour(this, false);
 	}
 
-	private void displayShowcaseView(int id, String title, String detail) {
+	private void displayShowcaseView(int id, String title, String detail,boolean isLast) {
 		int[] position = new int[2];
 		View v = findViewById(id);
 
 		if (v != null) {
 			v.getLocationInWindow(position);
 			BaseTutorialActivity.newIstance(this, position, v.getWidth(),
-					Color.WHITE, null, title, detail, TUTORIAL_REQUEST_CODE,
+					Color.WHITE, null, title, detail, isLast, TUTORIAL_REQUEST_CODE,
 					TutorialActivity.class);
 		}
 	}
@@ -257,7 +265,7 @@ public class HomeActivity extends BaseActivity {
 
 	private void showTourDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.first_launch))
+				.setMessage(getString(R.string.jp_first_launch))
 				.setPositiveButton(getString(R.string.begin_tut),
 						new DialogInterface.OnClickListener() {
 

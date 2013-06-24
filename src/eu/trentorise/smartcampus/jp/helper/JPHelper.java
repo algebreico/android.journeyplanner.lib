@@ -101,10 +101,11 @@ public class JPHelper {
 	
 	public static enum Tutorial {
 	    PLAN("planTut"),
+	    MONITOR("monitorTut"),
 	    WATCH("watchTut"),
+	    NOTIF("notifTut"),
 	    SEND("sendTut"),
 	    INFO("infoTut"),
-	    NOTIF("notifTut"),
 	    PREFST("prefsTut")
 	    ;
 	    /**

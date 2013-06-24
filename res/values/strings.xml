@@ -37,6 +37,10 @@
     <string name="tab_myjourneys">My journeys</string>
     <string name="tab_profile">Preferences</string>
     <string name="tab_favorites">My locations</string>
+    <string name="tab_map">Map</string>
+    <string name="tab_lines">Lines</string>
+    <string name="tab_zones">Zones</string>
+    <string name="tab_parkings">Parkings</string>
     <string name="dialog_itineraryname_hint">Journey name</string>
     <string name="plan_location">Location</string>
     <string name="plan_datetime">Departure</string>
@@ -45,6 +49,7 @@
     <string name="plan_schedule">Schedule</string>
     <string name="plan_from">From&#8230;</string>
     <string name="plan_to">To&#8230;</string>
+    <string name="plan_address">Address&#8230;</string>
     <string name="plan_date">Date</string>
     <string name="plan_time">Time</string>
     <string name="plan_search">Go</string>
@@ -232,6 +237,7 @@
         
     <string name="toast_position">Position</string>
     <string name="toast_deleted">%s deleted</string>
+    <string name="toast_position_deleted">Position %s deleted</string>
     <string name="toast_alert_sent">Alert submitted</string>
     <string name="toast_prefs_saved">Preferences saved successfully!</string>
     <string name="toast_notification_sent">Your notification has been sent!</string>
@@ -275,4 +281,8 @@
     <string name="tt_today">  Today </string>
     <string name="tt_next">  Next  </string>
 
+    
+    <string name="info_save_new_journey"> By saving this itinerary you will be notified about any delays or problems that might affect it.</string>
+    <string name="info_save_rec_journey"> Choose the transit lines you would like to monitor, i.e. those for which you want to be notified in case of delays.</string>
+    
 </resources>

@@ -130,6 +130,8 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		linelayout.setBackgroundColor(params.getColor());
 
 		TextView lineNumber = (TextView) getSherlockActivity().findViewById(R.id.lineNumber);
+		if (this.typeOfTransport)
+			lineNumber.setTextSize(17);
 		lineNumber.setText(params.getLine());
 		lineNumber.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 		lineNumber.setBackgroundColor(params.getColor());
@@ -399,7 +401,9 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	}
 
 	private void reloadDelays() {
-		GridView gwDelays = (GridView) getActivity().findViewById(R.id.delays);
+		GridView gwDelays = null;
+		if (getSherlockActivity()!=null)
+			gwDelays = (GridView) getSherlockActivity().findViewById(R.id.delays);
 		if (gwDelays!=null)
 			gwDelays.setAdapter(new TTDelaysAdapter(getSherlockActivity(),delays));
 	}

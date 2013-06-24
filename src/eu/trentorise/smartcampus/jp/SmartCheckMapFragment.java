@@ -119,7 +119,8 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 
 		mMyLocationOverlay = new MyLocationOverlay(getSherlockActivity(), mapView) {
 			@Override
-			protected void drawMyLocation(Canvas canvas, MapView mapView, Location lastFix, GeoPoint myLocation, long when) {
+			protected void drawMyLocation(Canvas canvas, MapView mapView, Location lastFix, GeoPoint myLocation,
+					long when) {
 				Projection p = mapView.getProjection();
 				float accuracy = p.metersToEquatorPixels(lastFix.getAccuracy());
 				Point loc = p.toPixels(myLocation, null);
@@ -166,8 +167,11 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 						loader.cancel(true);
 					}
 
-					loader = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, stopsItemizedoverlay, new double[] {
-							centerGeoPoint.getLatitudeE6() / 1e6, centerGeoPoint.getLongitudeE6() / 1e6 },
+					loader = new StopsAsyncTask(
+							selectedAgencyIds,
+							smartCheckStopMap,
+							stopsItemizedoverlay,
+							new double[] { centerGeoPoint.getLatitudeE6() / 1e6, centerGeoPoint.getLongitudeE6() / 1e6 },
 							mapView.getDiagonalLenght(), mapView, mFragment);
 					loader.execute();
 				}
@@ -201,7 +205,8 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		// tabs
 
 		// hide keyboard if it is still open
-		InputMethodManager imm = (InputMethodManager) getSherlockActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager) getSherlockActivity().getSystemService(
+				Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(mapView.getWindowToken(), 0);
 	}
 
@@ -215,10 +220,10 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 
 		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 
-//		final ViewGroup parent = (ViewGroup) mapView.getParent();
-//		if (parent != null) {
-//			parent.removeView(mapView);
-//		}
+		// final ViewGroup parent = (ViewGroup) mapView.getParent();
+		// if (parent != null) {
+		// parent.removeView(mapView);
+		// }
 	}
 
 	@Override
@@ -285,10 +290,11 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 
 			if (sfa != null) {
 				getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
-				loader = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, stopsItemizedoverlay, location, diagonal,
-						mapView, this);
-				loader.execute();
 			}
+			loader = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, stopsItemizedoverlay, location, diagonal,
+					mapView, this);
+			loader.execute();
+
 		}
 		// }
 	}
@@ -296,9 +302,8 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 	@Override
 	public void onZoomChanged(GeoPoint center, double diagonal) {
 		SherlockFragmentActivity sfa = getSherlockActivity();
-		Log.i("where",
-				"DiagonalLenght: " + diagonal + "\nCenter Long: " + center.getLongitudeE6() / 1e6 + " Lat: "
-						+ center.getLatitudeE6() / 1e6);
+		Log.i("where", "DiagonalLenght: " + diagonal + "\nCenter Long: " + center.getLongitudeE6() / 1e6 + " Lat: "
+				+ center.getLatitudeE6() / 1e6);
 		final double[] location = { center.getLatitudeE6() / 1e6, center.getLongitudeE6() / 1e6 };
 		// if (cache == null || diagonalLenght > cache.getDiagonal()) {
 		Square s = new Square(location, diagonal);
@@ -309,10 +314,11 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 
 			if (sfa != null) {
 				getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
-				loader = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, stopsItemizedoverlay, location, diagonal,
-						mapView, this);
-				loader.execute();
 			}
+			loader = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, stopsItemizedoverlay, location, diagonal,
+					mapView, this);
+			loader.execute();
+
 		}
 		// }
 	}
@@ -324,7 +330,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 	public void setSelectedStop(SmartCheckStop selectedStop) {
 		this.selectedStop = selectedStop;
 	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration arg0) {
 		super.onConfigurationChanged(arg0);

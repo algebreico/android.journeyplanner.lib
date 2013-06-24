@@ -120,7 +120,8 @@ public class StopSelectActivity extends FeedbackFragmentActivity implements Stop
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
 				(RelativeLayout) findViewById(R.id.mapcontainer_relativelayout_jp));
 
-		mapView = new BetterMapView(this, getResources().getString(R.string.maps_api_key), StopSelectActivity.this);
+		mapView = new BetterMapView(this, getResources().getString(R.string.maps_api_key));
+		mapView.setOnMapChanged(StopSelectActivity.this);
 
 		// mapView = MapManager.getMapView();
 		// setContentView(R.layout.mapcontainer);
@@ -172,9 +173,9 @@ public class StopSelectActivity extends FeedbackFragmentActivity implements Stop
 				// cache = new Square(location_old,
 				mapView.getDiagonalLenght();
 				// load with radius? Not for now.
-				if (active != null)
-					active.cancel(true);
-				active = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, mItemizedoverlay, location_old, mapView
+//				if (active != null)
+//					active.cancel(true);
+				active = new StopsAsyncTask(selectedAgencyIds,  mItemizedoverlay, location_old, mapView
 						.getDiagonalLenght(), mapView, StopSelectActivity.this);
 
 				active.execute();
@@ -263,10 +264,10 @@ public class StopSelectActivity extends FeedbackFragmentActivity implements Stop
 		// || cache.getLong() != location[1]) {
 		Square s = new Square(location, diagonal);
 		if (cache == null || cache.compareTo(s)) {
-			if (active != null)
-				active.cancel(true);
+//			if (active != null)
+//				active.cancel(true);
 			setSupportProgressBarIndeterminateVisibility(true);
-			active = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, mItemizedoverlay, location, diagonal, mapView,
+			active = new StopsAsyncTask(selectedAgencyIds,  mItemizedoverlay, location, diagonal, mapView,
 					this);
 			active.execute();
 		}
@@ -281,10 +282,10 @@ public class StopSelectActivity extends FeedbackFragmentActivity implements Stop
 		// if (cache == null || diagonalLenght > cache.getDiagonal()) {
 		Square s = new Square(location, diagonalLenght);
 		if (cache == null || cache.compareTo(s)) {
-			if (active != null)
-				active.cancel(true);
+//			if (active != null)
+//				active.cancel(true);
 			setSupportProgressBarIndeterminateVisibility(true);
-			active = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, mItemizedoverlay, location, diagonalLenght,
+			active = new StopsAsyncTask(selectedAgencyIds,  mItemizedoverlay, location, diagonalLenght,
 					mapView, this);
 			active.execute();
 		}

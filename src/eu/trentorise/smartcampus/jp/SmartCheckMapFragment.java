@@ -2,9 +2,8 @@ package eu.trentorise.smartcampus.jp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -29,7 +28,6 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
 
 import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
@@ -65,7 +63,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 	private StopsAsyncTask loader;
 	private Runnable onFirstFixLoader;
 
-	private Map<String, SmartCheckStop> smartCheckStopMap;
+//	private Map<String, SmartCheckStop> smartCheckStopMap;
 	private Square cache;
 
 	private GeoPoint centerGeoPoint = null;
@@ -85,12 +83,21 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		mapContainer = new RelativeLayout(getActivity());
 
 		mapView = MapManager.getBetterMapView();
+		
+		SherlockFragmentActivity sfa = getSherlockActivity();
 		if (mapView == null) {
 			mapView = new BetterMapView(getSherlockActivity(), getSherlockActivity().getResources().getString(
-					R.string.maps_api_key), this);
+					R.string.maps_api_key));
 			MapManager.setBetterMapView(mapView);
+//		} else {
+//			 final ViewGroup parent = (ViewGroup) mapView.getParent();
+//			 if (parent != null) {
+//			 parent.removeView(mapView);
+//			 }
 		}
-
+		
+		mapView.setOnMapChanged(this);
+		
 		mapView.setClickable(true);
 		mapView.setBuiltInZoomControls(true);
 
@@ -108,85 +115,92 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		}
 		mapContainer.addView(mapView);
 
-		List<Overlay> listOfOverlays = mapView.getOverlays();
-		mapView.getOverlays().clear();
-
-		listOfOverlays.clear();
-		stopsItemizedoverlay = new StopsItemizedOverlay(getSherlockActivity(), mapView);
-		stopsItemizedoverlay.setMapItemTapListener(this);
-		listOfOverlays.add(stopsItemizedoverlay);
-		// setEventCategoriesToLoad("Family");
-
-		mMyLocationOverlay = new MyLocationOverlay(getSherlockActivity(), mapView) {
-			@Override
-			protected void drawMyLocation(Canvas canvas, MapView mapView, Location lastFix, GeoPoint myLocation,
-					long when) {
-				Projection p = mapView.getProjection();
-				float accuracy = p.metersToEquatorPixels(lastFix.getAccuracy());
-				Point loc = p.toPixels(myLocation, null);
-				Paint paint = new Paint();
-				paint.setAntiAlias(true);
-				// paint.setColor(Color.BLUE);
-				paint.setColor(Color.parseColor(mContext.getResources().getString(R.color.jpappcolor)));
-
-				if (accuracy > 10.0f) {
-					paint.setAlpha(50);
-					canvas.drawCircle(loc.x, loc.y, accuracy, paint);
-					// border
-					paint.setAlpha(200);
-					paint.setStyle(Paint.Style.STROKE);
-					canvas.drawCircle(loc.x, loc.y, accuracy, paint);
-				}
-
-				Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.me).copy(
-						Bitmap.Config.ARGB_8888, true);
-				canvas.drawBitmap(bitmap, loc.x - (bitmap.getWidth() / 2), loc.y - bitmap.getHeight(), null);
-			}
-		};
-		mMyLocationOverlay.enableMyLocation();
-		listOfOverlays.add(mMyLocationOverlay);
+		// List<Overlay> listOfOverlays = mapView.getOverlays();
+		// listOfOverlays.clear();
 
 		if (selectedAgencyIds == null
 				|| !(Arrays.asList(argumentsSelectedAgencyIds).containsAll(Arrays.asList(selectedAgencyIds)))) {
 			this.selectedAgencyIds = argumentsSelectedAgencyIds;
-			this.smartCheckStopMap = new HashMap<String, SmartCheckStop>();
 			mapView.getController().setZoom(JPParamsHelper.getZoomLevelMap() + 2);
 		}
 
-		onFirstFixLoader = new Runnable() {
-			public void run() {
-				SherlockFragmentActivity sfa = getSherlockActivity();
+		if (stopsItemizedoverlay == null) {
+			stopsItemizedoverlay = new StopsItemizedOverlay(getSherlockActivity(), mapView);
+			stopsItemizedoverlay.setMapItemTapListener(this);
+//			this.smartCheckStopMap = new HashMap<String, SmartCheckStop>();
+			
 
-				if (sfa != null) {
-					// mapView.getDiagonalLenght();
-					// load with radius? Not for now.
-					centerGeoPoint = mMyLocationOverlay.getMyLocation();
-					mapView.getController().animateTo(centerGeoPoint);
+		}
+		 mapView.getOverlays().clear();
+		mapView.getOverlays().add(stopsItemizedoverlay);
 
-					if (loader != null) {
-						loader.cancel(true);
+		// setEventCategoriesToLoad("Family");
+
+		if (mMyLocationOverlay == null) {
+			mMyLocationOverlay = new MyLocationOverlay(getSherlockActivity(), mapView) {
+				@Override
+				protected void drawMyLocation(Canvas canvas, MapView mapView, Location lastFix, GeoPoint myLocation,
+						long when) {
+					Projection p = mapView.getProjection();
+					float accuracy = p.metersToEquatorPixels(lastFix.getAccuracy());
+					Point loc = p.toPixels(myLocation, null);
+					Paint paint = new Paint();
+					paint.setAntiAlias(true);
+					// paint.setColor(Color.BLUE);
+					paint.setColor(Color.parseColor(mContext.getResources().getString(R.color.jpappcolor)));
+
+					if (accuracy > 10.0f) {
+						paint.setAlpha(50);
+						canvas.drawCircle(loc.x, loc.y, accuracy, paint);
+						// border
+						paint.setAlpha(200);
+						paint.setStyle(Paint.Style.STROKE);
+						canvas.drawCircle(loc.x, loc.y, accuracy, paint);
 					}
 
-					loader = new StopsAsyncTask(
-							selectedAgencyIds,
-							smartCheckStopMap,
-							stopsItemizedoverlay,
-							new double[] { centerGeoPoint.getLatitudeE6() / 1e6, centerGeoPoint.getLongitudeE6() / 1e6 },
-							mapView.getDiagonalLenght(), mapView, mFragment);
-					loader.execute();
+					Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.me).copy(
+							Bitmap.Config.ARGB_8888, true);
+					canvas.drawBitmap(bitmap, loc.x - (bitmap.getWidth() / 2), loc.y - bitmap.getHeight(), null);
 				}
-			}
-		};
+			};
+			mMyLocationOverlay.enableMyLocation();
 
-		// move to me
-		mMyLocationOverlay.runOnFirstFix(onFirstFixLoader);
+			onFirstFixLoader = new Runnable() {
+				public void run() {
+
+					if (getSherlockActivity() != null) {
+						// mapView.getDiagonalLenght();
+						// load with radius? Not for now.
+						centerGeoPoint = mMyLocationOverlay.getMyLocation();
+						mapView.getController().animateTo(centerGeoPoint);
+
+						 if (loader != null) {
+						 loader.cancel(true);
+						 }
+						 
+						loader = new StopsAsyncTask( selectedAgencyIds, stopsItemizedoverlay,
+								new double[] { centerGeoPoint.getLatitudeE6() / 1e6,
+										centerGeoPoint.getLongitudeE6() / 1e6 }, mapView.getDiagonalLenght(), mapView,
+								mFragment);
+						loader.execute();
+					}
+				}
+			};
+
+			// move to me
+			mMyLocationOverlay.runOnFirstFix(onFirstFixLoader);
+
+		}
+		mapView.getOverlays().add(mMyLocationOverlay);
 
 		// LOAD
-		if (smartCheckStopMap != null && smartCheckStopMap.size() > 0) {
-			stopsItemizedoverlay.addAllOverlays(smartCheckStopMap.values());
+		Collection<SmartCheckStop> stops = null;
+		if (mapView.getCache() != null && (stops = mapView.getCache().getStopsByAgencyIds(selectedAgencyIds)) != null) {
+			stopsItemizedoverlay.addAllOverlays(stops);
 			stopsItemizedoverlay.populateAll();
 			mapView.postInvalidate();
 		}
+		
 
 		return mapContainer;
 	}
@@ -268,8 +282,9 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 				cache = new Square(location, diagonal);
 			}
 		}
-
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		SherlockFragmentActivity sfa = getSherlockActivity();
+		if (sfa != null)
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
@@ -284,15 +299,15 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		// || cache.getLong() != location[1]) {
 		Square s = new Square(location, diagonal);
 		if (cache == null || cache.compareTo(s)) {
-			if (loader != null) {
-				loader.cancel(true);
-			}
+			 if (loader != null) {
+			 loader.cancel(true);
+			 }
 
 			if (sfa != null) {
 				getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
 			}
-			loader = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, stopsItemizedoverlay, location, diagonal,
-					mapView, this);
+			loader = new StopsAsyncTask( selectedAgencyIds,  stopsItemizedoverlay, location,
+					diagonal, mapView, this);
 			loader.execute();
 
 		}
@@ -308,15 +323,15 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		// if (cache == null || diagonalLenght > cache.getDiagonal()) {
 		Square s = new Square(location, diagonal);
 		if (cache == null || cache.compareTo(s)) {
-			if (loader != null) {
-				loader.cancel(true);
-			}
+			 if (loader != null) {
+			 loader.cancel(true);
+			 }
 
 			if (sfa != null) {
 				getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
 			}
-			loader = new StopsAsyncTask(selectedAgencyIds, smartCheckStopMap, stopsItemizedoverlay, location, diagonal,
-					mapView, this);
+			loader = new StopsAsyncTask( selectedAgencyIds,  stopsItemizedoverlay, location,
+					diagonal, mapView, this);
 			loader.execute();
 
 		}
@@ -335,7 +350,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 	public void onConfigurationChanged(Configuration arg0) {
 		super.onConfigurationChanged(arg0);
 	}
-
+	
 	@Override
 	public void onResume() {
 		super.onResume();

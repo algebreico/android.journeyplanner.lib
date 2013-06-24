@@ -69,10 +69,12 @@ public class SmartCheckParkingMapFragment extends FeedbackFragment implements Pa
 		mapView = MapManager.getBetterMapView();
 		if (mapView == null) {
 			mapView = new BetterMapView(getSherlockActivity(), getSherlockActivity().getResources().getString(
-					R.string.maps_api_key), this);
+					R.string.maps_api_key));
 			MapManager.setBetterMapView(mapView);
 		}
 
+		mapView.setOnMapChanged(this);
+		
 		mapView.setClickable(true);
 		mapView.setBuiltInZoomControls(true);
 

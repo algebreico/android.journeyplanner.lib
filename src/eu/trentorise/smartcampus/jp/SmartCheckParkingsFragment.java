@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.app.SherlockListFragment;
 
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
@@ -109,8 +110,9 @@ public class SmartCheckParkingsFragment extends SherlockListFragment {
 		if (loader != null) {
 			loader.cancel(true);
 		}
-
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+		SherlockFragmentActivity sfa = getSherlockActivity();
+		if (sfa!=null)
+			sfa.setSupportProgressBarIndeterminateVisibility(false);
 	}
 
 	// @Override

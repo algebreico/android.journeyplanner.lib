@@ -1,5 +1,8 @@
 package eu.trentorise.smartcampus.jp.custom;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
@@ -7,6 +10,9 @@ import android.view.MotionEvent;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
+
+import eu.trentorise.smartcampus.jp.custom.map.MapCache;
+import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
 
 public class BetterMapView extends MapView {
 	public interface OnMapChanged {
@@ -18,11 +24,24 @@ public class BetterMapView extends MapView {
 	private OnMapChanged mOnMapChanged;
 	private GeoPoint mCenter;
 	private double mDiagonal;
-
-	public BetterMapView(Context mContext, String arg1, OnMapChanged listener) {
+	private MapCache cache;
+	
+	public BetterMapView(Context mContext, String arg1) {
 		super(mContext, arg1);
-		this.mOnMapChanged = listener;
+		this.cache = new MapCache();
 	}
+
+	public OnMapChanged getOnMapChanged() {
+		return mOnMapChanged;
+	}
+
+
+
+	public void setOnMapChanged(OnMapChanged mOnMapChanged) {
+		this.mOnMapChanged = mOnMapChanged;
+	}
+
+
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -59,5 +78,16 @@ public class BetterMapView extends MapView {
 	public double getDiagonalLenght() {
 		return mDiagonal;
 	}
+
+	public MapCache getCache() {
+		return cache;
+	}
+
+	public void setCache(MapCache cache) {
+		this.cache = cache;
+	}
+
+
+	
 
 }

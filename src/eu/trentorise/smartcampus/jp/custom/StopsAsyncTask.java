@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 
 import eu.trentorise.smartcampus.jp.custom.map.StopsItemizedOverlay;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
@@ -18,46 +20,45 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 		public void onStopLoadingFinished(boolean result, double[] location, double diagonal);
 	}
 
+	private final String TAG = "StopsAsyncTask";
 	private OnStopLoadingFinished mOnStopLoadingFinished;
 
 	// private Collection<SmartCheckStop> list;
-	private Map<String, SmartCheckStop> smartCheckStopMap;
-	private StopsItemizedOverlay overlay;
+//	private Map<String, SmartCheckStop> smartCheckStopMap;
+//	private StopsItemizedOverlay overlay;
 	private double diagonal;
 	private double[] location;
-	private MapView mapView;
+	private BetterMapView mapView;
 	private String[] selectedAgencyIds;
-	private StopsItemizedOverlay old_overlay;
+//	private StopsItemizedOverlay old_overlay;
 
-	public StopsAsyncTask(String[] selectedAgencyIds, Map<String, SmartCheckStop> smartCheckStopMap,
-			StopsItemizedOverlay overlay, double[] location, double diagonal, MapView mapView, OnStopLoadingFinished listener) {
+	public StopsAsyncTask( String[] selectedAgencyIds, StopsItemizedOverlay overlay, double[] location,
+			double diagonal, BetterMapView mapView, OnStopLoadingFinished listener) {
 		super();
-		this.overlay = overlay;
+//		this.overlay = overlay;
 		this.mapView = mapView;
 		this.diagonal = diagonal;
 		this.location = location;
 		this.mOnStopLoadingFinished = listener;
 		// this.list = new ArrayList<SmartCheckStop>();
-		this.smartCheckStopMap = smartCheckStopMap;
-
+//		this.smartCheckStopMap = smartCheckStopMap;
 		this.selectedAgencyIds = selectedAgencyIds;
 	}
 
-	@Override
-	protected void onPreExecute() {
-		super.onPreExecute();
-		old_overlay = overlay;
-	}
+//	@Override
+//	protected void onPreExecute() {
+//		super.onPreExecute();
+//		old_overlay = overlay;
+//
+//	}
+//
 
-	@Override
-	protected void onCancelled() {
-		super.onCancelled();
-	}
 
 	@Override
 	protected Boolean doInBackground(Object... params) {
 		// params[0]=location
 		// params[1]=radius
+
 		try {
 			List<SmartCheckStop> stops = new ArrayList<SmartCheckStop>();
 			if (selectedAgencyIds != null) {
@@ -78,15 +79,20 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 
 			for (SmartCheckStop stop : stops) {
 				if (isCancelled()) {
+					Log.e(TAG, "doInbackground if cancelled==true ");
 					break;
-				} else if (!smartCheckStopMap.containsKey(stop.getId())) {
-					smartCheckStopMap.put(stop.getId(), stop);
-					// list.add(stop);
-					// publishProgress(stop);
-					overlay.addOverlay(stop);
-					overlay.populateAll();
-					mapView.postInvalidate();
 				}
+				else if (mapView.getCache().addStop(stop)){
+					getItemizedOverlay().addOverlay(stop);
+				}
+//				else if (!smartCheckStopMap.containsKey(stop.getId())) {
+//					smartCheckStopMap.put(stop.getId(), stop);
+//					// list.add(stop);
+//					// publishProgress(stop);
+//					getItemizedOverlay().addOverlay(stop);
+//					Log.e(TAG, "add overlay " + stop);
+//
+//				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -95,20 +101,26 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 		return !isCancelled();
 	}
 
-	@Override
-	protected void onProgressUpdate(SmartCheckStop... values) {
-		super.onProgressUpdate(values);
-		// overlay.addOverlay(values[0]);
-		// overlay.populateAll();
-		// mapView.invalidate();
+	private StopsItemizedOverlay getItemizedOverlay() {
+		return (StopsItemizedOverlay)mapView.getOverlays().get(0);
 	}
+
+
 
 	@Override
 	protected void onPostExecute(Boolean result) {
 		super.onPostExecute(result);
-		if (!result)
-			overlay = old_overlay;
+//		if (!result) {
+//			overlay = old_overlay;
+//		}
+		getItemizedOverlay().populateAll();
+		mapView.postInvalidate();
+
+		
+//		String o1 = overlay.toString();
+//		String o2 = ((StopsItemizedOverlay) getItemizedOverlay()).toString();
+//		Log.e(TAG, "Is the same overlay? " + o2.equalsIgnoreCase(o1));
+
 		mOnStopLoadingFinished.onStopLoadingFinished(result, location, diagonal);
 	}
-
 }

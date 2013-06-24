@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -214,10 +215,10 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 
 		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 
-		final ViewGroup parent = (ViewGroup) mapView.getParent();
-		if (parent != null) {
-			parent.removeView(mapView);
-		}
+//		final ViewGroup parent = (ViewGroup) mapView.getParent();
+//		if (parent != null) {
+//			parent.removeView(mapView);
+//		}
 	}
 
 	@Override
@@ -323,5 +324,14 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 	public void setSelectedStop(SmartCheckStop selectedStop) {
 		this.selectedStop = selectedStop;
 	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration arg0) {
+		super.onConfigurationChanged(arg0);
+	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+	}
 }

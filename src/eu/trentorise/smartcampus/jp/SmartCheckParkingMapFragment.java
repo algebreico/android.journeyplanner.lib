@@ -183,11 +183,11 @@ public class SmartCheckParkingMapFragment extends FeedbackFragment implements Pa
 	@Override
 	public void onPause() {
 		super.onPause();
-
-		final ViewGroup parent = (ViewGroup) mapView.getParent();
-		if (parent != null) {
-			parent.removeView(mapView);
-		}
+//
+//		final ViewGroup parent = (ViewGroup) mapView.getParent();
+//		if (parent != null) {
+//			parent.removeView(mapView);
+//		}
 	}
 
 	@Override

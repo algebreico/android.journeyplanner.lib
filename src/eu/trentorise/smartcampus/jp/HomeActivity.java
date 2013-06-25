@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -62,7 +63,7 @@ public class HomeActivity extends BaseActivity {
 					ActionBar.NAVIGATION_MODE_STANDARD);
 
 		// DEBUG PURPOSE
-		// JPHelper.getTutorialPreferences(this).edit().clear().commit();
+		//JPHelper.getTutorialPreferences(this).edit().clear().commit();
 
 		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
@@ -124,8 +125,15 @@ public class HomeActivity extends BaseActivity {
 	protected void onPostResume() {
 		super.onPostResume();
 		
-		if (JPHelper.wantTour(this))
+		
+		if (JPHelper.wantTour(this)){
+			//scroll to the end of the screen 
+			//because the prefs button can be invisible
+			//in landscape
+			if(lastShowed == Tutorial.PREFST)
+				((ScrollView)findViewById(R.id.jp_home_sv)).fullScroll(View.FOCUS_DOWN);
 			showTutorials();
+		}
 	}
 
 	private void showTutorials() {
@@ -169,6 +177,10 @@ public class HomeActivity extends BaseActivity {
 				id = R.id.btn_myprofile;
 				title = getString(R.string.btn_myprofile);
 				msg = getString(R.string.jp_prefs_tut);
+				//scroll to the end of the screen 
+				//because the prefs button can be invisible
+				//in landscape
+				((ScrollView)findViewById(R.id.jp_home_sv)).fullScroll(View.FOCUS_DOWN);
 				isLast=true;
 				break;
 			default:
@@ -298,9 +310,6 @@ public class HomeActivity extends BaseActivity {
 				String resData = data.getExtras().getString(BaseTutorialActivity.RESULT_DATA);
 				if(resData.equals(BaseTutorialActivity.OK))
 					JPHelper.setTutorialAsShowed(this, lastShowed);
-				if (JPHelper.wantTour(this)){
-					showTutorials();
-				}
 			} 
 			
 		}

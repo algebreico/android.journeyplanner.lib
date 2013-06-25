@@ -99,6 +99,28 @@ public class HomeActivity extends BaseActivity {
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			onBackPressed();
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		JPHelper.getLocationHelper().stop();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		JPHelper.getLocationHelper().start();
+	}
+
+	@Override
 	protected void onPostResume() {
 		super.onPostResume();
 		
@@ -170,28 +192,6 @@ public class HomeActivity extends BaseActivity {
 					Color.WHITE, null, title, detail, isLast, TUTORIAL_REQUEST_CODE,
 					TutorialActivity.class);
 		}
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			onBackPressed();
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		getSupportActionBar().setHomeButtonEnabled(true);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		JPHelper.getLocationHelper().start();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		JPHelper.getLocationHelper().stop();
 	}
 
 	public int getMainlayout() {

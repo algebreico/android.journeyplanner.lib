@@ -60,7 +60,7 @@ public class HomeActivity extends BaseActivity {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
 		// DEBUG PURPOSE
-		JPHelper.getTutorialPreferences(this).edit().clear().commit();
+		//JPHelper.getTutorialPreferences(this).edit().clear().commit();
 
 		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,

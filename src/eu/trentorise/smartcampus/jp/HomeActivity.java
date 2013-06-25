@@ -60,18 +60,18 @@ public class HomeActivity extends BaseActivity {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
 		// DEBUG PURPOSE
-		//JPHelper.getTutorialPreferences(this).edit().clear().commit();
+		JPHelper.getTutorialPreferences(this).edit().clear().commit();
 
 		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
 				(RelativeLayout) findViewById(R.id.home_relative_layout_jp));
-
+ 
 		setHiddenNotification();
 
-		// if (JPHelper.isFirstLaunch(this)) {
-		// showTourDialog();
-		// JPHelper.disableFirstLaunch(this);
-		// }
+		if (JPHelper.isFirstLaunch(this)) {
+			showTourDialog();
+			JPHelper.disableFirstLaunch(this);
+		}
 	}
 
 	@Override
@@ -132,11 +132,7 @@ public class HomeActivity extends BaseActivity {
 		super.onPostResume();
 		
 		if (JPHelper.wantTour(this)){
-			//scroll to the end of the screen 
-			//because the prefs button can be invisible
-			//in landscape
-			if(lastShowed == Tutorial.PREFST)
-				((ScrollView)findViewById(R.id.jp_home_sv)).fullScroll(View.FOCUS_DOWN);
+			showTutorials();
 		}
 	}
 
@@ -181,10 +177,6 @@ public class HomeActivity extends BaseActivity {
 				id = R.id.btn_myprofile;
 				title = getString(R.string.btn_myprofile);
 				msg = getString(R.string.jp_prefs_tut);
-				//scroll to the end of the screen 
-				//because the prefs button can be invisible
-				//in landscape
-				((ScrollView)findViewById(R.id.jp_home_sv)).fullScroll(View.FOCUS_DOWN);
 				isLast=true;
 				break;
 			default:
@@ -192,8 +184,8 @@ public class HomeActivity extends BaseActivity {
 				break;
 			}
 		if (t != null) {
-			displayShowcaseView(id, title, msg, isLast);
 			lastShowed = t;
+			displayShowcaseView(id, title, msg, isLast);
 		} else
 			JPHelper.setWantTour(this, false);
 	}
@@ -203,7 +195,14 @@ public class HomeActivity extends BaseActivity {
 		View v = findViewById(id);
 
 		if (v != null) {
-			v.getLocationInWindow(position);
+			v.getLocationOnScreen(position);
+			//scroll to the end of the screen 
+			//because the prefs button can be invisible
+			//in landscape
+			if(lastShowed== Tutorial.PREFST)
+				((ScrollView)findViewById(R.id.jp_home_sv)).scrollTo(position[0],position[1]);
+			
+			v.getLocationOnScreen(position);
 			BaseTutorialActivity.newIstance(this, position, v.getWidth(), Color.WHITE, null, title, detail, isLast,
 					TUTORIAL_REQUEST_CODE, TutorialActivity.class);
 		}
@@ -304,9 +303,6 @@ public class HomeActivity extends BaseActivity {
 				String resData = data.getExtras().getString(BaseTutorialActivity.RESULT_DATA);
 				if (resData.equals(BaseTutorialActivity.OK))
 					JPHelper.setTutorialAsShowed(this, lastShowed);
-				if (JPHelper.wantTour(this)) {
-					showTutorials();
-				}
 			}
 
 		}

@@ -379,7 +379,7 @@ public class MyRecurItineraryFragment extends FeedbackFragment {
 
 			} else {
 				noitems.setVisibility(View.VISIBLE);
-
+				saveLayout.setVisibility(View.GONE);
 			}
 		}
 	}

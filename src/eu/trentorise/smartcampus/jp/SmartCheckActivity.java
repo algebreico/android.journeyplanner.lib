@@ -3,13 +3,14 @@ package eu.trentorise.smartcampus.jp;
 import android.app.FragmentTransaction;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
+import eu.trentorise.smartcampus.jp.custom.BetterMapView;
+import eu.trentorise.smartcampus.jp.custom.map.MapManager;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
 
@@ -23,6 +24,11 @@ public class SmartCheckActivity extends BaseActivity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		setContentView(R.layout.empty_layout_jp);
+		
+		BetterMapView mapView = new BetterMapView(this, getResources().getString(R.string.maps_api_key));
+		mapView.setClickable(true);
+		mapView.setBuiltInZoomControls(true);
+		MapManager.setBetterMapView(mapView);
 
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

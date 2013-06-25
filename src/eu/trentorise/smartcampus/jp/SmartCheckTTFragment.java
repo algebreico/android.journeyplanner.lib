@@ -286,7 +286,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 		@Override
 		public void handleFailure(Exception e) {
-			super.handleFailure(e);
+//			super.handleFailure(e);
 		}
 
 		@Override

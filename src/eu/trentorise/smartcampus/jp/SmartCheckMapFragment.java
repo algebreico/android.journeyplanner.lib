@@ -68,12 +68,10 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 
 	private GeoPoint centerGeoPoint = null;
 
-	private SmartCheckMapFragment mFragment = this;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.mContext = this.getSherlockActivity();
+		this.mContext = this.getActivity().getApplicationContext();
 
 		setHasOptionsMenu(true);
 	}
@@ -83,24 +81,8 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		mapContainer = new RelativeLayout(getActivity());
 
 		mapView = MapManager.getBetterMapView();
-		
-		SherlockFragmentActivity sfa = getSherlockActivity();
-		if (mapView == null) {
-			mapView = new BetterMapView(getSherlockActivity(), getSherlockActivity().getResources().getString(
-					R.string.maps_api_key));
-			MapManager.setBetterMapView(mapView);
-//		} else {
-//			 final ViewGroup parent = (ViewGroup) mapView.getParent();
-//			 if (parent != null) {
-//			 parent.removeView(mapView);
-//			 }
-		}
-		
 		mapView.setOnMapChanged(this);
 		
-		mapView.setClickable(true);
-		mapView.setBuiltInZoomControls(true);
-
 		// get arguments
 		String[] argumentsSelectedAgencyIds = new String[] {};
 		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_AGENCY_IDS)) {
@@ -125,19 +107,17 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		}
 
 		if (stopsItemizedoverlay == null) {
-			stopsItemizedoverlay = new StopsItemizedOverlay(getSherlockActivity(), mapView);
+			stopsItemizedoverlay = new StopsItemizedOverlay(mContext, mapView);
 			stopsItemizedoverlay.setMapItemTapListener(this);
 //			this.smartCheckStopMap = new HashMap<String, SmartCheckStop>();
-			
-
 		}
-		 mapView.getOverlays().clear();
+		mapView.getOverlays().clear();
 		mapView.getOverlays().add(stopsItemizedoverlay);
 
 		// setEventCategoriesToLoad("Family");
 
 		if (mMyLocationOverlay == null) {
-			mMyLocationOverlay = new MyLocationOverlay(getSherlockActivity(), mapView) {
+			mMyLocationOverlay = new MyLocationOverlay(mContext, mapView) {
 				@Override
 				protected void drawMyLocation(Canvas canvas, MapView mapView, Location lastFix, GeoPoint myLocation,
 						long when) {
@@ -181,7 +161,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 						loader = new StopsAsyncTask( selectedAgencyIds, stopsItemizedoverlay,
 								new double[] { centerGeoPoint.getLatitudeE6() / 1e6,
 										centerGeoPoint.getLongitudeE6() / 1e6 }, mapView.getDiagonalLenght(), mapView,
-								mFragment);
+								null);
 						loader.execute();
 					}
 				}
@@ -219,7 +199,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		// tabs
 
 		// hide keyboard if it is still open
-		InputMethodManager imm = (InputMethodManager) getSherlockActivity().getSystemService(
+		InputMethodManager imm = (InputMethodManager) mContext.getSystemService(
 				Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(mapView.getWindowToken(), 0);
 	}
@@ -304,7 +284,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 			 }
 
 			if (sfa != null) {
-				getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+				sfa.setSupportProgressBarIndeterminateVisibility(true);
 			}
 			loader = new StopsAsyncTask( selectedAgencyIds,  stopsItemizedoverlay, location,
 					diagonal, mapView, this);
@@ -328,7 +308,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 			 }
 
 			if (sfa != null) {
-				getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+				sfa.setSupportProgressBarIndeterminateVisibility(true);
 			}
 			loader = new StopsAsyncTask( selectedAgencyIds,  stopsItemizedoverlay, location,
 					diagonal, mapView, this);

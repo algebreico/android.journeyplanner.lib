@@ -2,14 +2,9 @@ package eu.trentorise.smartcampus.jp.custom;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-
 import eu.trentorise.smartcampus.jp.custom.map.StopsItemizedOverlay;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
@@ -121,6 +116,8 @@ public class StopsAsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean> {
 //		String o2 = ((StopsItemizedOverlay) getItemizedOverlay()).toString();
 //		Log.e(TAG, "Is the same overlay? " + o2.equalsIgnoreCase(o1));
 
-		mOnStopLoadingFinished.onStopLoadingFinished(result, location, diagonal);
+		if (mOnStopLoadingFinished != null) {
+			mOnStopLoadingFinished.onStopLoadingFinished(result, location, diagonal);
+		}
 	}
 }

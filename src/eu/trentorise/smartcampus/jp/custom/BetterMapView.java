@@ -1,8 +1,5 @@
 package eu.trentorise.smartcampus.jp.custom;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
@@ -12,7 +9,6 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 
 import eu.trentorise.smartcampus.jp.custom.map.MapCache;
-import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
 
 public class BetterMapView extends MapView {
 	public interface OnMapChanged {

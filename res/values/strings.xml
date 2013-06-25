@@ -285,6 +285,7 @@
     <string name="info_save_rec_journey">Choose the transit lines you would like to monitor, i.e. those for which you want to be notified in case of delays.</string>
     
     <string name="menu_help">Help</string>
+    <string name="menu_tutorial">Tutorial</string>
     
     <string name="url_help">http://www.smartcampuslab.it/vivitrentoapp/</string>
     

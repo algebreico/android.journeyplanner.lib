@@ -83,7 +83,9 @@ public class SmartCheckBusDirectionFragment extends FeedbackFragment {
 		busLine.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 
 		SmartCheckDirectionAdapter adapter = new SmartCheckDirectionAdapter(getSherlockActivity(), layout.smart_direction_row);
-		adapter.addAll(smartLine.getRoutesLong());
+		for (String routeLong : smartLine.getRoutesLong()) {
+			adapter.add(routeLong);
+		}
 		busDirectionsView.setAdapter(adapter);
 
 		busDirectionsView.setOnItemClickListener(new OnItemClickListener() {

@@ -60,12 +60,12 @@ public class HomeActivity extends BaseActivity {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
 		// DEBUG PURPOSE
-		//JPHelper.getTutorialPreferences(this).edit().clear().commit();
+		// JPHelper.getTutorialPreferences(this).edit().clear().commit();
 
 		// Feedback
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
 				(RelativeLayout) findViewById(R.id.home_relative_layout_jp));
- 
+
 		setHiddenNotification();
 
 		if (JPHelper.isFirstLaunch(this)) {
@@ -95,6 +95,7 @@ public class HomeActivity extends BaseActivity {
 
 		SubMenu submenu = menu.getItem(0).getSubMenu();
 		submenu.clear();
+		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_tutorial, Menu.NONE, R.string.menu_tutorial);
 		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_help, Menu.NONE, R.string.menu_help);
 
 		return super.onCreateOptionsMenu(menu);
@@ -108,6 +109,8 @@ public class HomeActivity extends BaseActivity {
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setData(Uri.parse(getString(R.string.url_help)));
 			startActivity(i);
+		} else if (item.getItemId() == R.id.menu_item_tutorial) {
+			JPHelper.setWantTour(getApplicationContext(), true);
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -130,8 +133,8 @@ public class HomeActivity extends BaseActivity {
 	@Override
 	protected void onPostResume() {
 		super.onPostResume();
-		
-		if (JPHelper.wantTour(this)){
+
+		if (JPHelper.wantTour(this)) {
 			showTutorials();
 		}
 	}
@@ -177,7 +180,7 @@ public class HomeActivity extends BaseActivity {
 				id = R.id.btn_myprofile;
 				title = getString(R.string.btn_myprofile);
 				msg = getString(R.string.jp_prefs_tut);
-				isLast=true;
+				isLast = true;
 				break;
 			default:
 				id = -1;
@@ -196,12 +199,12 @@ public class HomeActivity extends BaseActivity {
 
 		if (v != null) {
 			v.getLocationOnScreen(position);
-			//scroll to the end of the screen 
-			//because the prefs button can be invisible
-			//in landscape
-			if(lastShowed== Tutorial.PREFST)
-				((ScrollView)findViewById(R.id.jp_home_sv)).scrollTo(position[0],position[1]);
-			
+			// scroll to the end of the screen
+			// because the prefs button can be invisible
+			// in landscape
+			if (lastShowed == Tutorial.PREFST)
+				((ScrollView) findViewById(R.id.jp_home_sv)).scrollTo(position[0], position[1]);
+
 			v.getLocationOnScreen(position);
 			BaseTutorialActivity.newIstance(this, position, v.getWidth(), Color.WHITE, null, title, detail, isLast,
 					TUTORIAL_REQUEST_CODE, TutorialActivity.class);

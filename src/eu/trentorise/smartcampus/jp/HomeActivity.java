@@ -15,15 +15,14 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.jp;
 
-import android.R.bool;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,8 +31,8 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.SubMenu;
 import com.github.espiandev.showcaseview.BaseTutorialActivity;
 
 import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
@@ -49,7 +48,6 @@ public class HomeActivity extends BaseActivity {
 
 	private final static int TUTORIAL_REQUEST_CODE = 1;
 
-
 	private Tutorial lastShowed;
 
 	@Override
@@ -58,8 +56,7 @@ public class HomeActivity extends BaseActivity {
 
 		setContentView(R.layout.home);
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD)
-			getSupportActionBar().setNavigationMode(
-					ActionBar.NAVIGATION_MODE_STANDARD);
+			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
 		// DEBUG PURPOSE
 		// JPHelper.getTutorialPreferences(this).edit().clear().commit();
@@ -70,10 +67,10 @@ public class HomeActivity extends BaseActivity {
 
 		setHiddenNotification();
 
-		if (JPHelper.isFirstLaunch(this)) {
-			showTourDialog();
-			JPHelper.disableFirstLaunch(this);
-		}
+		// if (JPHelper.isFirstLaunch(this)) {
+		// showTourDialog();
+		// JPHelper.disableFirstLaunch(this);
+		// }
 	}
 
 	@Override
@@ -85,24 +82,33 @@ public class HomeActivity extends BaseActivity {
 		getSupportActionBar().setDisplayShowTitleEnabled(true);
 
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
-			getSupportActionBar().setNavigationMode(
-					ActionBar.NAVIGATION_MODE_STANDARD);
+			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		}
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.clear();
-		MenuInflater inflater = getSupportMenuInflater();
-		inflater.inflate(R.menu.emptymenu, menu);
-		return true;
+		// getSupportMenuInflater().inflate(R.menu.emptymenu, menu);
+		getSupportMenuInflater().inflate(R.menu.gripmenu, menu);
+
+		SubMenu submenu = menu.getItem(0).getSubMenu();
+		submenu.clear();
+		submenu.add(Menu.CATEGORY_SYSTEM, R.id.menu_item_help, Menu.NONE, R.string.menu_help);
+
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
 			onBackPressed();
+		} else if (item.getItemId() == R.id.menu_item_help) {
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse(getString(R.string.url_help)));
+			startActivity(i);
 		}
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -123,7 +129,7 @@ public class HomeActivity extends BaseActivity {
 	@Override
 	protected void onPostResume() {
 		super.onPostResume();
-		
+
 		if (JPHelper.wantTour(this))
 			showTutorials();
 	}
@@ -131,7 +137,7 @@ public class HomeActivity extends BaseActivity {
 	private void showTutorials() {
 		JPHelper.Tutorial t = JPHelper.getLastTutorialNotShowed(this);
 		String title = "", msg = "";
-		boolean isLast= false;
+		boolean isLast = false;
 		int id = R.id.btn_myprofile;
 		if (t != null)
 			switch (t) {
@@ -169,28 +175,27 @@ public class HomeActivity extends BaseActivity {
 				id = R.id.btn_myprofile;
 				title = getString(R.string.btn_myprofile);
 				msg = getString(R.string.jp_prefs_tut);
-				isLast=true;
+				isLast = true;
 				break;
 			default:
 				id = -1;
 				break;
 			}
 		if (t != null) {
-			displayShowcaseView(id, title, msg,isLast);
+			displayShowcaseView(id, title, msg, isLast);
 			lastShowed = t;
 		} else
 			JPHelper.setWantTour(this, false);
 	}
 
-	private void displayShowcaseView(int id, String title, String detail,boolean isLast) {
+	private void displayShowcaseView(int id, String title, String detail, boolean isLast) {
 		int[] position = new int[2];
 		View v = findViewById(id);
 
 		if (v != null) {
 			v.getLocationInWindow(position);
-			BaseTutorialActivity.newIstance(this, position, v.getWidth(),
-					Color.WHITE, null, title, detail, isLast, TUTORIAL_REQUEST_CODE,
-					TutorialActivity.class);
+			BaseTutorialActivity.newIstance(this, position, v.getWidth(), Color.WHITE, null, title, detail, isLast,
+					TUTORIAL_REQUEST_CODE, TutorialActivity.class);
 		}
 	}
 
@@ -238,8 +243,7 @@ public class HomeActivity extends BaseActivity {
 			startActivity(intent);
 			return;
 		} else {
-			Toast toast = Toast.makeText(getApplicationContext(), R.string.tmp,
-					Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(getApplicationContext(), R.string.tmp, Toast.LENGTH_SHORT);
 			toast.show();
 			return;
 		}
@@ -247,14 +251,12 @@ public class HomeActivity extends BaseActivity {
 
 	private void setHiddenNotification() {
 		try {
-			ApplicationInfo ai = getPackageManager().getApplicationInfo(
-					this.getPackageName(), PackageManager.GET_META_DATA);
+			ApplicationInfo ai = getPackageManager().getApplicationInfo(this.getPackageName(), PackageManager.GET_META_DATA);
 			Bundle aBundle = ai.metaData;
 			mHiddenNotification = aBundle.getBoolean("hidden-notification");
 		} catch (NameNotFoundException e) {
 			mHiddenNotification = false;
-			Log.e(HomeActivity.class.getName(),
-					"you should set the hidden-notification metadata in app manifest");
+			Log.e(HomeActivity.class.getName(), "you should set the hidden-notification metadata in app manifest");
 		}
 		if (mHiddenNotification) {
 			View notificationButton = findViewById(R.id.btn_notifications);
@@ -264,28 +266,22 @@ public class HomeActivity extends BaseActivity {
 	}
 
 	private void showTourDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this)
-				.setMessage(getString(R.string.jp_first_launch))
-				.setPositiveButton(getString(R.string.begin_tut),
-						new DialogInterface.OnClickListener() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(getString(R.string.jp_first_launch))
+				.setPositiveButton(getString(R.string.begin_tut), new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								JPHelper.setWantTour(HomeActivity.this, true);
-								showTutorials();
-							}
-						})
-				.setNeutralButton(getString(android.R.string.cancel),
-						new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						JPHelper.setWantTour(HomeActivity.this, true);
+						showTutorials();
+					}
+				}).setNeutralButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								JPHelper.setWantTour(HomeActivity.this, false);
-								dialog.dismiss();
-							}
-						});
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						JPHelper.setWantTour(HomeActivity.this, false);
+						dialog.dismiss();
+					}
+				});
 		builder.create().show();
 	}
 
@@ -296,13 +292,13 @@ public class HomeActivity extends BaseActivity {
 		if (requestCode == TUTORIAL_REQUEST_CODE) {
 			if (resultCode == RESULT_OK) {
 				String resData = data.getExtras().getString(BaseTutorialActivity.RESULT_DATA);
-				if(resData.equals(BaseTutorialActivity.OK))
+				if (resData.equals(BaseTutorialActivity.OK))
 					JPHelper.setTutorialAsShowed(this, lastShowed);
-				if (JPHelper.wantTour(this)){
+				if (JPHelper.wantTour(this)) {
 					showTutorials();
 				}
-			} 
-			
+			}
+
 		}
 	}
 }

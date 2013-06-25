@@ -275,7 +275,10 @@
     <string name="tt_today">  Oggi </string>
     <string name="tt_next">  Prossimo  </string>
     
-    
     <string name="info_save_new_journey"> Salvando questo itinerario, sarai informato di eventuali ritardi o problemi che lo possano influenzare.</string>
     <string name="info_save_rec_journey">  Scegli le linee dei mezzi pubblici che ti interessa monitorare, ossia per le quali vuoi essere informato in caso di ritardi.</string>
+    
+    <string name="menu_help">Aiuto</string>
+    
+    <string name="url_help">http://www.smartcampuslab.it/vivitrentoapp_it/</string>
 </resources>

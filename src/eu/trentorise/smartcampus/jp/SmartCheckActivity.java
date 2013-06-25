@@ -22,7 +22,7 @@ public class SmartCheckActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
+		
 		setContentView(R.layout.empty_layout_jp);
 		
 		BetterMapView mapView = new BetterMapView(this, getResources().getString(R.string.maps_api_key));
@@ -49,6 +49,9 @@ public class SmartCheckActivity extends BaseActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setTitle(R.string.title_smart_check);
+		
+		//Pre HoneyComb hot-fix
+		setSupportProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override

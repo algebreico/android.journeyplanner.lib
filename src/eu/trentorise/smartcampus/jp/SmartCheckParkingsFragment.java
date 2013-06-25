@@ -70,7 +70,7 @@ public class SmartCheckParkingsFragment extends SherlockListFragment {
 		setListAdapter(adapter);
 
 		// LOAD
-		getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		//getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
 		loader = new SCAsyncTask<Void, Void, List<ParkingSerial>>(getSherlockActivity(), new SmartCheckParkingsProcessor(
 				getSherlockActivity(), adapter, JPHelper.getLocationHelper().getLocation(), parkingAid));
 		loader.execute();

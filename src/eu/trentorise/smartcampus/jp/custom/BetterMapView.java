@@ -20,11 +20,10 @@ public class BetterMapView extends MapView {
 	private OnMapChanged mOnMapChanged;
 	private GeoPoint mCenter;
 	private double mDiagonal;
-	private MapCache cache;
+	private static MapCache cache;
 	
 	public BetterMapView(Context mContext, String arg1) {
 		super(mContext, arg1);
-		this.cache = new MapCache();
 	}
 
 	public OnMapChanged getOnMapChanged() {
@@ -76,14 +75,9 @@ public class BetterMapView extends MapView {
 	}
 
 	public MapCache getCache() {
+		if (cache == null)
+			cache = new MapCache();
 		return cache;
 	}
-
-	public void setCache(MapCache cache) {
-		this.cache = cache;
-	}
-
-
-	
 
 }

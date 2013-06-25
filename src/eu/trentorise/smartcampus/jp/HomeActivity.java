@@ -110,7 +110,9 @@ public class HomeActivity extends BaseActivity {
 			i.setData(Uri.parse(getString(R.string.url_help)));
 			startActivity(i);
 		} else if (item.getItemId() == R.id.menu_item_tutorial) {
+			JPHelper.resetTutorialPreferences(this);
 			JPHelper.setWantTour(getApplicationContext(), true);
+			showTutorials();
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -305,7 +307,7 @@ public class HomeActivity extends BaseActivity {
 			if (resultCode == RESULT_OK) {
 				String resData = data.getExtras().getString(BaseTutorialActivity.RESULT_DATA);
 				if (resData.equals(BaseTutorialActivity.OK))
-					JPHelper.setTutorialAsShowed(this, lastShowed);
+					JPHelper.setTutorialVisibility(this, lastShowed, true);
 			}
 
 		}

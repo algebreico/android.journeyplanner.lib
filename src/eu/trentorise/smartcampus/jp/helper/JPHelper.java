@@ -830,10 +830,18 @@ public class JPHelper {
 		return getTutorialPreferences(ctx).getBoolean(t.toString(), false);
 	}
 	
-	public static void setTutorialAsShowed(Context ctx,Tutorial t){
+	
+	public static void setTutorialVisibility(Context ctx,Tutorial t,boolean visibility){
 		Editor edit = getTutorialPreferences(ctx).edit();
-		edit.putBoolean(t.toString(), true);
+		edit.putBoolean(t.toString(), visibility);
 		edit.commit();
+	}
+	
+	public static void resetTutorialPreferences(Context ctx){
+		for(Tutorial t : Tutorial.values() )
+		{
+			setTutorialVisibility(mContext, t,false);
+		}
 	}
 	
 	/**

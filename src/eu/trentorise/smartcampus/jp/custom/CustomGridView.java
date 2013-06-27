@@ -22,31 +22,26 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
-import eu.trentorise.smartcampus.jp.R;
 
 /**
  * @author raman
  *
  */
-public class CustomView extends View {
-
-	private Paint mVLinePaint;
-	private Paint mHLinePaint;
+public abstract class CustomGridView<T> extends View {
 
 	private int numRows;
 	private int numCols;
 	private int rowHeight;
 	private int colWidth;
 	
-	private List<String> texts;
+	private List<T> data;
 
-	private Paint mTextPaint;
-	
 	/**
 	 * @param context
 	 */
-	public CustomView(Context context) {
+	public CustomGridView(Context context) {
 		super(context);
 		init();
 	}
@@ -56,7 +51,7 @@ public class CustomView extends View {
 	 * @param attrs
 	 * @param defStyle
 	 */
-	public CustomView(Context context, AttributeSet attrs, int defStyle) {
+	public CustomGridView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		init();
 	}
@@ -65,7 +60,7 @@ public class CustomView extends View {
 	 * @param context
 	 * @param attrs
 	 */
-	public CustomView(Context context, AttributeSet attrs) {
+	public CustomGridView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
 	}
@@ -73,39 +68,75 @@ public class CustomView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 //		super.onDraw(canvas);	
-		canvas.drawLine(0, 0, numCols*colWidth+numCols, 0, mHLinePaint);
-		for (int i = 0; i < numRows; i++) {
-			int y = (rowHeight)*(i+1);
-			canvas.drawLine(0, y, numCols*colWidth+numCols, y, mHLinePaint);
+		if (getHLinePaint() != null) {
+			canvas.drawLine(0, 0, getNumCols()*getColWidth(), 0, getHLinePaint());
+			for (int i = 0; i < getNumRows(); i++) {
+				int y = (getRowHeight())*(i);
+				canvas.drawLine(0, y, getNumCols()*getColWidth(), y, getHLinePaint());
+			}
 		}
-		canvas.drawLine(0, 0, 0, numRows*rowHeight+numRows, mVLinePaint);
-		for (int i = 0; i < numCols; i++) {
-			int x = (colWidth+1)*(i+1);
-			canvas.drawLine(x, 0, x, numRows*rowHeight+numRows, mVLinePaint);
+		if (getVLinePaint() != null) {
+			canvas.drawLine(0, 0, 0, getNumRows() * getRowHeight(), getVLinePaint());
+			for (int i = 0; i < getNumCols(); i++) {
+				int x = (getColWidth()) * (i);
+				canvas.drawLine(x, 0, x, getNumRows() * getRowHeight(), getVLinePaint());
+			}
 		}
-		
-		for (int i = 0; i < numRows; i++) {
-			for (int j = 0; j < numCols; j++) {
-				String text = texts.get(i*numCols+j);
-				int xPos = (int)((colWidth+1)*j + colWidth/2 - mTextPaint.measureText(text)/2);
-				int yPos = (int) (((rowHeight)*i+rowHeight / 2) - ((mTextPaint.descent() + mTextPaint.ascent()) / 2)) ; 
-				
-				canvas.drawText(text, xPos, yPos, mTextPaint);
+		for (int i = 0; i < getNumRows(); i++) {
+			for (int j = 0; j < getNumCols(); j++) {
+				drawCell(canvas, data.get(i*getNumCols()+j), i, j, (getColWidth())*j, getRowHeight()*i);
 			}
 		}
 	}
 
-	private void init() {
-		mVLinePaint = new Paint(0);
-		mVLinePaint.setColor(getResources().getColor(android.R.color.black));
-		mVLinePaint.setStrokeWidth(2);
+	/**
+	 * @param canvas
+	 * @param object
+	 * @param i
+	 * @param j
+	 * @param k
+	 * @param l
+	 */
+	protected abstract void drawCell(Canvas canvas, T item, int row, int col, int x, int y);
 
-		mHLinePaint = new Paint(0);
-		mHLinePaint.setColor(getResources().getColor(R.color.sc_light_gray));
-		mHLinePaint.setStrokeWidth(2);
 
-		mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		mTextPaint.setTextSize(18);
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			return true;
+		}
+		if (event.getAction() == MotionEvent.ACTION_UP) {
+			float x = event.getX();
+			float y = event.getY();
+			int i = (int)(x / getColWidth());
+			int j = (int)(y / getRowHeight());
+			handleClick(data.get(j*getNumCols()+i));
+		} 
+		return super.onTouchEvent(event);
+	}
+	
+	/**
+	 * @param object
+	 */
+	protected void handleClick(T object) {
+	}
+
+	/**
+	 * @return
+	 */
+	protected abstract Paint getVLinePaint();
+
+	/**
+	 * @return
+	 */
+	protected abstract Paint getHLinePaint();
+	protected void init() {
+		setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+			}
+		});
 	}
 
 	/**
@@ -120,6 +151,7 @@ public class CustomView extends View {
 	 */
 	public void setNumRows(int numRows) {
 		this.numRows = numRows;
+		setMinimumHeight(getRowHeight()*numRows);
 	}
 
 	/**
@@ -134,6 +166,7 @@ public class CustomView extends View {
 	 */
 	public void setNumCols(int numCols) {
 		this.numCols = numCols;
+		setMinimumWidth(numCols*getColWidth());
 	}
 
 	/**
@@ -165,16 +198,16 @@ public class CustomView extends View {
 	}
 
 	/**
-	 * @return the texts
+	 * @return the data
 	 */
-	public List<String> getTexts() {
-		return texts;
+	public List<T> getData() {
+		return data;
 	}
 
 	/**
-	 * @param texts the texts to set
+	 * @param data the data to set
 	 */
-	public void setTexts(List<String> texts) {
-		this.texts = texts;
+	public void setData(List<T> data) {
+		this.data = data;
 	}
 }

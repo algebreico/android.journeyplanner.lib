@@ -23,7 +23,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -34,13 +33,12 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.jp.custom.AbstractAsyncTaskProcessorNoDialog;
 import eu.trentorise.smartcampus.jp.custom.AsyncTaskNoDialog;
-import eu.trentorise.smartcampus.jp.custom.CustomView;
+import eu.trentorise.smartcampus.jp.custom.DelaysView;
 import eu.trentorise.smartcampus.jp.custom.LinkedScrollView;
-import eu.trentorise.smartcampus.jp.custom.TACGridView;
-import eu.trentorise.smartcampus.jp.custom.TTAdapter;
-import eu.trentorise.smartcampus.jp.custom.TTDelaysAdapter;
-import eu.trentorise.smartcampus.jp.custom.TTStopsAdapter;
-import eu.trentorise.smartcampus.jp.custom.TTTypesAdapter;
+import eu.trentorise.smartcampus.jp.custom.StopsView;
+import eu.trentorise.smartcampus.jp.custom.TTHelper;
+import eu.trentorise.smartcampus.jp.custom.TTView;
+import eu.trentorise.smartcampus.jp.custom.TypesView;
 import eu.trentorise.smartcampus.jp.custom.data.SmartLine;
 import eu.trentorise.smartcampus.jp.custom.data.TimeTable;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
@@ -262,7 +260,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 			todayView = true;
 			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 			((GradientDrawable) todayButton.getBackground()).setColor(getResources().getColor(
-					android.R.color.holo_blue_light));
+					R.color.abs__holo_blue_light));
 		} else {
 			todayView = false;
 			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
@@ -280,7 +278,6 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 		@Override
 		public List<List<Map<String, String>>> performAction(Object... params) throws SecurityException, Exception {
-
 			return JPHelper.getDelay((String) params[2], (Long) params[0], (Long) params[1]);
 		}
 
@@ -301,7 +298,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 			for (List<Map<String, String>> tt : result) {
 				tempNumbCol += tt.size();
 			}
-
+			
 			final int NUM_COLS = tempNumbCol;
 				int indexOfDay = 0;
 				int indexOfCourseInThatDay = 0;
@@ -318,8 +315,6 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 								.get(indexOfCourseInThatDay);
 						delays[j] = actualDelays;
 					
-
-
 					if (indexOfCourseInThatDay == result.get(indexOfDay).size() - 1) {
 						if (indexOfDay < DAYS_WINDOWS)
 							indexOfDay++;
@@ -390,10 +385,11 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 			if (mProgressBar.isShown())
 				toggleProgressDialog();
 
-			AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>> task = new AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>>(
-					getSherlockActivity(), new GetDelayProcessor(getSherlockActivity()));
-			task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
-
+			if (todayView) {
+				AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>> task = new AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>>(
+						getSherlockActivity(), new GetDelayProcessor(getSherlockActivity()));
+				task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
+			}
 		}
 
 	
@@ -401,11 +397,13 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	}
 
 	private void reloadDelays() {
-		GridView gwDelays = null;
+		DelaysView gwDelays = null;
 		if (getSherlockActivity()!=null)
-			gwDelays = (GridView) getSherlockActivity().findViewById(R.id.delays);
-		if (gwDelays!=null)
-			gwDelays.setAdapter(new TTDelaysAdapter(getSherlockActivity(),delays));
+			gwDelays = (DelaysView) getSherlockActivity().findViewById(R.id.delays);
+		if (gwDelays!=null) {
+			gwDelays.setData(Arrays.asList(delays));
+			gwDelays.invalidate();
+		}
 	}
 	
 	/*
@@ -501,46 +499,64 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	protected void loadView(int NUM_COLS, int NUM_ROWS, int minFutureCol) {
 		getSherlockActivity().findViewById(R.id.layout_bustt).setVisibility(View.VISIBLE);
 		// delays label
-		getSherlockActivity().findViewById(R.id.twDelays).setMinimumHeight(TTAdapter.rowHeight(getSherlockActivity()));
+//		getSherlockActivity().findViewById(R.id.twDelays).setMinimumHeight(TTAdapter.rowHeight(getSherlockActivity()));
+//		getSherlockActivity().findViewById(R.id.twDelays).setMinimumWidth(TTAdapter.getPixels(getSherlockActivity(), TTStopsAdapter.COL_PLACE_WIDTH));
 
 		// stop list
-		TACGridView lwStops = (TACGridView) getActivity().findViewById(R.id.stops);
-		lwStops.setAdapter(new TTStopsAdapter(getSherlockActivity(),Arrays.asList(stops)));
-		lwStops.setVerticalScrollBarEnabled(false);
-		lwStops.setExpanded(true);
+//		TACGridView lwStops = (TACGridView) getActivity().findViewById(R.id.stops);
+//		lwStops.setAdapter(new TTStopsAdapter(getSherlockActivity(),Arrays.asList(stops)));
+//		lwStops.setVerticalScrollBarEnabled(false);
+//		lwStops.setExpanded(true);
+		StopsView lwStops = (StopsView) getActivity().findViewById(R.id.stops);
+		lwStops.setData(Arrays.asList(stops));
 
-		GridView gwDelays = (GridView) getActivity().findViewById(R.id.delays);
-		gwDelays.setAdapter(new TTDelaysAdapter(getSherlockActivity(),delays));
-		gwDelays.setNumColumns(NUM_COLS);
+//		lwStops.setAdapter(new TTStopsAdapter(getSherlockActivity(),Arrays.asList(stops)));
+//		lwStops.setVerticalScrollBarEnabled(false);
+//		lwStops.setExpanded(true);
+
+		DelaysView gwDelays = (DelaysView) getActivity().findViewById(R.id.delays);
+//		gwDelays.setAdapter(new TTDelaysAdapter(getSherlockActivity(),delays));
+//		gwDelays.setNumColumns(NUM_COLS);
+//		gwDelays.setMinimumWidth(TTAdapter.colWidth(getActivity())*NUM_COLS);
+//		gwDelays.setMinimumHeight(TTAdapter.rowHeight(getActivity()));
+		gwDelays.setData(Arrays.asList(delays));
 
 		// times
 
-		CustomView gw = (CustomView)getSherlockActivity().findViewById(R.id.gridview);
-		gw.setMinimumHeight(TTAdapter.rowHeight(getActivity())*NUM_ROWS);
-		gw.setMinimumWidth(TTAdapter.getPixels(getSherlockActivity(),TTAdapter.COL_WIDTH*NUM_COLS)+NUM_COLS+1);
-		gw.setRowHeight(TTAdapter.rowHeight(getSherlockActivity()));
-		gw.setColWidth(TTAdapter.colWidth(getSherlockActivity()));
+		TTView gw = (TTView)getSherlockActivity().findViewById(R.id.gridview);
+//		gw.setMinimumHeight(TTAdapter.rowHeight(getActivity())*NUM_ROWS);
+//		gw.setMinimumWidth(TTAdapter.colWidth(getActivity())*NUM_COLS);
 		gw.setNumCols(NUM_COLS);
 		gw.setNumRows(NUM_ROWS);
-		gw.setTexts(timesArr);
+		gw.setData(timesArr);
 		
 		LinkedScrollView lswmain = (LinkedScrollView)getActivity().findViewById(R.id.mainscrollview);
-		lswmain.setMinimumWidth(TTAdapter.colWidth(getActivity())*NUM_COLS);
-		lswmain.setMinimumHeight(TTAdapter.rowHeight(getActivity())*NUM_ROWS);
+		lswmain.setMinimumWidth(TTHelper.colWidth(getActivity())*NUM_COLS);
+		lswmain.setMinimumHeight(TTHelper.rowHeight(getActivity())*NUM_ROWS);
 		LinkedScrollView lswleft = (LinkedScrollView)getActivity().findViewById(R.id.leftscrollview);
-		lswleft.setMinimumHeight(TTAdapter.rowHeight(getActivity())*NUM_ROWS);
+		lswleft.setMinimumHeight(TTHelper.rowHeight(getActivity())*NUM_ROWS);
 		lswmain.others.add(lswleft);
 		lswleft.others.add(lswmain);
 		
 		if (typeOfTransport && tripids != null){
 			getSherlockActivity().findViewById(R.id.twTypes).setVisibility(View.VISIBLE);
-			getSherlockActivity().findViewById(R.id.twTypes).setMinimumHeight(TTAdapter.rowHeight(getSherlockActivity()));
+			getSherlockActivity().findViewById(R.id.twTypes).setMinimumHeight(TTHelper.rowHeight(getSherlockActivity()));
+			getSherlockActivity().findViewById(R.id.twTypes).setMinimumWidth(TTHelper.getPixels(getSherlockActivity(), TTHelper.COL_PLACE_WIDTH));
 						
 			// Type row
-			GridView gwTypes = (GridView) getActivity().findViewById(R.id.types);
+			TypesView gwTypes = (TypesView) getActivity().findViewById(R.id.types);
+//			gwTypes.setMinimumHeight(TTAdapter.rowHeight(getActivity()));
+//			gwTypes.setMinimumWidth(TTAdapter.colWidth(getSherlockActivity())*NUM_COLS);
+//			gwTypes.setRowHeight(TTAdapter.rowHeight(getSherlockActivity()));
+//			gwTypes.setColWidth(TTAdapter.colWidth(getSherlockActivity()));
+//			gwTypes.setNumCols(NUM_COLS);
+//			gwTypes.setNumRows(1);
+			gwTypes.setData(Arrays.asList(tripids));
+//			GridView gwTypes = (GridView) getActivity().findViewById(R.id.types);
+
 			gwTypes.setVisibility(View.VISIBLE);
-			gwTypes.setAdapter(new TTTypesAdapter(getSherlockActivity(),Arrays.asList(tripids)));
-			gwTypes.setNumColumns(NUM_COLS);
+//			gwTypes.setAdapter(new TTTypesAdapter(getSherlockActivity(),Arrays.asList(tripids)));
+//			gwTypes.setNumColumns(NUM_COLS);
 	
 		} else {
 			getSherlockActivity().findViewById(R.id.twTypes).setVisibility(View.GONE);
@@ -549,7 +565,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		
 		if (todayView) {
 			final HorizontalScrollView hsw = (HorizontalScrollView)getActivity().findViewById(R.id.ttHsv); 
-			final int shift = (minFutureCol < NUM_COLS ? minFutureCol : (NUM_COLS - 1)) * TTAdapter.colWidth(getActivity());
+			final int shift = (minFutureCol < NUM_COLS ? minFutureCol : (NUM_COLS - 1)) * TTHelper.colWidth(getActivity());
 			hsw.post(new Runnable() {
 				public void run() {
 					hsw.smoothScrollTo(shift, 0);

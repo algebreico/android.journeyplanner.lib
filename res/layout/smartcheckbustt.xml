@@ -13,7 +13,9 @@
             android:id="@+id/line_day"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal" 
+            android:gravity="center_vertical"
+            >
 
             <TextView
                 android:id="@+id/lineNumber"
@@ -81,7 +83,7 @@
             android:visibility="gone">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="115dp"
                 android:layout_height="fill_parent"
                 android:orientation="vertical" >
 
@@ -91,7 +93,7 @@
 
                 <TextView
                     android:id="@+id/twDelays"
-                    android:layout_width="match_parent"
+                    android:layout_width="115dp"
                     android:layout_height="33dp"
                     android:background="@drawable/cell_place"
                     android:gravity="center"
@@ -100,7 +102,7 @@
                 
                 <TextView
                     android:id="@+id/twTypes"
-                    android:layout_width="match_parent"
+                    android:layout_width="115dp"
                     android:layout_height="33dp"
                     android:background="@drawable/cell_place"
                     android:gravity="center"
@@ -112,13 +114,15 @@
                     android:id="@+id/leftscrollview"
                     android:layout_width="115dp"
                     android:layout_height="match_parent" 
+                    android:fadingEdge="none" 
                     android:scrollbars="none">
 
-                    <eu.trentorise.smartcampus.jp.custom.TACGridView
+                    <eu.trentorise.smartcampus.jp.custom.StopsView
                         android:id="@+id/stops"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:fadingEdge="none" />
+                        android:background="@drawable/cell_place"
+                        android:layout_width="115dp"
+                        android:layout_height="fill_parent"
+                        />
                 </eu.trentorise.smartcampus.jp.custom.LinkedScrollView>
             </LinearLayout>
 
@@ -134,41 +138,40 @@
                 android:scrollbars="none" >
 
                 <LinearLayout
-                    android:layout_width="fill_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical" >
+                    android:orientation="vertical" 
+                    >
 
 <!--                     <View -->
 <!--                         android:id="@+id/ttw" -->
 <!--                         android:layout_width="match_parent" -->
 <!--                         android:layout_height="1dp" /> -->
 
-                    <GridView
+                    <eu.trentorise.smartcampus.jp.custom.DelaysView
                         android:id="@+id/delays"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:fadingEdge="none"
-                        android:stretchMode="columnWidth" />
+                        android:layout_height="33dp" 
+                        android:background="@drawable/cell_late"/>
                     
-                    <GridView
+                    <eu.trentorise.smartcampus.jp.custom.TypesView
                         android:id="@+id/types"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:fadingEdge="none"
-                        android:stretchMode="columnWidth" 
-                        android:visibility="gone"/>
+                        android:layout_height="33dp"
+                        android:visibility="gone"
+                        android:background="@drawable/cell_late"/>
                     
                     <eu.trentorise.smartcampus.jp.custom.LinkedScrollView
                         android:id="@+id/mainscrollview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" 
+                        android:fadingEdge="none"
                         android:scrollbars="none">
 
-                        <eu.trentorise.smartcampus.jp.custom.CustomView
+                        <eu.trentorise.smartcampus.jp.custom.TTView
                             android:id="@+id/gridview"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
-                            android:fadingEdge="none"
                             android:background="@drawable/cell_hour"/>
 <!--                         <eu.trentorise.smartcampus.jp.custom.TACGridView -->
 <!--                             android:id="@+id/gridview" -->

@@ -407,7 +407,6 @@ public class JPHelper {
 	public static void submitAlert(BasicAlert ba) throws ConnectionException, ProtocolException, SecurityException {
 		if (ba != null) {
 			String json = JSONUtils.convertToJSON(ba);
-			System.err.println(json);
 			MessageRequest req = new MessageRequest(GlobalConfig.getAppUrl(JPHelper.mContext), Config.TARGET_ADDRESS
 					+ Config.CALL_ALERT_SUBMIT);
 			req.setMethod(Method.POST);

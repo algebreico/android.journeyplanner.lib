@@ -69,16 +69,16 @@ public abstract class CustomGridView<T> extends View {
 	protected void onDraw(Canvas canvas) {
 //		super.onDraw(canvas);	
 		if (getHLinePaint() != null) {
-			canvas.drawLine(0, 0, getNumCols()*getColWidth(), 0, getHLinePaint());
+			canvas.drawLine(0, 0, getNumCols()*getColWidth()-1, 0, getHLinePaint());
 			for (int i = 0; i < getNumRows(); i++) {
-				int y = (getRowHeight())*(i);
-				canvas.drawLine(0, y, getNumCols()*getColWidth(), y, getHLinePaint());
+				int y = (getRowHeight())*(i)-1;
+				canvas.drawLine(0, y, getNumCols()*getColWidth()-1, y, getHLinePaint());
 			}
 		}
 		if (getVLinePaint() != null) {
 			canvas.drawLine(0, 0, 0, getNumRows() * getRowHeight(), getVLinePaint());
 			for (int i = 0; i < getNumCols(); i++) {
-				int x = (getColWidth()) * (i);
+				int x = (getColWidth()) * (i)-1;
 				canvas.drawLine(x, 0, x, getNumRows() * getRowHeight(), getVLinePaint());
 			}
 		}
@@ -151,6 +151,7 @@ public abstract class CustomGridView<T> extends View {
 	 */
 	public void setNumRows(int numRows) {
 		this.numRows = numRows;
+//		getLayoutParams().height = getRowHeight()*numRows;
 		setMinimumHeight(getRowHeight()*numRows);
 	}
 
@@ -167,6 +168,7 @@ public abstract class CustomGridView<T> extends View {
 	public void setNumCols(int numCols) {
 		this.numCols = numCols;
 		setMinimumWidth(numCols*getColWidth());
+//		getLayoutParams().width = numCols*getColWidth();
 	}
 
 	/**

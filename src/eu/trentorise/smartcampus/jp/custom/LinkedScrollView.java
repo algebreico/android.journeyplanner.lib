@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 
 public class LinkedScrollView extends ScrollView {
@@ -35,4 +33,5 @@ public class LinkedScrollView extends ScrollView {
 		}
 		super.onScrollChanged(l, t, oldl, oldt);
 	}
+	
 }

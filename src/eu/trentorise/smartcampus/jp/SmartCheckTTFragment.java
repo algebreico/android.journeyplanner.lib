@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -256,16 +257,21 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		cal.set(Calendar.MINUTE, 59);
 		cal.set(Calendar.SECOND, 999);
 		Date evening = cal.getTime();
+		GradientDrawable gd = (GradientDrawable) todayButton.getBackground();
 		if (basic_date.after(morning) && basic_date.before(evening)) {
 			todayView = true;
 			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
-			((GradientDrawable) todayButton.getBackground()).setColor(getResources().getColor(
-					R.color.abs__holo_blue_light));
+			gd.setColor(getResources().getColor(R.color.abs__holo_blue_light));
+//			((GradientDrawable) todayButton.getBackground()).setColor(getResources().getColor(
+//					R.color.abs__holo_blue_light));
 		} else {
 			todayView = false;
-			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
-			((GradientDrawable) todayButton.getBackground()).setColor(params.getColor());
+//			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
+//			((GradientDrawable) todayButton.getBackground()).setColor(params.getColor());
+//			((ColorDrawable) todayButton.getBackground()).setColor(params.getColor());
+			gd.setColor(params.getColor());
 		}
+		todayButton.invalidate();
 
 	}
 
@@ -300,29 +306,33 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 			}
 			
 			final int NUM_COLS = tempNumbCol;
-				int indexOfDay = 0;
-				int indexOfCourseInThatDay = 0;
+			int indexOfDay = 0;
+			int indexOfCourseInThatDay = 0;
 
-				for (int j = 0; j < NUM_COLS; j++) {
-					while (result.get(indexOfDay).isEmpty()) {
-						if (indexOfDay == 0) {
-							displayedDay = 1;
-						}
-						indexOfDay++;
+			delays = new HashMap[NUM_COLS];
+			
+			for (int j = 0; j < NUM_COLS; j++) {
+				while (result.get(indexOfDay).isEmpty()) {
+					if (indexOfDay == 0) {
+						displayedDay = 1;
 					}
-
-					Map<String, String> actualDelays = result.get(indexOfDay)
-								.get(indexOfCourseInThatDay);
-						delays[j] = actualDelays;
-					
-					if (indexOfCourseInThatDay == result.get(indexOfDay).size() - 1) {
-						if (indexOfDay < DAYS_WINDOWS)
-							indexOfDay++;
-						indexOfCourseInThatDay = 0;
-					} else {
-						indexOfCourseInThatDay++;
-					}
+					indexOfDay++;
 				}
+				// hook
+				
+
+				Map<String, String> actualDelays = result.get(indexOfDay)
+							.get(indexOfCourseInThatDay);
+					delays[j] = actualDelays;
+				
+				if (indexOfCourseInThatDay == result.get(indexOfDay).size() - 1) {
+					if (indexOfDay < DAYS_WINDOWS)
+						indexOfDay++;
+					indexOfCourseInThatDay = 0;
+				} else {
+					indexOfCourseInThatDay++;
+				}
+			}
 			
 			// reload Delay part
 			reloadDelays();
@@ -358,6 +368,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 		@Override
 		public void handleResult(TimeTable result) {
+			if (mProgressBar.isShown()) toggleProgressDialog();
 			try {
 				reloadTimeTable(actualTimeTable);
 
@@ -382,9 +393,6 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 					builder.setMessage("Problem loading").setPositiveButton("Back", dialogClickListener).show();
 				}
 			}
-			if (mProgressBar.isShown())
-				toggleProgressDialog();
-
 			if (todayView) {
 				AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>> task = new AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>>(
 						getSherlockActivity(), new GetDelayProcessor(getSherlockActivity()));
@@ -497,67 +505,40 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	}
 
 	protected void loadView(int NUM_COLS, int NUM_ROWS, int minFutureCol) {
-		getSherlockActivity().findViewById(R.id.layout_bustt).setVisibility(View.VISIBLE);
-		// delays label
-//		getSherlockActivity().findViewById(R.id.twDelays).setMinimumHeight(TTAdapter.rowHeight(getSherlockActivity()));
-//		getSherlockActivity().findViewById(R.id.twDelays).setMinimumWidth(TTAdapter.getPixels(getSherlockActivity(), TTStopsAdapter.COL_PLACE_WIDTH));
-
+		LinearLayout container =  (LinearLayout)getSherlockActivity().findViewById(R.id.layout_bustt);
+		if (NUM_COLS > 0 && NUM_ROWS > 0) {
+			container.setVisibility(View.VISIBLE);
+			getSherlockActivity().findViewById(R.id.ttempty).setVisibility(View.INVISIBLE);
+		} else {
+			container.setVisibility(View.GONE);
+			getSherlockActivity().findViewById(R.id.ttempty).setVisibility(View.VISIBLE);
+			return;
+		}
 		// stop list
-//		TACGridView lwStops = (TACGridView) getActivity().findViewById(R.id.stops);
-//		lwStops.setAdapter(new TTStopsAdapter(getSherlockActivity(),Arrays.asList(stops)));
-//		lwStops.setVerticalScrollBarEnabled(false);
-//		lwStops.setExpanded(true);
-		StopsView lwStops = (StopsView) getActivity().findViewById(R.id.stops);
-		lwStops.setData(Arrays.asList(stops));
+		StopsView stopsView = (StopsView) getActivity().findViewById(R.id.stops);
+		stopsView.setData(Arrays.asList(stops));
 
-//		lwStops.setAdapter(new TTStopsAdapter(getSherlockActivity(),Arrays.asList(stops)));
-//		lwStops.setVerticalScrollBarEnabled(false);
-//		lwStops.setExpanded(true);
-
-		DelaysView gwDelays = (DelaysView) getActivity().findViewById(R.id.delays);
-//		gwDelays.setAdapter(new TTDelaysAdapter(getSherlockActivity(),delays));
-//		gwDelays.setNumColumns(NUM_COLS);
-//		gwDelays.setMinimumWidth(TTAdapter.colWidth(getActivity())*NUM_COLS);
-//		gwDelays.setMinimumHeight(TTAdapter.rowHeight(getActivity()));
-		gwDelays.setData(Arrays.asList(delays));
+		DelaysView delaysView = (DelaysView) getActivity().findViewById(R.id.delays);
+		delaysView.setData(Arrays.asList(delays));
 
 		// times
 
-		TTView gw = (TTView)getSherlockActivity().findViewById(R.id.gridview);
-//		gw.setMinimumHeight(TTAdapter.rowHeight(getActivity())*NUM_ROWS);
-//		gw.setMinimumWidth(TTAdapter.colWidth(getActivity())*NUM_COLS);
-		gw.setNumCols(NUM_COLS);
-		gw.setNumRows(NUM_ROWS);
-		gw.setData(timesArr);
+		TTView timetableView = (TTView)getSherlockActivity().findViewById(R.id.gridview);
+		timetableView.setNumCols(NUM_COLS);
+		timetableView.setNumRows(NUM_ROWS);
+		timetableView.setData(timesArr);
 		
-		LinkedScrollView lswmain = (LinkedScrollView)getActivity().findViewById(R.id.mainscrollview);
-		lswmain.setMinimumWidth(TTHelper.colWidth(getActivity())*NUM_COLS);
-		lswmain.setMinimumHeight(TTHelper.rowHeight(getActivity())*NUM_ROWS);
-		LinkedScrollView lswleft = (LinkedScrollView)getActivity().findViewById(R.id.leftscrollview);
-		lswleft.setMinimumHeight(TTHelper.rowHeight(getActivity())*NUM_ROWS);
-		lswmain.others.add(lswleft);
-		lswleft.others.add(lswmain);
+		LinkedScrollView lsvmain = (LinkedScrollView)getActivity().findViewById(R.id.mainscrollview);
+		LinkedScrollView lsvleft = (LinkedScrollView)getActivity().findViewById(R.id.leftscrollview);
+		lsvmain.others.add(lsvleft);
+		lsvleft.others.add(lsvmain);
 		
 		if (typeOfTransport && tripids != null){
 			getSherlockActivity().findViewById(R.id.twTypes).setVisibility(View.VISIBLE);
-			getSherlockActivity().findViewById(R.id.twTypes).setMinimumHeight(TTHelper.rowHeight(getSherlockActivity()));
-			getSherlockActivity().findViewById(R.id.twTypes).setMinimumWidth(TTHelper.getPixels(getSherlockActivity(), TTHelper.COL_PLACE_WIDTH));
-						
 			// Type row
 			TypesView gwTypes = (TypesView) getActivity().findViewById(R.id.types);
-//			gwTypes.setMinimumHeight(TTAdapter.rowHeight(getActivity()));
-//			gwTypes.setMinimumWidth(TTAdapter.colWidth(getSherlockActivity())*NUM_COLS);
-//			gwTypes.setRowHeight(TTAdapter.rowHeight(getSherlockActivity()));
-//			gwTypes.setColWidth(TTAdapter.colWidth(getSherlockActivity()));
-//			gwTypes.setNumCols(NUM_COLS);
-//			gwTypes.setNumRows(1);
 			gwTypes.setData(Arrays.asList(tripids));
-//			GridView gwTypes = (GridView) getActivity().findViewById(R.id.types);
-
 			gwTypes.setVisibility(View.VISIBLE);
-//			gwTypes.setAdapter(new TTTypesAdapter(getSherlockActivity(),Arrays.asList(tripids)));
-//			gwTypes.setNumColumns(NUM_COLS);
-	
 		} else {
 			getSherlockActivity().findViewById(R.id.twTypes).setVisibility(View.GONE);
 			getSherlockActivity().findViewById(R.id.types).setVisibility(View.GONE);
@@ -572,6 +553,10 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 				}
 			});
 		}
+		timetableView.setLayoutParams(new ScrollView.LayoutParams(TTHelper.colWidth(getActivity())*NUM_COLS, TTHelper.rowHeight(getActivity())*NUM_ROWS));
+		stopsView.setLayoutParams(new ScrollView.LayoutParams(TTHelper.getPixels(getActivity(), TTHelper.COL_PLACE_WIDTH), TTHelper.rowHeight(getActivity())*NUM_ROWS));
+		
+		container.invalidate();
 		refreshDayTextView(0); 
 	}
 

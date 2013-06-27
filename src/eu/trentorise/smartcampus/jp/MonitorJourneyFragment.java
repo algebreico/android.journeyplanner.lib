@@ -572,7 +572,7 @@ public class MonitorJourneyFragment extends PlanNewJourneyFragment {
 			@Override
 			public void onClick(View v) {
 				DialogFragment newFragment = TimePickerDialogFragment.newInstance((EditText) v);
-				newFragment.setArguments(TimePickerDialogFragment.prepareData(fromTime.toString()));
+				newFragment.setArguments(TimePickerDialogFragment.prepareData(fromTime.getText().toString()));
 				newFragment.show(getSherlockActivity().getSupportFragmentManager(), "timePicker");
 			}
 		});
@@ -581,7 +581,7 @@ public class MonitorJourneyFragment extends PlanNewJourneyFragment {
 			@Override
 			public void onClick(View v) {
 				DialogFragment newFragment = TimePickerDialogFragment.newInstance((EditText) v);
-				newFragment.setArguments(TimePickerDialogFragment.prepareData(toTime.toString()));
+				newFragment.setArguments(TimePickerDialogFragment.prepareData(toTime.getText().toString()));
 				newFragment.show(getSherlockActivity().getSupportFragmentManager(), "timePicker");
 			}
 		});

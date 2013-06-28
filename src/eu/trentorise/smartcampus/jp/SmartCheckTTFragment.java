@@ -275,6 +275,11 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 	}
 
+	@Override
+	public void onPause() {
+		if (mProgressBar.isShown()) toggleProgressDialog();
+		super.onPause();
+	}
 
 	private class GetDelayProcessor extends AbstractAsyncTaskProcessorNoDialog<Object, List<List<Map<String, String>>>> {
 
@@ -290,15 +295,18 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		@Override
 		public void handleFailure(Exception e) {
 //			super.handleFailure(e);
+			if (mProgressBar.isShown()) toggleProgressDialog();
 		}
 
 		@Override
 		public void handleConnectionError() {
 //			super.handleConnectionError();
+			if (mProgressBar.isShown()) toggleProgressDialog();
 		}
 
 		@Override
 		public void handleResult(List<List<Map<String, String>>> result) {
+			if (mProgressBar.isShown()) toggleProgressDialog();
 			// refresh delay with new data
 			int tempNumbCol=0;
 			for (List<Map<String, String>> tt : result) {
@@ -394,13 +402,12 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 				}
 			}
 			if (todayView) {
+				if (!mProgressBar.isShown()) toggleProgressDialog();
 				AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>> task = new AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>>(
 						getSherlockActivity(), new GetDelayProcessor(getSherlockActivity()));
 				task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
 			}
 		}
-
-	
 
 	}
 

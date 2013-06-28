@@ -167,7 +167,7 @@
     
     <string name="leg_from">da</string>
     <string name="leg_to">a</string>
-    <string name="leg_pick_bike">prendi una bicicletta a</string>
+    <string name="leg_bike_pick_up">prendi una bicicletta a</string>
     <string name="leg_bike_leave">lascia la bicicletta a</string>
     <string name="leg_car_pick_up">prendi un\'auto a</string>
     <string name="leg_car_leave">lascia l\'auto a</string>

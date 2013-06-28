@@ -34,6 +34,7 @@ public class SmartCheckListFragment extends FeedbackFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.smartcheck, container, false);
 	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -55,15 +56,13 @@ public class SmartCheckListFragment extends FeedbackFragment {
 		optionsListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				
+
 				String optionName = adapter.getItem(position);
 				// Fragment fragment = null;
 				ActionBar actionBar = getSherlockActivity().getSupportActionBar();
-				FragmentTransaction fragmentTransaction =
-						 getSherlockActivity().getSupportFragmentManager()
-						 .beginTransaction();
-						 fragmentTransaction.remove(SmartCheckListFragment.this);
-						 fragmentTransaction.commit();
+				FragmentTransaction fragmentTransaction = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+				fragmentTransaction.remove(SmartCheckListFragment.this);
+				fragmentTransaction.commit();
 				if (optionName.contentEquals(getResources().getString(R.string.smart_check_list_bus_trento_timetable))) {
 					// actionBar.setDisplayShowTitleEnabled(true); // system
 					// title
@@ -85,10 +84,10 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Map
 					tab = actionBar.newTab();
 					tab.setText(R.string.tab_map);
-					tab.setTabListener(new TabListener<SmartCheckMapFragment>(getSherlockActivity(), "map",
-							SmartCheckMapFragment.class, null));
+					tab.setTabListener(new TabListener<SmartCheckMapV2Fragment>(getSherlockActivity(), "map",
+							SmartCheckMapV2Fragment.class, null));
 					bundle = new Bundle();
-					bundle.putStringArray(SmartCheckMapFragment.ARG_AGENCY_IDS,
+					bundle.putStringArray(SmartCheckMapV2Fragment.ARG_AGENCY_IDS,
 							new String[] { RoutesHelper.AGENCYID_BUS_TRENTO });
 					tab.setTag(bundle);
 					actionBar.addTab(tab);
@@ -125,10 +124,10 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Map
 					tab = actionBar.newTab();
 					tab.setText(R.string.tab_map);
-					tab.setTabListener(new TabListener<SmartCheckMapFragment>(getSherlockActivity(), "map",
-							SmartCheckMapFragment.class, null));
+					tab.setTabListener(new TabListener<SmartCheckMapV2Fragment>(getSherlockActivity(), "map",
+							SmartCheckMapV2Fragment.class, null));
 					bundle = new Bundle();
-					bundle.putStringArray(SmartCheckMapFragment.ARG_AGENCY_IDS,
+					bundle.putStringArray(SmartCheckMapV2Fragment.ARG_AGENCY_IDS,
 							new String[] { RoutesHelper.AGENCYID_BUS_ROVERETO });
 					tab.setTag(bundle);
 					actionBar.addTab(tab);
@@ -154,10 +153,10 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Map
 					tab = actionBar.newTab();
 					tab.setText(R.string.tab_map);
-					tab.setTabListener(new TabListener<SmartCheckMapFragment>(getSherlockActivity(), "map",
-							SmartCheckMapFragment.class, null));
+					tab.setTabListener(new TabListener<SmartCheckMapV2Fragment>(getSherlockActivity(), "map",
+							SmartCheckMapV2Fragment.class, null));
 					bundle = new Bundle();
-					bundle.putStringArray(SmartCheckMapFragment.ARG_AGENCY_IDS,
+					bundle.putStringArray(SmartCheckMapV2Fragment.ARG_AGENCY_IDS,
 							new String[] { RoutesHelper.AGENCYID_BUS_SUBURBAN });
 					tab.setTag(bundle);
 					actionBar.addTab(tab);
@@ -184,10 +183,10 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Map
 					tab = actionBar.newTab();
 					tab.setText(R.string.tab_map);
-					tab.setTabListener(new TabListener<SmartCheckMapFragment>(getSherlockActivity(), "map",
-							SmartCheckMapFragment.class, null));
+					tab.setTabListener(new TabListener<SmartCheckMapV2Fragment>(getSherlockActivity(), "map",
+							SmartCheckMapV2Fragment.class, null));
 					bundle = new Bundle();
-					bundle.putStringArray(SmartCheckMapFragment.ARG_AGENCY_IDS,
+					bundle.putStringArray(SmartCheckMapV2Fragment.ARG_AGENCY_IDS,
 							new String[] { RoutesHelper.AGENCYID_TRAIN_BZVR, RoutesHelper.AGENCYID_TRAIN_TM,
 									RoutesHelper.AGENCYID_TRAIN_TNBDG });
 					tab.setTag(bundle);

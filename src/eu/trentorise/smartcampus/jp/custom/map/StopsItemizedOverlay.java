@@ -200,7 +200,7 @@ public class StopsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 									}
 									listener.onStopObjectsTap(objects);
 								} else {
-									MapManager.fitMapWithOverlays(list, mMapView);
+//									MapManager.fitMapWithOverlays(list, mMapView);
 								}
 								return super.onTap(index);
 							}

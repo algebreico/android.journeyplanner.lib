@@ -63,7 +63,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 	private StopsAsyncTask loader;
 	private Runnable onFirstFixLoader;
 
-//	private Map<String, SmartCheckStop> smartCheckStopMap;
+	// private Map<String, SmartCheckStop> smartCheckStopMap;
 	private Square cache;
 
 	private GeoPoint centerGeoPoint = null;
@@ -82,7 +82,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 
 		mapView = MapManager.getBetterMapView();
 		mapView.setOnMapChanged(this);
-		
+
 		// get arguments
 		String[] argumentsSelectedAgencyIds = new String[] {};
 		if (savedInstanceState != null && savedInstanceState.containsKey(ARG_AGENCY_IDS)) {
@@ -109,7 +109,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		if (stopsItemizedoverlay == null) {
 			stopsItemizedoverlay = new StopsItemizedOverlay(mContext, mapView);
 			stopsItemizedoverlay.setMapItemTapListener(this);
-//			this.smartCheckStopMap = new HashMap<String, SmartCheckStop>();
+			// this.smartCheckStopMap = new HashMap<String, SmartCheckStop>();
 		}
 		mapView.getOverlays().clear();
 		mapView.getOverlays().add(stopsItemizedoverlay);
@@ -119,8 +119,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		if (mMyLocationOverlay == null) {
 			mMyLocationOverlay = new MyLocationOverlay(mContext, mapView) {
 				@Override
-				protected void drawMyLocation(Canvas canvas, MapView mapView, Location lastFix, GeoPoint myLocation,
-						long when) {
+				protected void drawMyLocation(Canvas canvas, MapView mapView, Location lastFix, GeoPoint myLocation, long when) {
 					Projection p = mapView.getProjection();
 					float accuracy = p.metersToEquatorPixels(lastFix.getAccuracy());
 					Point loc = p.toPixels(myLocation, null);
@@ -154,14 +153,13 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 						centerGeoPoint = mMyLocationOverlay.getMyLocation();
 						mapView.getController().animateTo(centerGeoPoint);
 
-						 if (loader != null) {
-						 loader.cancel(true);
-						 }
-						 
-						loader = new StopsAsyncTask( selectedAgencyIds, stopsItemizedoverlay,
-								new double[] { centerGeoPoint.getLatitudeE6() / 1e6,
-										centerGeoPoint.getLongitudeE6() / 1e6 }, mapView.getDiagonalLenght(), mapView,
-								null);
+						if (loader != null) {
+							loader.cancel(true);
+						}
+
+						loader = new StopsAsyncTask(selectedAgencyIds, stopsItemizedoverlay, new double[] {
+								centerGeoPoint.getLatitudeE6() / 1e6, centerGeoPoint.getLongitudeE6() / 1e6 },
+								mapView.getDiagonalLenght(), mapView, null);
 						loader.execute();
 					}
 				}
@@ -180,7 +178,6 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 			stopsItemizedoverlay.populateAll();
 			mapView.postInvalidate();
 		}
-		
 
 		return mapContainer;
 	}
@@ -199,8 +196,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		// tabs
 
 		// hide keyboard if it is still open
-		InputMethodManager imm = (InputMethodManager) mContext.getSystemService(
-				Context.INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(mapView.getWindowToken(), 0);
 	}
 
@@ -279,15 +275,14 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 		// || cache.getLong() != location[1]) {
 		Square s = new Square(location, diagonal);
 		if (cache == null || cache.compareTo(s)) {
-			 if (loader != null) {
-			 loader.cancel(true);
-			 }
+			if (loader != null) {
+				loader.cancel(true);
+			}
 
 			if (sfa != null) {
 				sfa.setSupportProgressBarIndeterminateVisibility(true);
 			}
-			loader = new StopsAsyncTask( selectedAgencyIds,  stopsItemizedoverlay, location,
-					diagonal, mapView, this);
+			loader = new StopsAsyncTask(selectedAgencyIds, stopsItemizedoverlay, location, diagonal, mapView, this);
 			loader.execute();
 
 		}
@@ -297,21 +292,21 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 	@Override
 	public void onZoomChanged(GeoPoint center, double diagonal) {
 		SherlockFragmentActivity sfa = getSherlockActivity();
-		Log.i("where", "DiagonalLenght: " + diagonal + "\nCenter Long: " + center.getLongitudeE6() / 1e6 + " Lat: "
-				+ center.getLatitudeE6() / 1e6);
+		Log.i("where",
+				"DiagonalLenght: " + diagonal + "\nCenter Long: " + center.getLongitudeE6() / 1e6 + " Lat: "
+						+ center.getLatitudeE6() / 1e6);
 		final double[] location = { center.getLatitudeE6() / 1e6, center.getLongitudeE6() / 1e6 };
 		// if (cache == null || diagonalLenght > cache.getDiagonal()) {
 		Square s = new Square(location, diagonal);
 		if (cache == null || cache.compareTo(s)) {
-			 if (loader != null) {
-			 loader.cancel(true);
-			 }
+			if (loader != null) {
+				loader.cancel(true);
+			}
 
 			if (sfa != null) {
 				sfa.setSupportProgressBarIndeterminateVisibility(true);
 			}
-			loader = new StopsAsyncTask( selectedAgencyIds,  stopsItemizedoverlay, location,
-					diagonal, mapView, this);
+			loader = new StopsAsyncTask(selectedAgencyIds, stopsItemizedoverlay, location, diagonal, mapView, this);
 			loader.execute();
 
 		}
@@ -330,7 +325,7 @@ public class SmartCheckMapFragment extends FeedbackFragment implements StopObjec
 	public void onConfigurationChanged(Configuration arg0) {
 		super.onConfigurationChanged(arg0);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();

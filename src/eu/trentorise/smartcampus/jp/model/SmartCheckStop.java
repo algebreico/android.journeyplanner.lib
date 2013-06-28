@@ -19,7 +19,7 @@ import java.util.Map;
 
 import eu.trentorise.smartcampus.storage.BasicObject;
 
-public class SmartCheckStop extends BasicObject {
+public class SmartCheckStop extends BasicObject implements LocatedObject {
 	private static final long serialVersionUID = 3589900794339644582L;
 
 	// common fields
@@ -83,5 +83,9 @@ public class SmartCheckStop extends BasicObject {
 		return true;
 	}
 
+	@Override
+	public double[] location() {
+		return getLocation();
+	}
 
 }

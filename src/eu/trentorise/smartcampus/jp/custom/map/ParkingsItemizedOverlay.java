@@ -190,7 +190,7 @@ public class ParkingsItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 									}
 									listener.onParkingObjectsTap(objects);
 								} else {
-									MapManager.fitMapWithOverlays(list, mMapView);
+//									MapManager.fitMapWithOverlays(list, mMapView);
 								}
 								return super.onTap(index);
 							}

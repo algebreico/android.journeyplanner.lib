@@ -25,10 +25,10 @@ public class SmartCheckActivity extends BaseActivity {
 		
 		setContentView(R.layout.empty_layout_jp);
 		
-		BetterMapView mapView = new BetterMapView(this, getResources().getString(R.string.maps_api_key));
-		mapView.setClickable(true);
-		mapView.setBuiltInZoomControls(true);
-		MapManager.setBetterMapView(mapView);
+//		BetterMapView mapView = new BetterMapView(this, getResources().getString(R.string.maps_api_key));
+//		mapView.setClickable(true);
+//		mapView.setBuiltInZoomControls(true);
+//		MapManager.setBetterMapView(mapView);
 
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);

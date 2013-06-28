@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 /**
  * @author raman
- *
+ * 
  */
 public class StopsView extends TTView {
 
@@ -44,10 +44,12 @@ public class StopsView extends TTView {
 
 	@Override
 	protected void drawCell(Canvas canvas, String item, int row, int col, int x, int y) {
-		String text = (String) item;
-		int xPos = (int)(x + 10);
-		int yPos = (int) ((y+getRowHeight() / 2) - ((mTextPaint.descent() + mTextPaint.ascent()) / 2)) ; 
-		canvas.drawText(text, xPos, yPos, mTextPaint);
+		if (canvas != null) {
+			String text = (String) item;
+			int xPos = (int) (x + 10);
+			int yPos = (int) ((y + getRowHeight() / 2) - ((mTextPaint.descent() + mTextPaint.ascent()) / 2));
+			canvas.drawText(text, xPos, yPos, mTextPaint);
+		}
 	}
 
 	@Override
@@ -72,6 +74,5 @@ public class StopsView extends TTView {
 	public int getColWidth() {
 		return TTHelper.getPixels(getContext(), TTHelper.COL_PLACE_WIDTH);
 	}
-	
-	
+
 }

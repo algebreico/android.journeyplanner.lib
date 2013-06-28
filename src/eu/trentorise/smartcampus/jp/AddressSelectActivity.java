@@ -42,11 +42,7 @@ import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
 
 public class AddressSelectActivity extends BaseActivity implements OnMapLongClickListener {
 
-	private MapView mapView = null;
 	private GoogleMap mMap = null;
-
-	// private Timer timer = new Timer();
-	// private TimerTask task = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

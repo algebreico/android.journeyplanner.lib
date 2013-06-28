@@ -60,9 +60,10 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 	@Override
 	public void onResume() {
 		super.onResume();
-		
-		if (getSupportMap() == null) return;
-		
+
+		if (getSupportMap() == null)
+			return;
+
 		getSupportMap().setOnCameraChangeListener(this);
 		getSupportMap().setOnMarkerClickListener(this);
 
@@ -73,17 +74,17 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 			centerLatLng = new LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() / 1e6, JPHelper
 					.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
 
-			getSupportMap().animateCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel), 1, null);
+			getSupportMap().moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel));
 		} else {
-			getSupportMap().animateCamera(CameraUpdateFactory.zoomTo(zoomLevel), 1, null);
+			getSupportMap().moveCamera(CameraUpdateFactory.zoomTo(zoomLevel));
 		}
-
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (getSupportMap() == null) return;
+		if (getSupportMap() == null)
+			return;
 
 		getSupportMap().setMyLocationEnabled(false);
 		getSupportMap().setOnCameraChangeListener(null);

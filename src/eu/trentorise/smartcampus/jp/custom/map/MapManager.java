@@ -168,7 +168,7 @@ public class MapManager {
 		private static List<List<List<LocatedObject>>> grid = new ArrayList<List<List<LocatedObject>>>();
 		private static SparseArray<int[]> item2group = new SparseArray<int[]>();
 
-		public static <T extends LocatedObject> List<MarkerOptions> cluster(Context mContext, GoogleMap map,
+		public synchronized static <T extends LocatedObject> List<MarkerOptions> cluster(Context mContext, GoogleMap map,
 				Collection<T> objects) {
 			item2group.clear();
 			// 2D array with some configurable, fixed density

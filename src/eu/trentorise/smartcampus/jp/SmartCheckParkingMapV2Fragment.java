@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -15,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
+import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
 import eu.trentorise.smartcampus.jp.custom.map.MapManager;
 import eu.trentorise.smartcampus.jp.custom.map.ParkingsInfoDialog;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
@@ -42,6 +48,8 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 	private LatLng centerLatLng;
 	private float zoomLevel = JPParamsHelper.getZoomLevelMap();
 
+	private GoogleMap mMap;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,7 +58,7 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 
 		setHasOptionsMenu(true);
 	}
-
+	
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -69,11 +77,13 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 			ParkingsHelper.setFocusedParking(null);
 		}
 
-		getMap().setOnCameraChangeListener(this);
-		getMap().setOnMarkerClickListener(this);
+		if (getSupportMap() == null) return;
+		
+		getSupportMap().setOnCameraChangeListener(this);
+		getSupportMap().setOnMarkerClickListener(this);
 
 		// show my location
-		getMap().setMyLocationEnabled(true);
+		getSupportMap().setMyLocationEnabled(true);
 
 		if (focusedParking == null) {
 			// move to my location
@@ -81,13 +91,13 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 				centerLatLng = new LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() / 1e6, JPHelper
 						.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
 
-				getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel), 1, null);
+				getSupportMap().animateCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel), 1, null);
 			} else {
-				getMap().animateCamera(CameraUpdateFactory.zoomTo(zoomLevel), 1, null);
+				getSupportMap().animateCamera(CameraUpdateFactory.zoomTo(zoomLevel), 1, null);
 			}
 		} else {
 			zoomLevel--;
-			getMap().animateCamera(
+			getSupportMap().animateCamera(
 					CameraUpdateFactory.newLatLngZoom(new LatLng(focusedParking.location()[0], focusedParking.location()[1]),
 							FOCUSED_ZOOM));
 		}
@@ -95,28 +105,26 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 
 	@Override
 	public void onPause() {
-		getMap().setMyLocationEnabled(false);
-		getMap().setOnCameraChangeListener(null);
 		super.onPause();
+		if (getSupportMap() != null) {
+			getSupportMap().setMyLocationEnabled(false);
+			getSupportMap().setOnCameraChangeListener(null);
+		}
 	}
 
 	@Override
 	public void onCameraChange(CameraPosition position) {
-		boolean zoomLevelChanged = false;
 		if (zoomLevel != position.zoom) {
-			zoomLevelChanged = true;
 			zoomLevel = position.zoom;
 		}
 
 		if (ParkingsHelper.getParkingsCache().isEmpty()) {
-			new SCAsyncTask<Void, Void, List<ParkingSerial>>(mActivity, new SmartCheckParkingMapProcessor(mActivity, getMap(),
+			new SCAsyncTask<Void, Void, List<ParkingSerial>>(mActivity, new SmartCheckParkingMapProcessor(mActivity, getSupportMap(),
 					parkingAid)).execute();
 		} else {
-			if (zoomLevelChanged) {
-				getMap().clear();
-				MapManager.ClusteringHelper.render(getMap(),
-						MapManager.ClusteringHelper.cluster(mActivity, getMap(), ParkingsHelper.getParkingsCache()));
-			}
+				getSupportMap().clear();
+				MapManager.ClusteringHelper.render(getSupportMap(),
+						MapManager.ClusteringHelper.cluster(mActivity, getSupportMap(), ParkingsHelper.getParkingsCache()));
 		}
 	}
 
@@ -130,16 +138,16 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 			return true;
 		}
 
-		if (list.size() > 1 && getMap().getCameraPosition().zoom == getMap().getMaxZoomLevel()) {
+		if (list.size() > 1 && getSupportMap().getCameraPosition().zoom == getSupportMap().getMaxZoomLevel()) {
 			ParkingsInfoDialog parkingsInfoDialog = new ParkingsInfoDialog();
 			Bundle args = new Bundle();
 			args.putSerializable(ParkingsInfoDialog.ARG_PARKINGS, (ArrayList) list);
 			parkingsInfoDialog.setArguments(args);
 			parkingsInfoDialog.show(mActivity.getSupportFragmentManager(), "parking_selected");
 		} else if (list.size() > 1) {
-			// getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),
+			// getSupportMap().animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),
 			// zoomLevel + 1));
-			MapManager.fitMapWithOverlays(list, getMap());
+			MapManager.fitMapWithOverlays(list, getSupportMap());
 		} else {
 			ParkingSerial parking = (ParkingSerial) list.get(0);
 			ParkingsInfoDialog parkingsInfoDialog = new ParkingsInfoDialog();
@@ -151,6 +159,13 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 		// // default behavior
 		// return false;
 		return true;
+	}
+
+	private GoogleMap getSupportMap() {
+		if (mMap == null) {
+			mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(Config.mainlayout)).getMap();
+		}
+		return mMap;
 	}
 
 }

@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -38,6 +39,7 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 	private LatLng centerLatLng;
 	private float zoomLevel = JPParamsHelper.getZoomLevelMap() + 2;
 	private StopsV2AsyncTask loader;
+	private GoogleMap mMap;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,29 +60,33 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 	@Override
 	public void onResume() {
 		super.onResume();
-
-		getMap().setOnCameraChangeListener(this);
-		getMap().setOnMarkerClickListener(this);
+		
+		if (getSupportMap() == null) return;
+		
+		getSupportMap().setOnCameraChangeListener(this);
+		getSupportMap().setOnMarkerClickListener(this);
 
 		// show my location
-		getMap().setMyLocationEnabled(true);
+		getSupportMap().setMyLocationEnabled(true);
 		// move to my location
 		if (JPHelper.getLocationHelper().getLocation() != null) {
 			centerLatLng = new LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() / 1e6, JPHelper
 					.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
 
-			getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel), 1, null);
+			getSupportMap().animateCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel), 1, null);
 		} else {
-			getMap().animateCamera(CameraUpdateFactory.zoomTo(zoomLevel), 1, null);
+			getSupportMap().animateCamera(CameraUpdateFactory.zoomTo(zoomLevel), 1, null);
 		}
 
 	}
 
 	@Override
 	public void onPause() {
-		getMap().setMyLocationEnabled(false);
-		getMap().setOnCameraChangeListener(null);
 		super.onPause();
+		if (getSupportMap() == null) return;
+
+		getSupportMap().setMyLocationEnabled(false);
+		getSupportMap().setOnCameraChangeListener(null);
 	}
 
 	@Override
@@ -95,7 +101,7 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 			loader.cancel(true);
 		}
 
-		loader = new StopsV2AsyncTask(mActivity, selectedAgencyIds, centerLatLng, getDiagonalLenght(), getMap(),
+		loader = new StopsV2AsyncTask(mActivity, selectedAgencyIds, centerLatLng, getDiagonalLenght(), getSupportMap(),
 				zoomLevelChanged, null);
 		loader.execute();
 	}
@@ -110,16 +116,16 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 			return true;
 		}
 
-		if (list.size() > 1 && getMap().getCameraPosition().zoom == getMap().getMaxZoomLevel()) {
+		if (list.size() > 1 && getSupportMap().getCameraPosition().zoom == getSupportMap().getMaxZoomLevel()) {
 			StopsInfoDialog stopInfoDialog = new StopsInfoDialog(this);
 			Bundle args = new Bundle();
 			args.putSerializable(StopsInfoDialog.ARG_STOPS, (ArrayList) list);
 			stopInfoDialog.setArguments(args);
 			stopInfoDialog.show(mActivity.getSupportFragmentManager(), "stopselected");
 		} else if (list.size() > 1) {
-			// getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),
+			// getSupportMap().animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),
 			// zoomLevel + 1));
-			MapManager.fitMapWithOverlays(list, getMap());
+			MapManager.fitMapWithOverlays(list, getSupportMap());
 		} else {
 			SmartCheckStop stop = (SmartCheckStop) list.get(0);
 			if (stop != null) {
@@ -150,12 +156,18 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 	}
 
 	private double getDiagonalLenght() {
-		LatLng lu = getMap().getProjection().getVisibleRegion().farLeft;
-		LatLng rd = getMap().getProjection().getVisibleRegion().nearRight;
+		LatLng lu = getSupportMap().getProjection().getVisibleRegion().farLeft;
+		LatLng rd = getSupportMap().getProjection().getVisibleRegion().nearRight;
 		double h = rd.longitude - lu.longitude;
 		double w = lu.latitude - rd.latitude;
 		double diagonal = Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2));
 		return diagonal;
 	}
 
+	private GoogleMap getSupportMap() {
+		if (mMap == null) {
+			mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(Config.mainlayout)).getMap();
+		}
+		return mMap;
+	}
 }

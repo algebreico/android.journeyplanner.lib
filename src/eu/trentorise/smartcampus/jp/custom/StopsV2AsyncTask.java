@@ -61,7 +61,6 @@ public class StopsV2AsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean>
 	@Override
 	protected Boolean doInBackground(Object... params) {
 		time = System.currentTimeMillis();
-		Log.e(TAG, "server call START (" + "zoomLevelChanged " + zoomLevelChanged + ")");
 		try {
 			if (selectedAgencyIds != null) {
 				for (int i = 0; i < selectedAgencyIds.length; i++) {
@@ -75,7 +74,6 @@ public class StopsV2AsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean>
 			return false;
 		}
 		long newtime = System.currentTimeMillis();
-		Log.e(TAG, "server call DONE - " + (newtime - time));
 		time = newtime;
 		return !isCancelled();
 	}
@@ -98,25 +96,19 @@ public class StopsV2AsyncTask extends AsyncTask<Object, SmartCheckStop, Boolean>
 			}
 		}
 
-		Log.e(TAG, "new stops: " + newStops);
-
 		Collection<SmartCheckStop> stops = MapManager.getCache().getStopsByAgencyIds(selectedAgencyIds);
 		if (!stops.isEmpty() || newStops > 0 || zoomLevelChanged) {
 			map.clear();
 			long newtime = System.currentTimeMillis();
-			Log.e(TAG, "cluster START - " + (newtime - time));
 			time = newtime;
 			List<MarkerOptions> cluster = MapManager.ClusteringHelper.cluster(mActivity.getApplicationContext(), map, stops);
 			newtime = System.currentTimeMillis();
-			Log.e(TAG, "cluster DONE - " + (newtime - time));
 			time = newtime;
 
 			newtime = System.currentTimeMillis();
-			Log.e(TAG, "render START - " + (newtime - time));
 			time = newtime;
 			MapManager.ClusteringHelper.render(map, cluster);
 			newtime = System.currentTimeMillis();
-			Log.e(TAG, "render DONE - " + (newtime - time));
 			time = newtime;
 		}
 

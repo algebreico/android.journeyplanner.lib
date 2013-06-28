@@ -130,8 +130,8 @@ public class SmartCheckParkingMapFragment extends FeedbackFragment implements Pa
 
 		// LOAD
 		if (ParkingsHelper.getParkingsCache().isEmpty()) {
-			new SCAsyncTask<Void, Void, List<ParkingSerial>>(getSherlockActivity(), new SmartCheckParkingMapProcessor(
-					getSherlockActivity(), mapView, mItemizedoverlay, parkingAid)).execute();
+//			new SCAsyncTask<Void, Void, List<ParkingSerial>>(getSherlockActivity(), new SmartCheckParkingMapProcessor(
+//					getSherlockActivity(), mapView, mItemizedoverlay, parkingAid)).execute();
 		} else {
 			mItemizedoverlay.clearMarkers();
 			mItemizedoverlay.addAllOverlays(ParkingsHelper.getParkingsCache());

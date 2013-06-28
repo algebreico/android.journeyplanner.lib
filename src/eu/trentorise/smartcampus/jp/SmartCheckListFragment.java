@@ -217,10 +217,10 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Map
 					tab = actionBar.newTab();
 					tab.setText(R.string.tab_map);
-					tab.setTabListener(new TabListener<SmartCheckParkingMapFragment>(getSherlockActivity(), "map",
-							SmartCheckParkingMapFragment.class, null));
+					tab.setTabListener(new TabListener<SmartCheckParkingMapV2Fragment>(getSherlockActivity(), "map",
+							SmartCheckParkingMapV2Fragment.class, null));
 					bundle = new Bundle();
-					bundle.putString(SmartCheckParkingMapFragment.PARAM_AID, ParkingsHelper.PARKING_AID_TRENTO);
+					bundle.putString(SmartCheckParkingMapV2Fragment.PARAM_AID, ParkingsHelper.PARKING_AID_TRENTO);
 					tab.setTag(bundle);
 					actionBar.addTab(tab);
 
@@ -249,10 +249,10 @@ public class SmartCheckListFragment extends FeedbackFragment {
 					// Map
 					tab = actionBar.newTab();
 					tab.setText(R.string.tab_map);
-					tab.setTabListener(new TabListener<SmartCheckParkingMapFragment>(getSherlockActivity(), "map",
-							SmartCheckParkingMapFragment.class, null));
+					tab.setTabListener(new TabListener<SmartCheckParkingMapV2Fragment>(getSherlockActivity(), "map",
+							SmartCheckParkingMapV2Fragment.class, null));
 					bundle = new Bundle();
-					bundle.putString(SmartCheckParkingMapFragment.PARAM_AID, ParkingsHelper.PARKING_AID_ROVERETO);
+					bundle.putString(SmartCheckParkingMapV2Fragment.PARAM_AID, ParkingsHelper.PARKING_AID_ROVERETO);
 					tab.setTag(bundle);
 					actionBar.addTab(tab);
 

@@ -18,26 +18,24 @@ package eu.trentorise.smartcampus.jp.helper.processor;
 import java.util.List;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.google.android.maps.MapView;
+import com.google.android.gms.maps.GoogleMap;
 
 import eu.trentorise.smartcampus.jp.custom.AbstractAsyncTaskProcessor;
-import eu.trentorise.smartcampus.jp.custom.map.ParkingsItemizedOverlay;
+import eu.trentorise.smartcampus.jp.custom.map.MapManager;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.model.ParkingSerial;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class SmartCheckParkingMapProcessor extends AbstractAsyncTaskProcessor<Void, List<ParkingSerial>> {
 
+	private SherlockFragmentActivity mActivity;
 	private String parkingAid;
-	private MapView mapView;
-	private ParkingsItemizedOverlay overlay;
+	private GoogleMap map;
 
-	public SmartCheckParkingMapProcessor(SherlockFragmentActivity activity, MapView mapView, ParkingsItemizedOverlay overlay,
-			String parkingAid) {
+	public SmartCheckParkingMapProcessor(SherlockFragmentActivity activity, GoogleMap map, String parkingAid) {
 		super(activity);
+		this.map = map;
 		this.parkingAid = parkingAid;
-		this.mapView = mapView;
-		this.overlay = overlay;
 	}
 
 	@Override
@@ -47,10 +45,7 @@ public class SmartCheckParkingMapProcessor extends AbstractAsyncTaskProcessor<Vo
 
 	@Override
 	public void handleResult(List<ParkingSerial> result) {
-		overlay.clearMarkers();
-		overlay.addAllOverlays(result);
-		overlay.populateAll();
-		mapView.postInvalidate();
+		MapManager.ClusteringHelper.render(map, MapManager.ClusteringHelper.cluster(mActivity, map, result));
 	}
 
 }

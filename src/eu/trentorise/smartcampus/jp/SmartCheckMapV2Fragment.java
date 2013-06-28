@@ -1,5 +1,6 @@
 package eu.trentorise.smartcampus.jp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 
 	private String[] selectedAgencyIds = new String[] {};
 	private LatLng centerLatLng;
-	private float zoomLevel = JPParamsHelper.getZoomLevelMap();
+	private float zoomLevel = JPParamsHelper.getZoomLevelMap() + 2;
 	private StopsV2AsyncTask loader;
 
 	@Override
@@ -102,15 +103,22 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		String id = marker.getTitle();
-		
+
 		List<LocatedObject> list = MapManager.ClusteringHelper.getFromGridId(id);
 
 		if (list == null || list.isEmpty()) {
 			return true;
 		}
-		
-		if (list.size() > 1) {
-			// getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), zoomLevel + 1));
+
+		if (list.size() > 1 && getMap().getCameraPosition().zoom == getMap().getMaxZoomLevel()) {
+			StopsInfoDialog stopInfoDialog = new StopsInfoDialog(this);
+			Bundle args = new Bundle();
+			args.putSerializable(StopsInfoDialog.ARG_STOPS, (ArrayList) list);
+			stopInfoDialog.setArguments(args);
+			stopInfoDialog.show(mActivity.getSupportFragmentManager(), "stopselected");
+		} else if (list.size() > 1) {
+			// getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),
+			// zoomLevel + 1));
 			MapManager.fitMapWithOverlays(list, getMap());
 		} else {
 			SmartCheckStop stop = (SmartCheckStop) list.get(0);

@@ -45,7 +45,9 @@ import eu.trentorise.smartcampus.jp.R;
 import eu.trentorise.smartcampus.jp.custom.BetterMapView;
 import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
+import eu.trentorise.smartcampus.jp.helper.ParkingsHelper;
 import eu.trentorise.smartcampus.jp.model.LocatedObject;
+import eu.trentorise.smartcampus.jp.model.ParkingSerial;
 import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
 
 public class MapManager {
@@ -140,7 +142,8 @@ public class MapManager {
 
 	private static void fit(GoogleMap map, double[] ll, double[] rr, boolean zoomIn) {
 		if (ll != null) {
-			LatLngBounds bounds = LatLngBounds.builder().include(new LatLng(ll[0], ll[1])).include(new LatLng(rr[0], rr[1])).build();
+			LatLngBounds bounds = LatLngBounds.builder().include(new LatLng(ll[0], ll[1])).include(new LatLng(rr[0], rr[1]))
+					.build();
 			map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 16));
 		}
 	}
@@ -272,6 +275,8 @@ public class MapManager {
 			int markerIcon = R.drawable.marker_poi_generic;
 			if (item instanceof SmartCheckStop) {
 				markerIcon = R.drawable.marker_poi_mobility;
+			} else if (item instanceof ParkingSerial) {
+				markerIcon = ParkingsHelper.getParkingMarker((ParkingSerial) item);
 			}
 
 			MarkerOptions marker = new MarkerOptions().position(latLng).icon(BitmapDescriptorFactory.fromResource(markerIcon))
@@ -285,6 +290,9 @@ public class MapManager {
 			LatLng latLng = getLatLngFromBasicObject(item);
 
 			int markerIcon = R.drawable.marker_poi_generic;
+			if (item instanceof ParkingSerial) {
+				markerIcon = R.drawable.marker_parking_cluster;
+			}
 
 			BitmapDescriptor bd = BitmapDescriptorFactory.fromBitmap(writeOnMarker(mContext, markerIcon,
 					Integer.toString(markerList.size())));

@@ -32,8 +32,10 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -103,9 +105,10 @@ public class LegMapActivity extends BaseActivity {
 		// legsOverlay.adaptMap(mapView.getController());
 		// mapView.getOverlays().add(legsOverlay);
 
+		mMap.clear();
 		setPath(polylines, activePos);
-		draw(mMap);
 		adaptMap(mMap);
+		draw(mMap);
 	}
 
 	@Override
@@ -245,7 +248,7 @@ public class LegMapActivity extends BaseActivity {
 			LatLngBounds llb = LatLngBounds.builder().include(southwest).include(northeast).build();
 
 			Display display = getWindowManager().getDefaultDisplay();
-			map.moveCamera(CameraUpdateFactory.newLatLngBounds(llb, display.getWidth(), display.getHeight(), 16));
+			map.moveCamera(CameraUpdateFactory.newLatLngBounds(llb, display.getWidth() - 48, display.getHeight(), 16));
 		}
 	}
 
@@ -266,31 +269,21 @@ public class LegMapActivity extends BaseActivity {
 				drawPath(map, legPoints, color);
 			}
 
-			// // markers
-			// // start
-			// if (i == 0) {
-			// Projection p = mv.getProjection();
-			// Point loc = p.toPixels(legPoints.get(0), null);
-			// Bitmap bitmap = BitmapFactory.decodeResource(ctx.getResources(),
-			// R.drawable.ic_start).copy(
-			// Bitmap.Config.ARGB_8888, true);
-			// canvas.drawBitmap(bitmap, loc.x - (bitmap.getWidth() / 2), loc.y
-			// - bitmap.getHeight(), null);
-			// }
-			//
-			// // stop
-			// if (i == (legsPoints.size() - 1)) {
-			// Projection p = mv.getProjection();
-			// Point loc = p.toPixels(legPoints.get(legPoints.size() - 1),
-			// null);
-			// Bitmap bitmap = BitmapFactory.decodeResource(ctx.getResources(),
-			// R.drawable.ic_stop).copy(
-			// Bitmap.Config.ARGB_8888, true);
-			// canvas.drawBitmap(bitmap, loc.x - (bitmap.getWidth() / 2), loc.y
-			// - bitmap.getHeight(), null);
-			// }
-		}
+			// markers
+			// start
+			if (i == 0) {
+				LatLng startLatLng = legPoints.get(0);
+				map.addMarker(new MarkerOptions().position(startLatLng).icon(
+						BitmapDescriptorFactory.fromResource(R.drawable.ic_start)));
+			}
 
+			// stop
+			if (i == (legsPoints.size() - 1)) {
+				LatLng stopLatLng = legPoints.get(legPoints.size() - 1);
+				map.addMarker(new MarkerOptions().position(stopLatLng).icon(
+						BitmapDescriptorFactory.fromResource(R.drawable.ic_stop)));
+			}
+		}
 		if (index == -1)// show start leg
 			drawPath(map, legsPoints.get(index + 1), getApplicationContext().getResources().getColor(R.color.path_actual));
 		else if (index == legsPoints.size())// show end leg
@@ -307,23 +300,11 @@ public class LegMapActivity extends BaseActivity {
 		Paint paint = new Paint();
 		paint.setColor(color);
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
-		paint.setStrokeWidth(6); // TODO: use Config
+		paint.setStrokeWidth(6);
 
 		PolylineOptions po = new PolylineOptions().addAll(points).width(6).color(color);
 		Polyline pl = map.addPolyline(po);
 		pl.setVisible(true);
-
-		// for (int i = 0; i < points.size(); i++) {
-		// Point point = new Point();
-		// mv.getProjection().toPixels(points.get(i), point);
-		// x2 = point.x;
-		// y2 = point.y;
-		// if (i > 0) {
-		// canvas.drawLine(x1, y1, x2, y2, paint);
-		// }
-		// x1 = x2;
-		// y1 = y2;
-		// }
 	}
 
 }

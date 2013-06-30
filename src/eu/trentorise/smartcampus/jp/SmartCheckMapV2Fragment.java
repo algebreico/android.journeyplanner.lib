@@ -6,6 +6,7 @@ import java.util.List;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,6 +40,7 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 	private LatLng centerLatLng;
 	private float zoomLevel = JPParamsHelper.getZoomLevelMap() + 2;
 	private StopsV2AsyncTask loader;
+
 	private GoogleMap mMap;
 
 	@Override
@@ -54,12 +56,16 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 			selectedAgencyIds = getArguments().getStringArray(ARG_AGENCY_IDS);
 		}
 
+		Log.e(getClass().getSimpleName(), "onCreate");
+
 		setHasOptionsMenu(true);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		Log.e(getClass().getSimpleName(), "onResume");
 
 		if (getSupportMap() == null)
 			return;
@@ -86,11 +92,17 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 	@Override
 	public void onPause() {
 		super.onPause();
+
 		if (getSupportMap() == null)
 			return;
 
 		getSupportMap().setMyLocationEnabled(false);
 		getSupportMap().setOnCameraChangeListener(null);
+		getSupportMap().setOnMarkerClickListener(null);
+
+		if (loader != null) {
+			loader.cancel(true);
+		}
 	}
 
 	@Override
@@ -153,8 +165,8 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 		args.putSerializable(SmartCheckStopFragment.ARG_STOP, stop);
 		fragment.setArguments(args);
 		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		fragmentTransaction.replace(Config.mainlayout, fragment, "map");
 		fragmentTransaction.addToBackStack(fragment.getTag());
+		fragmentTransaction.add(Config.mainlayout, fragment, "map");
 		// fragmentTransaction.commitAllowingStateLoss();
 		fragmentTransaction.commit();
 	}

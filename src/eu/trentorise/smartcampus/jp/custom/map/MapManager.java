@@ -264,7 +264,6 @@ public class MapManager {
 		}
 
 		public static void render(GoogleMap map, List<MarkerOptions> markers) {
-			Log.e(TAG, "total markers: " + markers.size());
 			for (MarkerOptions mo : markers) {
 				map.addMarker(mo);
 			}

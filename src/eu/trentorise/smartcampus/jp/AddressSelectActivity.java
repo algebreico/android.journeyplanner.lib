@@ -62,12 +62,13 @@ public class AddressSelectActivity extends BaseActivity implements OnMapLongClic
 		if (JPHelper.getLocationHelper().getLocation() != null) {
 			LatLng centerLatLng = new LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() / 1e6, JPHelper
 					.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, JPParamsHelper.getZoomLevelMap()));
+			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, JPParamsHelper.getZoomLevelMap()));
 		} else {
-			mMap.animateCamera(CameraUpdateFactory.zoomTo(JPParamsHelper.getZoomLevelMap()));
+			mMap.moveCamera(CameraUpdateFactory.zoomTo(JPParamsHelper.getZoomLevelMap()));
 		}
 
 		Toast.makeText(this, R.string.address_select_toast, Toast.LENGTH_LONG).show();
+		
 		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
 				(RelativeLayout) findViewById(R.id.mapcontainer_relativelayout_jp_v2));
 	}
@@ -97,7 +98,6 @@ public class AddressSelectActivity extends BaseActivity implements OnMapLongClic
 
 		if (addresses != null && !addresses.isEmpty()) {
 			new InfoDialog(AddressSelectActivity.this, addresses.get(0)).show(getSupportFragmentManager(), "me");
-
 		} else {
 			Address address = new Address(Locale.getDefault());
 			address.setLatitude(point.latitude);

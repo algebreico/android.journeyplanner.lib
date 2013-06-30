@@ -94,13 +94,13 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 				centerLatLng = new LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() / 1e6, JPHelper
 						.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
 
-				getSupportMap().animateCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel), 1, null);
+				getSupportMap().moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel));
 			} else {
-				getSupportMap().animateCamera(CameraUpdateFactory.zoomTo(zoomLevel), 1, null);
+				getSupportMap().moveCamera(CameraUpdateFactory.zoomTo(zoomLevel));
 			}
 		} else {
 			zoomLevel--;
-			getSupportMap().animateCamera(
+			getSupportMap().moveCamera(
 					CameraUpdateFactory.newLatLngZoom(new LatLng(focusedParking.location()[0], focusedParking.location()[1]),
 							FOCUSED_ZOOM));
 		}
@@ -112,6 +112,7 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 		if (getSupportMap() != null) {
 			getSupportMap().setMyLocationEnabled(false);
 			getSupportMap().setOnCameraChangeListener(null);
+			getSupportMap().setOnMarkerClickListener(null);
 		}
 	}
 

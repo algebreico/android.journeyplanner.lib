@@ -79,6 +79,9 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 
 		if (getSupportMap() == null) return;
 		
+		// features disabled waiting for a better clustering grid
+		getSupportMap().getUiSettings().setRotateGesturesEnabled(false);
+		getSupportMap().getUiSettings().setTiltGesturesEnabled(false);
 		getSupportMap().setOnCameraChangeListener(this);
 		getSupportMap().setOnMarkerClickListener(this);
 

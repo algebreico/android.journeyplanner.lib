@@ -64,6 +64,9 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 		if (getSupportMap() == null)
 			return;
 
+		// features disabled waiting for a better clustering grid
+		getSupportMap().getUiSettings().setRotateGesturesEnabled(false);
+		getSupportMap().getUiSettings().setTiltGesturesEnabled(false);
 		getSupportMap().setOnCameraChangeListener(this);
 		getSupportMap().setOnMarkerClickListener(this);
 

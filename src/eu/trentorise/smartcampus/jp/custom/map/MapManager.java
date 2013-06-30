@@ -30,6 +30,7 @@ import android.graphics.Rect;
 import android.location.Location;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -221,7 +222,6 @@ public class MapManager {
 				Log.e(TAG, ex.toString());
 			}
 
-			// if (mapView.getZoomLevel() == mapView.getMaxZoomLevel()) {
 			if (map.getCameraPosition().zoom == map.getMaxZoomLevel()) {
 				for (int i = 0; i < grid.size(); i++) {
 					for (int j = 0; j < grid.get(0).size(); j++) {
@@ -264,6 +264,7 @@ public class MapManager {
 		}
 
 		public static void render(GoogleMap map, List<MarkerOptions> markers) {
+			Log.e(TAG, "total markers: " + markers.size());
 			for (MarkerOptions mo : markers) {
 				map.addMarker(mo);
 			}

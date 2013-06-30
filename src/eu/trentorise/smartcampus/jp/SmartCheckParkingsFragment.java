@@ -57,6 +57,7 @@ public class SmartCheckParkingsFragment extends SherlockListFragment {
 		adapter.registerDataSetObserver(new DataSetObserver() {
 			@Override
 			public void onChanged() {
+				if (getView()!=null){
 				TextView smartcheckRoutesMsg = (TextView) getView().findViewById(R.id.smartcheck_parkings_none);
 				if (adapter.getCount() == 0) {
 					smartcheckRoutesMsg.setVisibility(View.VISIBLE);
@@ -64,6 +65,7 @@ public class SmartCheckParkingsFragment extends SherlockListFragment {
 					smartcheckRoutesMsg.setVisibility(View.GONE);
 				}
 				super.onChanged();
+			}
 			}
 		});
 

@@ -19,10 +19,10 @@ public class SmartCheckActivity extends BaseActivity {
 	public static final String TAG_SMARTCHECKLIST = "smartchecklist";
 
 	public void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		
+		;		
 		setContentView(R.layout.empty_layout_jp);
 		
 //		BetterMapView mapView = new BetterMapView(this, getResources().getString(R.string.maps_api_key));

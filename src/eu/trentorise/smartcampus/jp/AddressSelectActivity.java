@@ -54,23 +54,24 @@ public class AddressSelectActivity extends BaseActivity implements OnMapLongClic
 		if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
 			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		}
+		if (((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap() != null) {
+			mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+			mMap.setOnMapLongClickListener(this);
+			mMap.setMyLocationEnabled(true);
 
-		mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-		mMap.setOnMapLongClickListener(this);
-		mMap.setMyLocationEnabled(true);
+			if (JPHelper.getLocationHelper().getLocation() != null) {
+				LatLng centerLatLng = new LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() / 1e6,
+						JPHelper.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
+				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, JPParamsHelper.getZoomLevelMap()));
+			} else {
+				mMap.moveCamera(CameraUpdateFactory.zoomTo(JPParamsHelper.getZoomLevelMap()));
+			}
 
-		if (JPHelper.getLocationHelper().getLocation() != null) {
-			LatLng centerLatLng = new LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() / 1e6, JPHelper
-					.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
-			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, JPParamsHelper.getZoomLevelMap()));
-		} else {
-			mMap.moveCamera(CameraUpdateFactory.zoomTo(JPParamsHelper.getZoomLevelMap()));
+			Toast.makeText(this, R.string.address_select_toast, Toast.LENGTH_LONG).show();
+
+			FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
+					(RelativeLayout) findViewById(R.id.mapcontainer_relativelayout_jp_v2));
 		}
-
-		Toast.makeText(this, R.string.address_select_toast, Toast.LENGTH_LONG).show();
-		
-		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
-				(RelativeLayout) findViewById(R.id.mapcontainer_relativelayout_jp_v2));
 	}
 
 	@Override

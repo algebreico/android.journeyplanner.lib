@@ -80,12 +80,14 @@ public class LegMapActivity extends BaseActivity {
 			polylines = (List<String>) savedInstanceState.getSerializable(POLYLINES);
 			activePos = savedInstanceState.getInt(ACTIVE_POS);
 		}
+		if (((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap() != null) {
 
-		mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-		mMap.setMyLocationEnabled(true);
+			mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+			mMap.setMyLocationEnabled(true);
 
-		FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
-				(RelativeLayout) findViewById(R.id.mapcontainer_relativelayout_jp_v2));
+			FeedbackFragmentInflater.inflateHandleButtonInRelativeLayout(this,
+					(RelativeLayout) findViewById(R.id.mapcontainer_relativelayout_jp_v2));
+		}
 	}
 
 	@Override
@@ -104,11 +106,12 @@ public class LegMapActivity extends BaseActivity {
 		// getApplicationContext());
 		// legsOverlay.adaptMap(mapView.getController());
 		// mapView.getOverlays().add(legsOverlay);
-
-		mMap.clear();
-		setPath(polylines, activePos);
-		adaptMap(mMap);
-		draw(mMap);
+		if (mMap != null) {
+			mMap.clear();
+			setPath(polylines, activePos);
+			adaptMap(mMap);
+			draw(mMap);
+		}
 	}
 
 	@Override
@@ -285,7 +288,8 @@ public class LegMapActivity extends BaseActivity {
 			}
 		}
 		if (index == -1)// show start leg
-			drawPath(map, legsPoints.get(index + 1), getApplicationContext().getResources().getColor(R.color.path_actual));
+			drawPath(map, legsPoints.get(index + 1),
+					getApplicationContext().getResources().getColor(R.color.path_actual));
 		else if (index == legsPoints.size())// show end leg
 			drawPath(map, legsPoints.get(legsPoints.size() - 1),
 					getApplicationContext().getResources().getColor(R.color.path_actual));

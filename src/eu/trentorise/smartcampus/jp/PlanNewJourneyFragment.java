@@ -245,7 +245,7 @@ public class PlanNewJourneyFragment extends FeedbackFragment {
 			@Override
 			public void onClick(View v) {
 				DialogFragment f = TimePickerDialogFragment.newInstance((EditText) v);
-				// f.setArguments(TimePickerDialogFragment.prepareData(timeEditText.toString()));
+				 f.setArguments(TimePickerDialogFragment.prepareData(timeEditText.toString()));
 				f.show(getSherlockActivity().getSupportFragmentManager(), "timePicker");
 			}
 		});

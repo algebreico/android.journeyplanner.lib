@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+import eu.trentorise.smartcampus.android.feedback.utils.FeedbackFragmentInflater;
 import eu.trentorise.smartcampus.jp.custom.StopsV2AsyncTask;
 import eu.trentorise.smartcampus.jp.custom.map.MapManager;
 import eu.trentorise.smartcampus.jp.custom.map.StopsInfoDialog;
@@ -61,6 +62,12 @@ public class SmartCheckMapV2Fragment extends SupportMapFragment implements OnCam
 		setHasOptionsMenu(true);
 	}
 
+	@Override
+	public void onStart() {
+		super.onStart();
+		FeedbackFragmentInflater.inflateHandleButton(getActivity(), getView());
+	}
+	
 	@Override
 	public void onResume() {
 		super.onResume();

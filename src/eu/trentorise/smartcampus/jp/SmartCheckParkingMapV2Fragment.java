@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,16 +45,20 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 	private float zoomLevel = JPParamsHelper.getZoomLevelMap();
 
 	private GoogleMap mMap;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		mActivity = (SherlockFragmentActivity) getActivity();
-
 		setHasOptionsMenu(true);
 	}
-	
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		FeedbackFragmentInflater.inflateHandleButton(getActivity(), getView());
+	}
+
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -77,8 +77,9 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 			ParkingsHelper.setFocusedParking(null);
 		}
 
-		if (getSupportMap() == null) return;
-		
+		if (getSupportMap() == null)
+			return;
+
 		// features disabled waiting for a better clustering grid
 		getSupportMap().getUiSettings().setRotateGesturesEnabled(false);
 		getSupportMap().getUiSettings().setTiltGesturesEnabled(false);
@@ -123,12 +124,12 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 		}
 
 		if (ParkingsHelper.getParkingsCache().isEmpty()) {
-			new SCAsyncTask<Void, Void, List<ParkingSerial>>(mActivity, new SmartCheckParkingMapProcessor(mActivity, getSupportMap(),
-					parkingAid)).execute();
+			new SCAsyncTask<Void, Void, List<ParkingSerial>>(mActivity, new SmartCheckParkingMapProcessor(mActivity,
+					getSupportMap(), parkingAid)).execute();
 		} else {
-				getSupportMap().clear();
-				MapManager.ClusteringHelper.render(getSupportMap(),
-						MapManager.ClusteringHelper.cluster(mActivity, getSupportMap(), ParkingsHelper.getParkingsCache()));
+			getSupportMap().clear();
+			MapManager.ClusteringHelper.render(getSupportMap(),
+					MapManager.ClusteringHelper.cluster(mActivity, getSupportMap(), ParkingsHelper.getParkingsCache()));
 		}
 	}
 

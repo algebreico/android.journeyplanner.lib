@@ -41,6 +41,8 @@ public class RoutesHelper {
 	public static final List<String> AGENCYIDS_TRAINS = Arrays.asList(AGENCYID_TRAIN_BZVR, AGENCYID_TRAIN_TM,
 			AGENCYID_TRAIN_TNBDG);
 
+	public static final List<String> AGENCYIDS_TRAINS_TYPED = Arrays.asList(AGENCYID_TRAIN_BZVR, AGENCYID_TRAIN_TNBDG);
+
 	public static Map<String, List<SmartLine>> smartLines = new HashMap<String, List<SmartLine>>();
 
 	public static List<Route> getRoutesList(Context ctx, String[] agencyIds) {
@@ -68,11 +70,9 @@ public class RoutesHelper {
 		return list;
 	}
 
-	public static String getAgencyIdByRouteId(String routeId){
-		for (List<RouteDescriptor> list: ROUTES.values())
-		{
-			for (RouteDescriptor route: list)
-			{
+	public static String getAgencyIdByRouteId(String routeId) {
+		for (List<RouteDescriptor> list : ROUTES.values()) {
+			for (RouteDescriptor route : list) {
 				if (route.getRouteId().equals(routeId))
 					return route.getAgencyId();
 			}
@@ -80,7 +80,7 @@ public class RoutesHelper {
 		}
 		return null;
 	}
-	
+
 	public static RouteDescriptor getRouteDescriptorByRouteId(String agencyId, String routeId) {
 		RouteDescriptor routeDescriptor = null;
 
@@ -96,17 +96,17 @@ public class RoutesHelper {
 		return routeDescriptor;
 	}
 
-	public static String getShortNameByRouteIdAndAgencyID (String routeId,String AgencyId){
-		
-		String returnShortName="";
+	public static String getShortNameByRouteIdAndAgencyID(String routeId, String AgencyId) {
+
+		String returnShortName = "";
 		List<RouteDescriptor> names = ROUTES.get(AgencyId);
-		for (RouteDescriptor desc: names)
-		{
+		for (RouteDescriptor desc : names) {
 			if (desc.getRouteId().equals(routeId))
 				return desc.getShortNameResource();
 		}
 		return returnShortName;
 	}
+
 	public static RouteDescriptor getRouteDescriptorByRouteId(String routeId) {
 		return getRouteDescriptorByRouteId(null, routeId);
 	}
@@ -334,7 +334,6 @@ public class RoutesHelper {
 	// R.string.agency_16_route_451_Rov, "N-7")
 			});
 
-	
 	/*
 	 * Suburban
 	 */

@@ -52,7 +52,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	private static final int DAYS_WINDOWS = 0;
 
 	private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
-	
+
 	private SmartLine params;
 	private TimeTable actualTimeTable;
 	private long from_date_millisecond;
@@ -67,6 +67,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	private Date basic_date;
 	private boolean todayView;
 	private LinearLayout layout;
+	private Boolean smallTitle = false;
 	private Boolean typeOfTransport = false;
 	private Boolean created = true;
 	private int NUM_COLS;
@@ -76,18 +77,27 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		if (savedInstanceState != null && savedInstanceState.containsKey(PARAM_SMARTLINE)) {
 			this.params = (SmartLine) savedInstanceState.getParcelable(PARAM_SMARTLINE);
 		} else if (getArguments() != null && getArguments().containsKey(PARAM_SMARTLINE)) {
 			this.params = (SmartLine) getArguments().getParcelable(PARAM_SMARTLINE);
 		}
-		 if (this.params!=null)
-			 if (RoutesHelper.AGENCYIDS_TRAINS.contains(RoutesHelper.getAgencyIdByRouteId(params.getRouteID().get(0))))
-				 this.typeOfTransport=true;
+
+		if (this.params != null) {
+			if (RoutesHelper.AGENCYIDS_TRAINS_TYPED.contains(RoutesHelper.getAgencyIdByRouteId(params.getRouteID().get(0)))) {
+				this.typeOfTransport = true;
+			}
+
+			if (RoutesHelper.AGENCYIDS_TRAINS.contains(RoutesHelper.getAgencyIdByRouteId(params.getRouteID().get(0)))) {
+				this.smallTitle = true;
+			}
+		}
+
 		create_interval();
 		// get the BusTimeTable
-		AsyncTaskNoDialog<Object, Void, TimeTable> task = new AsyncTaskNoDialog<Object, Void, TimeTable>(
-				getSherlockActivity(), new GetBusTimeTableProcessor(getSherlockActivity()));
+		AsyncTaskNoDialog<Object, Void, TimeTable> task = new AsyncTaskNoDialog<Object, Void, TimeTable>(getSherlockActivity(),
+				new GetBusTimeTableProcessor(getSherlockActivity()));
 		task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
 	}
 
@@ -120,17 +130,17 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		super.onStart();
 
 		mProgressBar = (ProgressBar) getView().findViewById(R.id.smartcheckbustt_content_pb);
-		if (created)
-			{
+		if (created) {
 			toggleProgressDialog();
-			created=false;
-			}
+			created = false;
+		}
 		LinearLayout linelayout = (LinearLayout) getSherlockActivity().findViewById(R.id.line_day);
 		linelayout.setBackgroundColor(params.getColor());
 
 		TextView lineNumber = (TextView) getSherlockActivity().findViewById(R.id.lineNumber);
-		if (this.typeOfTransport)
+		if (this.smallTitle) {
 			lineNumber.setTextSize(17);
+		}
 		lineNumber.setText(params.getLine());
 		lineNumber.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 		lineNumber.setBackgroundColor(params.getColor());
@@ -144,10 +154,8 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		todayButtonCheck();
 
 		todayButton.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-
 				if (!mProgressBar.isShown())
 					toggleProgressDialog();
 				// -1 day
@@ -163,8 +171,8 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		Button previousButton = (Button) getView().findViewById(R.id.button_previous);
 		previousButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 		((GradientDrawable) previousButton.getBackground()).setColor(params.getColor());
-		previousButton.setOnTouchListener(new OnTouchListener() {
 
+		previousButton.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				Button previousButton = (Button) getView().findViewById(R.id.button_previous);
@@ -262,13 +270,16 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 			todayView = true;
 			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
 			gd.setColor(getResources().getColor(R.color.abs__holo_blue_light));
-//			((GradientDrawable) todayButton.getBackground()).setColor(getResources().getColor(
-//					R.color.abs__holo_blue_light));
+			// ((GradientDrawable)
+			// todayButton.getBackground()).setColor(getResources().getColor(
+			// R.color.abs__holo_blue_light));
 		} else {
 			todayView = false;
-//			todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
-//			((GradientDrawable) todayButton.getBackground()).setColor(params.getColor());
-//			((ColorDrawable) todayButton.getBackground()).setColor(params.getColor());
+			// todayButton.setTextColor(getSherlockActivity().getResources().getColor(R.color.transparent_white));
+			// ((GradientDrawable)
+			// todayButton.getBackground()).setColor(params.getColor());
+			// ((ColorDrawable)
+			// todayButton.getBackground()).setColor(params.getColor());
 			gd.setColor(params.getColor());
 		}
 		todayButton.invalidate();
@@ -277,7 +288,8 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 	@Override
 	public void onPause() {
-		if (mProgressBar.isShown()) toggleProgressDialog();
+		if (mProgressBar.isShown())
+			toggleProgressDialog();
 		super.onPause();
 	}
 
@@ -294,31 +306,34 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 		@Override
 		public void handleFailure(Exception e) {
-//			super.handleFailure(e);
-			if (mProgressBar.isShown()) toggleProgressDialog();
+			// super.handleFailure(e);
+			if (mProgressBar.isShown())
+				toggleProgressDialog();
 		}
 
 		@Override
 		public void handleConnectionError() {
-//			super.handleConnectionError();
-			if (mProgressBar.isShown()) toggleProgressDialog();
+			// super.handleConnectionError();
+			if (mProgressBar.isShown())
+				toggleProgressDialog();
 		}
 
 		@Override
 		public void handleResult(List<List<Map<String, String>>> result) {
-			if (mProgressBar.isShown()) toggleProgressDialog();
+			if (mProgressBar.isShown())
+				toggleProgressDialog();
 			// refresh delay with new data
-			int tempNumbCol=0;
+			int tempNumbCol = 0;
 			for (List<Map<String, String>> tt : result) {
 				tempNumbCol += tt.size();
 			}
-			
+
 			final int NUM_COLS = tempNumbCol;
 			int indexOfDay = 0;
 			int indexOfCourseInThatDay = 0;
 
 			delays = new HashMap[NUM_COLS];
-			
+
 			for (int j = 0; j < NUM_COLS; j++) {
 				while (result.get(indexOfDay).isEmpty()) {
 					if (indexOfDay == 0) {
@@ -327,12 +342,10 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 					indexOfDay++;
 				}
 				// hook
-				
 
-				Map<String, String> actualDelays = result.get(indexOfDay)
-							.get(indexOfCourseInThatDay);
-					delays[j] = actualDelays;
-				
+				Map<String, String> actualDelays = result.get(indexOfDay).get(indexOfCourseInThatDay);
+				delays[j] = actualDelays;
+
 				if (indexOfCourseInThatDay == result.get(indexOfDay).size() - 1) {
 					if (indexOfDay < DAYS_WINDOWS)
 						indexOfDay++;
@@ -341,7 +354,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 					indexOfCourseInThatDay++;
 				}
 			}
-			
+
 			// reload Delay part
 			reloadDelays();
 		}
@@ -376,7 +389,8 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 		@Override
 		public void handleResult(TimeTable result) {
-			if (mProgressBar.isShown()) toggleProgressDialog();
+			if (mProgressBar.isShown())
+				toggleProgressDialog();
 			try {
 				reloadTimeTable(actualTimeTable);
 
@@ -387,7 +401,7 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
 						case DialogInterface.BUTTON_POSITIVE:
-							if (SmartCheckTTFragment.this.getSherlockActivity()!=null)
+							if (SmartCheckTTFragment.this.getSherlockActivity() != null)
 								SmartCheckTTFragment.this.getSherlockActivity().getSupportFragmentManager().popBackStack();
 							break;
 
@@ -395,14 +409,14 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 					}
 				};
 				if (SmartCheckTTFragment.this.getSherlockActivity() != null) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(
-							SmartCheckTTFragment.this.getSherlockActivity());
+					AlertDialog.Builder builder = new AlertDialog.Builder(SmartCheckTTFragment.this.getSherlockActivity());
 
 					builder.setMessage("Problem loading").setPositiveButton("Back", dialogClickListener).show();
 				}
 			}
 			if (todayView) {
-				if (!mProgressBar.isShown()) toggleProgressDialog();
+				if (!mProgressBar.isShown())
+					toggleProgressDialog();
 				AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>> task = new AsyncTaskNoDialog<Object, Void, List<List<Map<String, String>>>>(
 						getSherlockActivity(), new GetDelayProcessor(getSherlockActivity()));
 				task.execute(from_date_millisecond, to_date_millisecond, params.getRouteID().get(0));
@@ -413,14 +427,14 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 	private void reloadDelays() {
 		DelaysView gwDelays = null;
-		if (getSherlockActivity()!=null)
+		if (getSherlockActivity() != null)
 			gwDelays = (DelaysView) getSherlockActivity().findViewById(R.id.delays);
-		if (gwDelays!=null) {
+		if (gwDelays != null) {
 			gwDelays.setData(Arrays.asList(delays));
 			gwDelays.invalidate();
 		}
 	}
-	
+
 	/*
 	 * big method that build in runtime the timetable using the result get from
 	 * processing. It's used only the first time
@@ -436,83 +450,79 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 	 * @param actualBusTimeTable
 	 * @throws ParseException
 	 */
-	protected void initData(final TimeTable actualBusTimeTable)
-			throws ParseException {
-				actualTimeTable = actualBusTimeTable;
-				List<Integer> courseForDay = new ArrayList<Integer>();
-				// sum of every column
-				int tempNumbCol = 0;
-				courseForDay.add(0);
-		
-				for (List<Map<String, String>> tt : actualBusTimeTable.getDelays()) {
-					tempNumbCol += tt.size();
-					courseForDay.add(tempNumbCol);
+	protected void initData(final TimeTable actualBusTimeTable) throws ParseException {
+		actualTimeTable = actualBusTimeTable;
+		List<Integer> courseForDay = new ArrayList<Integer>();
+		// sum of every column
+		int tempNumbCol = 0;
+		courseForDay.add(0);
+
+		for (List<Map<String, String>> tt : actualBusTimeTable.getDelays()) {
+			tempNumbCol += tt.size();
+			courseForDay.add(tempNumbCol);
+		}
+
+		NUM_COLS = tempNumbCol;
+		NUM_ROWS = actualBusTimeTable.getStops().size();
+
+		delays = new HashMap[NUM_COLS];
+		stops = new String[NUM_ROWS];
+		tripids = new String[NUM_COLS];
+		timesArr = new ArrayList<String>(NUM_COLS * NUM_ROWS);
+
+		minFutureCol = Integer.MAX_VALUE;
+		String refTime = TIME_FORMAT.format(new Date());
+
+		// Initializing data
+		for (int i = 0; i < NUM_ROWS; i++) {
+			int indexOfDay = 0;
+			int indexOfCourseInThatDay = 0;
+			stops[i] = actualBusTimeTable.getStops().get(i);
+
+			for (int j = 0; j < NUM_COLS; j++) {
+				while (actualBusTimeTable.getDelays().get(indexOfDay).isEmpty()) {
+					if (indexOfDay == 0) {
+						displayedDay = 1;
+					}
+					indexOfDay++;
 				}
-		
-				NUM_COLS = tempNumbCol;
-				NUM_ROWS = actualBusTimeTable.getStops().size();
-		
-				delays = new HashMap[NUM_COLS];
-				stops = new String[NUM_ROWS];
-				tripids = new String[NUM_COLS];
-				timesArr = new ArrayList<String>(NUM_COLS*NUM_ROWS);
-				
-				minFutureCol = Integer.MAX_VALUE;
-				String refTime = TIME_FORMAT.format(new Date());
-				
-				// Initializing data
-				for (int i = 0; i < NUM_ROWS; i++) {
-		
-					int indexOfDay = 0;
-					int indexOfCourseInThatDay = 0;
-					stops[i] = actualBusTimeTable.getStops().get(i);
-		
-					for (int j = 0; j < NUM_COLS; j++) {
-						while (actualBusTimeTable.getDelays().get(indexOfDay).isEmpty()) {
-							if (indexOfDay == 0) {
-								displayedDay = 1;
-							}
-							indexOfDay++;
-						}
-		
-						if (i == 0) {
-							Map<String, String> actualDelays = actualBusTimeTable.getDelays().get(indexOfDay)
-									.get(indexOfCourseInThatDay);
-							delays[j] = actualDelays;
-							if (typeOfTransport)
-							{
-								if (actualBusTimeTable.getTripIds()!=null)
-									{
-									String actualTripId = actualBusTimeTable.getTripIds().get(indexOfDay).get(indexOfCourseInThatDay);
-									tripids[j] = actualTripId;
-									}
-								else typeOfTransport = false;
-		
-							}
-						}
-		
-						String time = actualBusTimeTable.getTimes().get(indexOfDay).get(indexOfCourseInThatDay).get(i);
-						time = time == null || time.length()==0 ? "":time.substring(0,5);
-						timesArr.add(time);
-						if (time.length() > 0) {
-							if (time.compareTo(refTime) > 0 && minFutureCol > j) {
-								minFutureCol = j;
-							}
-						}
-						
-						if (indexOfCourseInThatDay == actualBusTimeTable.getDelays().get(indexOfDay).size() - 1) {
-							if (indexOfDay < DAYS_WINDOWS)
-								indexOfDay++;
-							indexOfCourseInThatDay = 0;
+
+				if (i == 0) {
+					Map<String, String> actualDelays = actualBusTimeTable.getDelays().get(indexOfDay)
+							.get(indexOfCourseInThatDay);
+					delays[j] = actualDelays;
+					if (typeOfTransport) {
+						if (actualBusTimeTable.getTripIds() != null) {
+							String actualTripId = actualBusTimeTable.getTripIds().get(indexOfDay).get(indexOfCourseInThatDay);
+							tripids[j] = actualTripId;
 						} else {
-							indexOfCourseInThatDay++;
+							typeOfTransport = false;
 						}
 					}
 				}
+
+				String time = actualBusTimeTable.getTimes().get(indexOfDay).get(indexOfCourseInThatDay).get(i);
+				time = time == null || time.length() == 0 ? "" : time.substring(0, 5);
+				timesArr.add(time);
+				if (time.length() > 0) {
+					if (time.compareTo(refTime) > 0 && minFutureCol > j) {
+						minFutureCol = j;
+					}
+				}
+
+				if (indexOfCourseInThatDay == actualBusTimeTable.getDelays().get(indexOfDay).size() - 1) {
+					if (indexOfDay < DAYS_WINDOWS)
+						indexOfDay++;
+					indexOfCourseInThatDay = 0;
+				} else {
+					indexOfCourseInThatDay++;
+				}
+			}
+		}
 	}
 
 	protected void loadView(int NUM_COLS, int NUM_ROWS, int minFutureCol) {
-		LinearLayout container =  (LinearLayout)getSherlockActivity().findViewById(R.id.layout_bustt);
+		LinearLayout container = (LinearLayout) getSherlockActivity().findViewById(R.id.layout_bustt);
 		if (NUM_COLS > 0 && NUM_ROWS > 0) {
 			container.setVisibility(View.VISIBLE);
 			getSherlockActivity().findViewById(R.id.ttempty).setVisibility(View.INVISIBLE);
@@ -530,17 +540,17 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 
 		// times
 
-		TTView timetableView = (TTView)getSherlockActivity().findViewById(R.id.gridview);
+		TTView timetableView = (TTView) getSherlockActivity().findViewById(R.id.gridview);
 		timetableView.setNumCols(NUM_COLS);
 		timetableView.setNumRows(NUM_ROWS);
 		timetableView.setData(timesArr);
-		
-		LinkedScrollView lsvmain = (LinkedScrollView)getActivity().findViewById(R.id.mainscrollview);
-		LinkedScrollView lsvleft = (LinkedScrollView)getActivity().findViewById(R.id.leftscrollview);
+
+		LinkedScrollView lsvmain = (LinkedScrollView) getActivity().findViewById(R.id.mainscrollview);
+		LinkedScrollView lsvleft = (LinkedScrollView) getActivity().findViewById(R.id.leftscrollview);
 		lsvmain.others.add(lsvleft);
 		lsvleft.others.add(lsvmain);
-		
-		if (typeOfTransport && tripids != null){
+
+		if (typeOfTransport && tripids != null) {
 			getSherlockActivity().findViewById(R.id.twTypes).setVisibility(View.VISIBLE);
 			// Type row
 			TypesView gwTypes = (TypesView) getActivity().findViewById(R.id.types);
@@ -550,9 +560,9 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 			getSherlockActivity().findViewById(R.id.twTypes).setVisibility(View.GONE);
 			getSherlockActivity().findViewById(R.id.types).setVisibility(View.GONE);
 		}
-		
+
 		if (todayView) {
-			final HorizontalScrollView hsw = (HorizontalScrollView)getActivity().findViewById(R.id.ttHsv); 
+			final HorizontalScrollView hsw = (HorizontalScrollView) getActivity().findViewById(R.id.ttHsv);
 			final int shift = (minFutureCol < NUM_COLS ? minFutureCol : (NUM_COLS - 1)) * TTHelper.colWidth(getActivity());
 			hsw.post(new Runnable() {
 				public void run() {
@@ -560,14 +570,14 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 				}
 			});
 		}
-		timetableView.setLayoutParams(new ScrollView.LayoutParams(TTHelper.colWidth(getActivity())*NUM_COLS, TTHelper.rowHeight(getActivity())*NUM_ROWS));
-		stopsView.setLayoutParams(new ScrollView.LayoutParams(TTHelper.getPixels(getActivity(), TTHelper.COL_PLACE_WIDTH), TTHelper.rowHeight(getActivity())*NUM_ROWS));
-		
+		timetableView.setLayoutParams(new ScrollView.LayoutParams(TTHelper.colWidth(getActivity()) * NUM_COLS, TTHelper
+				.rowHeight(getActivity()) * NUM_ROWS));
+		stopsView.setLayoutParams(new ScrollView.LayoutParams(TTHelper.getPixels(getActivity(), TTHelper.COL_PLACE_WIDTH),
+				TTHelper.rowHeight(getActivity()) * NUM_ROWS));
+
 		container.invalidate();
-		refreshDayTextView(0); 
+		refreshDayTextView(0);
 	}
-
-
 
 	private void toggleProgressDialog() {
 		if (mProgressBar != null) {
@@ -602,6 +612,5 @@ public class SmartCheckTTFragment extends FeedbackFragment {
 		}
 
 	}
-
 
 }

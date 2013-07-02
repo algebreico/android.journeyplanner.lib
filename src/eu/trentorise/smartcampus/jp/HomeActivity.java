@@ -156,7 +156,7 @@ public class HomeActivity extends BaseActivity {
 			case MONITOR:
 				id = R.id.btn_monitorrecurrentjourney;
 				title = getString(R.string.btn_monitorrecurrent);
-				msg = getString(R.string.jp_plan_tut);
+				msg = getString(R.string.jp_monitor_tut);
 				break;
 			case WATCH:
 				id = R.id.btn_monitorsavedjourney;

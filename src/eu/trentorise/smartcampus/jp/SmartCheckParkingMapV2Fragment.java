@@ -41,8 +41,8 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 	// private ArrayList<ParkingSerial> parkingsList;
 	private ParkingSerial focusedParking;
 
-	private LatLng centerLatLng;
-	private float zoomLevel = JPParamsHelper.getZoomLevelMap();
+	private LatLng centerLatLng = new LatLng(JPParamsHelper.getCenterMap().get(0), JPParamsHelper.getCenterMap().get(1));
+	private float zoomLevel = JPParamsHelper.getZoomLevelMap() - 3;
 
 	private GoogleMap mMap;
 
@@ -89,21 +89,26 @@ public class SmartCheckParkingMapV2Fragment extends SupportMapFragment implement
 		// show my location
 		getSupportMap().setMyLocationEnabled(true);
 
-		if (focusedParking == null) {
-			// move to my location
-			if (JPHelper.getLocationHelper().getLocation() != null) {
-				centerLatLng = new LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6() / 1e6, JPHelper
-						.getLocationHelper().getLocation().getLongitudeE6() / 1e6);
-
-				getSupportMap().moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel));
-			} else {
-				getSupportMap().moveCamera(CameraUpdateFactory.zoomTo(zoomLevel));
-			}
-		} else {
+		if (focusedParking != null) {
 			zoomLevel--;
 			getSupportMap().moveCamera(
 					CameraUpdateFactory.newLatLngZoom(new LatLng(focusedParking.location()[0], focusedParking.location()[1]),
 							FOCUSED_ZOOM));
+		} else {
+			getSupportMap().moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, zoomLevel));
+
+			// // move to my location
+			// if (JPHelper.getLocationHelper().getLocation() != null) {
+			// centerLatLng = new
+			// LatLng(JPHelper.getLocationHelper().getLocation().getLatitudeE6()
+			// / 1e6, JPHelper
+			// .getLocationHelper().getLocation().getLongitudeE6() / 1e6);
+			//
+			// getSupportMap().moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng,
+			// zoomLevel));
+			// } else {
+			// getSupportMap().moveCamera(CameraUpdateFactory.zoomTo(zoomLevel));
+			// }
 		}
 	}
 

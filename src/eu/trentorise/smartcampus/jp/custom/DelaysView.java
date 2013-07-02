@@ -119,14 +119,14 @@ public class DelaysView extends CustomGridView<Map<String,String>> {
 		int yPos = (int) ((y+getRowHeight() / 2) - ((mSTextPaint.descent() + mSTextPaint.ascent()) / 2)) ; 
 		if (map.size() == 2) {
 			int xPos = (int)(x + getColWidth()/4 - mSTextPaint.measureText(map.get(CreatorType.SERVICE))/2);
-			canvas.drawText(map.get(CreatorType.SERVICE), xPos, yPos, mSTextPaint);
+			canvas.drawText(map.get(CreatorType.SERVICE) + "'", xPos, yPos, mSTextPaint);
 			xPos = (int)(x + 3*getColWidth()/4 - mUTextPaint.measureText(map.get(CreatorType.USER))/2);
-			canvas.drawText(map.get(CreatorType.USER), xPos, yPos, mUTextPaint);
+			canvas.drawText(map.get(CreatorType.USER) + "'", xPos, yPos, mUTextPaint);
 		} else if (map.size() == 1) {
 			Paint p = map.containsKey(CreatorType.SERVICE) ? mSTextPaint : mUTextPaint;
 			String text = map.values().iterator().next();
 			int xPos = (int)(x + getColWidth()/2 - mUTextPaint.measureText(text)/2);
-			canvas.drawText(text, xPos, yPos, p);
+			canvas.drawText(text + "'", xPos, yPos, p);
 		} 
 	}
 

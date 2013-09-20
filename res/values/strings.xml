@@ -298,5 +298,7 @@
     <string name="menu_tutorial">Tutorial</string>
     
     <string name="url_help">http://www.smartcampuslab.it/vivitrentoapp/</string>
+
+    <string name="btn_cit">Comune in tasca</string>
     
 </resources>

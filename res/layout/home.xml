@@ -136,6 +136,23 @@
                     android:text="@string/btn_myprofile"
                     android:textAppearance="@android:style/TextAppearance.Small" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:gravity="top|right"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btn_cit"
+                    style="@style/homeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/ic_cit"
+                    android:onClick="goToFunctionality"
+                    android:text="@string/btn_cit"
+                    android:textAppearance="@android:style/TextAppearance.Small" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

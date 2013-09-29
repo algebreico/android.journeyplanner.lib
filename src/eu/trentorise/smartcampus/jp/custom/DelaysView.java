@@ -111,13 +111,13 @@ public class DelaysView extends CustomGridView<Map<String,String>> {
 	protected void drawCell(Canvas canvas, Map<String,String> item, int row, int col, int x, int y) {
 		Map<CreatorType,String> map = new HashMap<CreatorType, String>(2);
 		if (item != null) {
-		for (Iterator<Entry<String,String>> iterator = item.entrySet().iterator(); iterator.hasNext();) {
-			Entry<String,String> delay = iterator.next();
-			if (!delay.getValue().equalsIgnoreCase("0")) {
-				CreatorType ct = CreatorType.getAlertType(delay.getKey());
-				map.put(ct, delay.getValue());
+			for (Iterator<Entry<String,String>> iterator = item.entrySet().iterator(); iterator.hasNext();) {
+				Entry<String,String> delay = iterator.next();
+				if (!delay.getValue().equalsIgnoreCase("0")) {
+					CreatorType ct = CreatorType.getAlertType(delay.getKey());
+					map.put(ct, delay.getValue());
+				}
 			}
-		}
 		}
 		int yPos = (int) ((y+getRowHeight() / 2) - ((mSTextPaint.descent() + mSTextPaint.ascent()) / 2)) ; 
 		if (map.size() == 2) {

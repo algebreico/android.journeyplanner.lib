@@ -26,17 +26,20 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="top|left"
+            android:background="@color/jpappcolor"
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/btn_cit"
-            style="@style/ActionBar.Solid.Journeyplanner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_cit"
             android:gravity="left|center_vertical"
+            android:padding="0dp"
+            android:layout_margin="0dp"
             android:onClick="goToFunctionality"
             android:text="@string/btn_cit"
+            android:background="@android:color/transparent"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:textColor="@android:color/white" />
     </LinearLayout>

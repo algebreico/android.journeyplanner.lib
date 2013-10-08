@@ -52,8 +52,10 @@ public abstract class AbstractAsyncTaskProcessor<Params, Result> implements SCAs
 	public void handleSecurityError() {
 		SCAccessProvider accessProvider = JPHelper.getAccessProvider();
 		try {
-			accessProvider.invalidateToken(activity, null);
-			accessProvider.getAuthToken(activity, null);
+			accessProvider.logout(activity);
+//			accessProvider.getAuthToken(activity, null);
+			accessProvider.login(activity, JPHelper.getCLIENT_ID(), JPHelper.getCLIENT_SECRET(), null);
+
 		} catch (Exception e) {
 			Log.e(HomeActivity.class.getName(), "" + e.getMessage());
 			JPHelper.showFailure(activity, R.string.app_failure_security);

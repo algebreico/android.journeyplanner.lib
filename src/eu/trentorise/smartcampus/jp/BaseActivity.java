@@ -33,7 +33,7 @@ public class BaseActivity extends FeedbackFragmentActivity {
 	private void initDataManagement(Bundle savedInstanceState) {
 		try {
 			JPHelper.init(getApplicationContext());
-			String token = JPHelper.getAccessProvider().getAuthToken(this, null);
+			String token = JPHelper.getAuthToken();
 			if (token != null) {
 				initData();
 			}

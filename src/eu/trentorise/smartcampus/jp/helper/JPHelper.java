@@ -39,18 +39,25 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.type.TypeReference;
 import org.json.JSONException;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.widget.Toast;
+import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
-import eu.trentorise.smartcampus.ac.authenticator.AMSCAccessProvider;
+import eu.trentorise.smartcampus.ac.embedded.EmbeddedSCAccessProvider;
+//import eu.trentorise.smartcampus.ac.authenticator.AMSCAccessProvider;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.android.common.LocationHelper;
 import eu.trentorise.smartcampus.jp.Config;
@@ -70,6 +77,8 @@ import eu.trentorise.smartcampus.jp.model.SmartCheckStop;
 import eu.trentorise.smartcampus.jp.model.SmartCheckTime;
 import eu.trentorise.smartcampus.jp.model.TripData;
 import eu.trentorise.smartcampus.jp.timetable.TTHelper;
+import eu.trentorise.smartcampus.profileservice.BasicProfileService;
+import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
 import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
 import eu.trentorise.smartcampus.protocolcarrier.custom.MessageRequest;
@@ -85,7 +94,7 @@ public class JPHelper {
 
 	private static JPHelper instance = null;
 
-	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
+	private static SCAccessProvider accessProvider = new EmbeddedSCAccessProvider();
 
 	private static Context mContext;
 
@@ -94,6 +103,9 @@ public class JPHelper {
 	private static LocationHelper mLocationHelper;
 
 	private SyncStorageWithPaging storage = null;
+	private static String CLIENT_ID = null;
+	private static String CLIENT_SECRET = null;
+	private static BasicProfile bp = null;
 
 	// tutorial's stuff
 
@@ -131,7 +143,28 @@ public class JPHelper {
 		JPParamsHelper.init(mContext);
 		TTHelper.init(mContext);
 		MapManager.initWithParams();
+		ApplicationInfo ai = null;
 
+		try {
+			ai = mContext.getPackageManager().getApplicationInfo(mContext.getPackageName(),
+					PackageManager.GET_META_DATA);
+		} catch (NameNotFoundException e) {
+
+		}
+		Bundle metaData = ai.metaData;
+		if (metaData != null) {
+
+			CLIENT_ID = (String) metaData.get("CLIENT_ID");
+			CLIENT_SECRET = (String) metaData.get("CLIENT_SECRET");
+		}
+
+		try {
+			/*async task*/
+			BasicProfileService basicProfileService = new BasicProfileService("https://vas-dev.smartcampuslab.it/aac");
+			bp = basicProfileService.getBasicProfile(getAuthToken());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		setProtocolCarrier(new ProtocolCarrier(mContext, JPParamsHelper.getAppToken()));
 
 		// LocationManager locationManager = (LocationManager)
@@ -414,7 +447,13 @@ public class JPHelper {
 	}
 
 	public static String getAuthToken() {
-		return getAccessProvider().readToken(JPHelper.mContext, null);
+		try {
+			return getAccessProvider().readToken(JPHelper.mContext, CLIENT_ID, CLIENT_SECRET);
+		} catch (AACException e) {
+			e.printStackTrace();
+			return null;
+
+		}
 	}
 
 	public static JPHelper getInstance() throws DataException {
@@ -873,5 +912,19 @@ public class JPHelper {
 		}
 		return null;
 	}
+	public static boolean isUserAnonymous(SherlockFragmentActivity sherlockActivity) {
+		return false;
+	}
 
+	public static void upgradeuser(SherlockFragmentActivity sherlockActivity) {
+		
+	}
+
+	public static String getCLIENT_SECRET() {
+		return CLIENT_SECRET;
+	}
+
+	public static String getCLIENT_ID() {
+		return CLIENT_ID;
+	}
 }

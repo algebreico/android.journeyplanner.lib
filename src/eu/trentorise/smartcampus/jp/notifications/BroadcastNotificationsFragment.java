@@ -29,11 +29,12 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-import eu.trentorise.smartcampus.ac.UserRegistration;
-import eu.trentorise.smartcampus.ac.authenticator.AMSCAccessProvider;
+//import eu.trentorise.smartcampus.ac.UserRegistration;
+//import eu.trentorise.smartcampus.ac.authenticator.AMSCAccessProvider;
 import eu.trentorise.smartcampus.android.feedback.fragment.FeedbackFragment;
 import eu.trentorise.smartcampus.jp.Config;
 import eu.trentorise.smartcampus.jp.R;
+import eu.trentorise.smartcampus.jp.helper.JPHelper;
 import eu.trentorise.smartcampus.jp.helper.JPParamsHelper;
 import eu.trentorise.smartcampus.jp.helper.RoutesHelper;
 
@@ -83,9 +84,9 @@ public class BroadcastNotificationsFragment extends FeedbackFragment {
 					Toast.makeText(getSherlockActivity().getApplicationContext(), R.string.tmp, Toast.LENGTH_SHORT).show();
 				}
 
-				if (new AMSCAccessProvider().isUserAnonymous(getSherlockActivity())) {
+				if (JPHelper.isUserAnonymous(getSherlockActivity())) {
 					// show dialog box
-					UserRegistration.upgradeuser(getSherlockActivity());
+					JPHelper.upgradeuser(getSherlockActivity());
 
 				} else if (fragment != null) {
 
